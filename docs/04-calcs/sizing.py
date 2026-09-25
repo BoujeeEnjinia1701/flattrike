@@ -1,0 +1,500 @@
+"""FlatTrike sizing calculations, FTK-CAL-001 v0.1 (TRL 3).
+
+Run from the repo root:  python docs/04-calcs/sizing.py
+Prints every number quoted in docs/04-calcs/01-sizing.md and writes docs/04-calcs/results.csv.
+Geometry, plate areas and part centroids come from the parametric model (cad/src/model.py),
+so the note, the model and the drawing stay in step. First-principles estimates only;
+nothing here is measured.
+"""
+from __future__ import annotations
+
+import csv
+import math
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "cad/src"))
+import model as M  # noqa: E402
+
+G = 9.81
+OUT = []   # (key, value, unit, note)
+
+
+def rec(key, value, unit="", note=""):
+    OUT.append((key, value, unit, note))
+    v = f"{value:,.3g}" if isinstance(value, float) and abs(value) < 100 else (
+        f"{value:,.1f}" if isinstance(value, float) else str(value))
+    print(f"  {key:52s} {v:>12s} {unit}")
+    return value
+
+
+def head(t):
+    print(f"\n== {t}")
+
+
+# ---------------------------------------------------------------- assumptions
+P = M.PARAMS
+RIDER, RIDER_MAX, CARGO = 80.0, 90.0, 150.0
+RHO_STEEL, RHO_PLY = 7850.0, 700.0
+CRR, CDA, RHO_AIR, ETA = 0.015, 0.9, 1.2, 0.89
+P_RIDER, P_ASSIST = 110.0, 250.0
+DYN = 2.5                      # dynamic factor on static loads for potholes and curbs
+E, FY = 210e3, 235.0           # MPa
+FAT_CAFL = 0.737 * 90          # MPa, constant-amplitude fatigue limit for a 90 MPa detail (plate with holes)
+MU_SLIP, BOLT_PRELOAD = 0.20, 15.6e3   # painted faying faces; M8 8.8 at 25 N m with K = 0.2
+HUB_RATIOS = (0.75, 1.00, 1.333)       # typical 3-speed hub gear
+BOUGHT = {   # kg, assumed masses of bought parts (BOM items 5 to 8 and 10 to 14)
+    "Front wheels with drum hubs (2)": (6, 5.8), "Rear wheel with 3-speed drum hub": (7, 3.8),
+    "Drivetrain (BB, cranks, ring, chain, pedals, guard)": (8, 3.0),
+    "Headset, head tube, steerer": (5, 1.3), "Seat and seatpost": (10, 1.4), "Handlebar and stem": (11, 1.2),
+    "Brake levers, cables, latch": (12, 0.7), "Box hinges, hasp, lock, screws, battens": (9, 1.0),
+    "Paint": (13, 0.6), "Accessories (mudguards, reflectors, bell, bumpers)": (14, 1.5),
+}
+BOLTS = {   # M8 class 8.8 bolt sets (bolt, two washers, all-metal locknut) per joint group
+    "Spine top and bottom cover cross-bolts": 10, "Spine ribs": 12, "Stay to spine nodes (4 per node)": 8,
+    "Stay bridge": 2, "Head tube collar plates": 8, "Bottom bracket collars": 4, "Yokes to bulkhead": 8,
+    "Bulkhead to rails": 6, "Rails to axle beam": 8, "Axle beam to inner fork plates": 12,
+    "Crown plates to fork plates": 16, "Box to rails": 8, "Stem to bulkhead": 4, "Seatpost clamp": 2,
+    "Steerer to yokes": 4,
+}
+BOLT_KG = 0.028
+
+
+def main():
+    parts = M.build_parts()
+    sched = M.plate_schedule()
+    kgm2 = P["T"] / 1000 * RHO_STEEL
+
+    # ------------------------------------------------------------ 1 geometry and plates
+    head("1. Geometry, plates and nesting (R3, R4, R6, R9, R17)")
+    from build123d import Compound
+    asm = Compound(children=[parts[k] for k in sorted(parts)])
+    bb = asm.bounding_box()
+    rec("Overall length", bb.size.X / 1000, "m")
+    rec("Overall width", bb.size.Y / 1000, "m")
+    rec("Overall height (saddle top)", bb.size.Z / 1000, "m")
+    rec("Wheelbase", P["WB"] / 1000, "m"); rec("Front track", P["TRACK"] / 1000, "m")
+    n_plates = sum(v["qty"] for v in sched.values())
+    area = sum(v["qty"] * v["area_m2"] for v in sched.values())
+    rec("Cut plates (count)", n_plates)
+    rec("Plate area, net of windows", area, "m2")
+    plate_kg = rec("Plate mass (3 mm, 23.6 kg/m2)", area * kgm2, "kg")
+    washers = 8 * 9
+    rec("Spacer washers cut from offcuts (8 stacks of 9)", washers)
+
+    # shelf nesting of bounding rectangles on one 1250 x 2500 sheet, 8 mm gap, 10 mm edge margin
+    SW, SL, GAP, EDGE = 1250.0, 2500.0, 8.0, 10.0
+    pieces = []
+    for k, v in sched.items():
+        pieces += [v["size"]] * v["qty"]
+
+    def ffdh(pcs):
+        """First-fit decreasing height: shelves stacked along the 2500 mm length, pieces side by side
+        across the 1250 mm width. pcs: list of (across, along)."""
+        pcs = sorted(pcs, key=lambda r: -r[1])
+        shelves = []
+        for across, along in pcs:
+            for sh in shelves:
+                if sh["used"] + across <= SW - 2 * EDGE and along <= sh["depth"]:
+                    sh["used"] += across + GAP; break
+            else:
+                shelves.append({"used": across + GAP, "depth": along})
+        return sum(sh["depth"] for sh in shelves) + GAP * (len(shelves) - 1) + 2 * EDGE, len(shelves)
+
+    import random
+    rng = random.Random(1)      # fixed seed: the note quotes this result
+    best = (1e9, 0)
+    for it in range(3000):      # random orientation of each piece, keep the shortest layout
+        pcs = [(w, h) if (it == 0 or rng.random() < 0.5) else (h, w) for w, h in pieces]
+        pcs = [(a, b) if a <= SW - 2 * EDGE else (b, a) for a, b in pcs]
+        best = min(best, ffdh(pcs))
+    used, n_sh = best
+    rec("Shelf-nest of bounding rectangles: sheet length used (of 2500 mm)", used, "mm",
+        f"{n_sh} shelves; conservative, true-shape nesting is tighter")
+    rec("Sheet utilisation by net area", area / (SW * SL / 1e6) * 100, "%")
+    r4_ok = used <= SL
+
+    # box and flat pack
+    x0 = P["BOX_X0"]; L_in = P["BOX_L"] - 2 * P["PLY_WALL"]; W_in = P["BOX_W"] - 2 * P["PLY_WALL"]
+    H_in = P["BOX_H"] - P["PLY_FLOOR"]
+    rec("Box inside volume", L_in * W_in * H_in / 1e6, "L")
+    lid_top = P["BOX_Z0"] + P["BOX_H"] + P["PLY_WALL"]
+    rec("Lid (counter) height", lid_top / 1000, "m")
+    box_kg = rec("Box mass (12 mm floor, 9 mm walls and lid, 700 kg/m3)", parts[9].volume / 1e9 * RHO_PLY, "kg")
+    stack = (n_plates + 6) * 3.0 * 1.1 + (P["PLY_FLOOR"] + 5 * P["PLY_WALL"]) * 1.1
+    rec("Flat stack of plates and box panels", stack, "mm")
+    crate = (1.35, 0.80, max(0.36, 3 * 0.12))
+    rec("Crate: plates and panels 0.80 x 0.80, three wheels stacked beside", crate[0] * crate[1] * crate[2], "m3",
+        "1.35 x 0.80 x 0.36 m")
+    longest = max(max(v["size"]) for v in sched.values())
+    rec("Longest cut plate", longest, "mm")
+    rec("Longest single piece (box floor panel, 795 mm)", float(P["BOX_L"]), "mm")
+
+    # ------------------------------------------------------------ 2 mass and centre of mass
+    head("2. Mass budget and centre of mass (R1, R8)")
+    items = []   # (label, kg, x, y, z, on_bed)
+    bed_items = {3, 6, 9, 11}
+    by_bom = {}
+    for k, v in sched.items():
+        by_bom[v["bom"]] = by_bom.get(v["bom"], 0.0) + v["qty"] * v["area_m2"] * kgm2
+    for b, kg in by_bom.items():
+        c = parts[b].center()
+        items.append((f"Plates, item {b}", kg, c.X, c.Y, c.Z, b in bed_items))
+    washer_kg = washers * (math.pi * (13 ** 2 - 4.25 ** 2) * 3 / 1e9 * RHO_STEEL)
+    c = parts[4].center(); items.append(("Spacer washers", washer_kg, c.X, 0, c.Z, False))
+    n_bolts = sum(BOLTS.values())
+    bolts_kg = n_bolts * BOLT_KG
+    items.append(("M8 bolt sets", bolts_kg, 800, 0, 450, False))
+    items.append(("Cargo box", box_kg, *(lambda c: (c.X, c.Y, c.Z))(parts[9].center()), True))
+    for name, (b, kg) in BOUGHT.items():
+        c = parts[b].center() if b in parts else parts[1].center()
+        items.append((name, kg, c.X, c.Y, c.Z, b in bed_items))
+    empty = sum(i[1] for i in items)
+    for i in items:
+        print(f"    {i[0]:52s} {i[1]:6.1f} kg")
+    rec("Bolt sets (count)", n_bolts)
+    rec("Bolts and spacer washers", bolts_kg + washer_kg, "kg")
+    rec("Empty mass", empty, "kg", "R8 target 55 kg")
+    rec("Plate share of empty mass", plate_kg / empty * 100, "%")
+    rec("Box share of empty mass", box_kg / empty * 100, "%")
+    gross = rec("Gross mass, 80 kg rider and 150 kg cargo", empty + RIDER + CARGO, "kg")
+    rec("Gross mass, 90 kg rider and 150 kg cargo", empty + RIDER_MAX + CARGO, "kg")
+    rec("Cargo allowed with a 90 kg rider inside 300 kg", 300 - empty - RIDER_MAX, "kg")
+
+    saddle_x = M.seat_xy(P["SADDLE_TOP"] - 25)
+    rider = ("Rider", RIDER, saddle_x + 20, 0.0, P["SADDLE_TOP"] + 160, False)
+    cargo = ("Cargo", CARGO, x0 + P["BOX_L"] / 2, 0.0, P["BOX_Z0"] + P["PLY_FLOOR"] + H_in / 2, True)
+    rec("Rider centre of mass ahead of rear axle", rider[2] / 1000, "m")
+    rec("Rider centre of mass height", rider[4] / 1000, "m")
+
+    def com(lst):
+        m = sum(i[1] for i in lst)
+        return m, sum(i[1] * i[2] for i in lst) / m, sum(i[1] * i[3] for i in lst) / m, sum(i[1] * i[4] for i in lst) / m
+
+    m0, xe, _, ze = com(items)
+    rec("Empty trike CoM ahead of rear axle", xe / 1000, "m"); rec("Empty trike CoM height", ze / 1000, "m")
+
+    # axle loads, loaded
+    mt, xt, _, zt = com(items + [rider, cargo])
+    front = mt * xt / P["WB"]
+    rec("Front axle load, loaded (static)", front * G / 1000, "kN")
+    rec("Rear axle load, loaded (static)", (mt - front) * G / 1000, "kN")
+    mr, xr, _, _ = com(items + [rider])
+    rec("Rear axle load, rider only (static)", (mr - mr * xr / P["WB"]) * G / 1000, "kN")
+
+    # ------------------------------------------------------------ 3 riding power
+    head("3. Riding power, gearing and assist (R12, R13)")
+    f_roll = CRR * gross * G
+    rec("Rolling resistance at gross mass", f_roll, "N")
+    p_wheel = P_RIDER * ETA
+    k_air = 0.5 * RHO_AIR * CDA
+    v = 1.0
+    for _ in range(60):
+        v = v - (f_roll * v + k_air * v ** 3 - p_wheel) / (f_roll + 3 * k_air * v ** 2)
+    rec("Power at the rear wheel from 110 W", p_wheel, "W")
+    rec("Cruise speed, flat", v * 3.6, "km/h", "R12 target 7 km/h")
+    rec("  of which rolling", f_roll * v, "W"); rec("  of which drag", k_air * v ** 3, "W")
+    f5 = gross * G * (0.05 + CRR)
+    v4 = 4 / 3.6
+    p5 = f5 * v4 + k_air * v4 ** 3
+    rec("Force on a 5 % grade", f5, "N")
+    rec("Wheel power at 4 km/h on 5 %", p5, "W")
+    rec("Pedal power at 4 km/h on 5 %", p5 / ETA, "W", "R13; rider sustains 110 W")
+    v5 = 1.0
+    for _ in range(60):
+        v5 = v5 - (f5 * v5 + k_air * v5 ** 3 - p_wheel) / (f5 + 3 * k_air * v5 ** 2)
+    rec("Unassisted speed on 5 % at 110 W", v5 * 3.6, "km/h")
+    rear_n = (mt - front) * G
+    rec("Rear tyre grip needed on 5 %, loaded (rear-wheel drive)", f5 / rear_n, "", "friction coefficient")
+    R = P["WHEEL_R"] / 1000
+    rec("Wheel torque on 5 %", f5 * R, "N m")
+    ring, spr = P["RING_T"], P["SPROCKET_T"]
+    circ = 2 * math.pi * R
+    for g_, rt in zip(("low", "middle", "high"), HUB_RATIOS):
+        dev = circ * ring / spr * rt
+        rec(f"Development, {g_} gear", dev, "m per crank rev")
+    rec("Cadence at 4 km/h in low gear", v4 / (circ * ring / spr * HUB_RATIOS[0]) * 60, "rpm")
+    rec("Speed at 70 rpm in high gear", 70 / 60 * circ * ring / spr * HUB_RATIOS[2] * 3.6, "km/h")
+    crank_t = f5 * R / (ring / spr * HUB_RATIOS[0]) / ETA
+    rec("Mean crank torque on 5 % in low gear", crank_t, "N m")
+    rec("Mean pedal force at 170 mm", crank_t / (P["CRANK"] / 1000), "N")
+    pa = (P_ASSIST + P_RIDER) * ETA
+    va = 1.0
+    for _ in range(60):
+        va = va - (f5 * va + k_air * va ** 3 - pa) / (f5 + 3 * k_air * va ** 2)
+    rec("Speed on 5 % with 250 W mid-drive plus rider", va * 3.6, "km/h", "assist route C")
+    # SwapCell energy use, assist route C
+    e_pack = 457.0   # Wh at the terminals per cycle, SWC-CAL-001
+    eta_motor = 0.80
+    v12 = 12 / 3.6
+    p12 = f_roll * v12 + k_air * v12 ** 3
+    motor_w = max(p12 - p_wheel, 0) / ETA
+    wh_km_flat = motor_w / eta_motor / (v12 * 3.6)
+    rec("Assist battery use, flat at 12 km/h", wh_km_flat, "Wh/km")
+    rec("SwapCell range, flat at 12 km/h", e_pack / wh_km_flat, "km")
+    motor5 = (P_ASSIST) / eta_motor
+    wh_km_5 = motor5 / (va * 3.6)
+    rec("Assist battery use, 5 % climb", wh_km_5, "Wh/km")
+
+    # ------------------------------------------------------------ 4 steering and stability
+    head("4. Steering, turning circle and stability (R9, R10)")
+    kp, wb, tr = P["KP_X"], P["WB"], P["TRACK"] / 2
+    lock = math.radians(P["STEER_LOCK"])
+
+    def rot_bed(x, y, d):
+        dx, dy = x - kp, y
+        return kp + dx * math.cos(d) - dy * math.sin(d), dx * math.sin(d) + dy * math.cos(d)
+
+    def threshold(lst, d, ackermann=False):
+        """Lateral acceleration (g) at tip-up in a left turn with bed angle d (box steering)."""
+        pts = []
+        for i in lst:
+            x, y = (i[2], i[3])
+            if i[5] and not ackermann:
+                x, y = rot_bed(x, y, d)
+            pts.append((i[1], x, y, i[4]))
+        m = sum(p[0] for p in pts)
+        cx = sum(p[0] * p[1] for p in pts) / m; cy = sum(p[0] * p[2] for p in pts) / m
+        cz = sum(p[0] * p[3] for p in pts) / m
+        ox, oy = (wb, -tr) if ackermann else rot_bed(wb, -tr, d)   # outer (right) front contact
+        L = math.hypot(ox, oy)
+        dist = (cx * (-oy) + cy * ox) / L     # signed distance of CoM from the rear-to-outer-front axis
+        return dist / cz, cx, cz, (ox, oy)
+
+    ax, ay = rot_bed(wb, 0, lock)
+    t_ic = ax / math.sin(lock)
+    y_ic = ay + t_ic * math.cos(lock)
+    ox, oy = rot_bed(wb, -tr, lock)
+    r_outer = math.hypot(ox, oy - y_ic) + P["TYRE_W"] / 2
+    corner = rot_bed(x0 + P["BOX_L"], -P["BOX_W"] / 2, lock)
+    r_box = math.hypot(corner[0], corner[1] - y_ic)
+    rec("Steering lock (assumed clearance limit)", P["STEER_LOCK"], "deg")
+    rec("Turning circle, outer tyre (box steering)", 2 * r_outer / 1000, "m", "R9 target 6 m")
+    rec("Swept circle, box front corner", 2 * r_box / 1000, "m")
+    rec("Outer front wheel moves inward at full lock", (tr - abs(oy)) , "mm", "effective half track")
+
+    cases = {}
+    for label, lst in (("loaded", items + [rider, cargo]), ("rider only", items + [rider]),
+                       ("rider only, 90 kg", items + [rider[:1] + (RIDER_MAX,) + rider[2:]])):
+        a0, cx, cz, _ = threshold(lst, 0.0)
+        cases[label] = a0
+        rec(f"Tipping threshold, {label}, straight", a0, "g", f"CoM {cx/1000:.2f} m ahead, {cz/1000:.2f} m high")
+        rec(f"  speed at threshold on a 5 m radius, {label}", math.sqrt(a0 * G * 5) * 3.6, "km/h")
+    lock_res = {}
+    for label, lst in (("loaded", items + [rider, cargo]), ("rider only", items + [rider])):
+        a1, cx, cz, _ = threshold(lst, lock)
+        lock_res[label] = a1
+        rec(f"Tipping threshold, {label}, box steering at full lock", a1, "g")
+        rc = math.hypot(cx, y_ic)
+        rec(f"  tip-up speed at full lock, {label}", math.sqrt(max(a1, 0) * G * rc / 1000) * 3.6, "km/h",
+            f"CoM path radius {rc/1000:.2f} m")
+    for label, lst in (("loaded", items + [rider, cargo]), ("rider only", items + [rider])):
+        a2, _, _, _ = threshold(lst, lock, ackermann=True)
+        rec(f"Tipping threshold, {label}, option B (Ackermann) at any lock", a2, "g")
+    # sensitivity: what would meet 0.30 g with the rider only?
+    need_x = None
+    for dx in range(0, 2000, 10):
+        lst = items + [rider[:2] + (rider[2] + dx,) + rider[3:]]
+        if threshold(lst, 0.0)[0] >= 0.30:
+            need_x = dx; break
+    rec("Rider shift forward for 0.30 g rider only (sensitivity)", float(need_x), "mm")
+    ballast = None
+    for kg in range(0, 200, 5):
+        lst = items + [rider, ("Ballast", float(kg), x0 + P["BOX_L"] / 2, 0.0, P["BOX_Z0"] + 30, True)]
+        if threshold(lst, 0.0)[0] >= 0.30:
+            ballast = kg; break
+    rec("Ballast low in the box for 0.30 g rider only", float(ballast), "kg")
+    for trk in (900, 1000):
+        s_tr = tr
+        tr = trk / 2
+        a_w, _, _, _ = threshold(items + [rider], 0.0)
+        rec(f"Rider-only threshold with a {trk} mm track (breaks R9 width)", a_w, "g")
+        tr = s_tr
+
+    # ------------------------------------------------------------ 5 structure
+    head("5. Structure (R2)")
+    t = P["T"]
+    # 5.1 rear stays as a two-member truss from the rear axle to the seat node and the front node
+    R_rear = (mt - front) * G
+    ax_, az_ = 0.0, P["WHEEL_R"]
+    seat_node, front_node = (435.0, 680.0), (650.0, 550.0)
+    ut = ((seat_node[0] - ax_), (seat_node[1] - az_)); lt = math.hypot(*ut); ut = (ut[0] / lt, ut[1] / lt)
+    ub = ((front_node[0] - ax_), (front_node[1] - az_)); lb = math.hypot(*ub); ub = (ub[0] / lb, ub[1] / lb)
+    import numpy as np
+    A = np.array([[ut[0], ub[0]], [ut[1], ub[1]]]); F = np.linalg.solve(A, np.array([0.0, -R_rear]))
+    Ft, Fb = float(F[0]), float(F[1])
+    rec("Rear axle load, loaded (static)", R_rear, "N")
+    rec("Upper stay strip force (both plates, static)", Ft, "N", "negative = compression")
+    rec("Lower stay strip force (both plates, static)", Fb, "N")
+    comp = abs(Ft) / 2 * DYN
+    rec("Compression per plate, dynamic x2.5", comp, "N")
+    (ex0, ez0), (ex1, ez1) = M.STAY[-1], M.STAY[-2]          # upper edge of the stay plate
+    le = math.hypot(ex1 - ex0, ez1 - ez0); nx_, nz_ = -(ez1 - ez0) / le, (ex1 - ex0) / le
+    b_strip = min(abs((wx - ex0) * nx_ + (wz - ez0) * nz_) for wx, wz in M.STAY_WIN)
+    rec("Narrowest upper stay strip (edge to window)", b_strip, "mm")
+    I_s = b_strip * t ** 3 / 12
+    for L_u, lab in ((lt, "if unbraced from axle to seat node"), (300.0, "braced by the stay bridge (300 mm)")):
+        pcr = math.pi ** 2 * E * I_s / L_u ** 2
+        rec(f"Strip buckling load, {lab}", pcr, "N", f"L = {L_u:.0f} mm, pinned ends")
+        rec(f"  safety factor on dynamic compression, {lab}", pcr / comp, "")
+    b55 = 55.0
+    rec("Safety factor with the TRL 2 style 55 mm strip, braced", math.pi ** 2 * E * b55 * t ** 3 / 12 / 300 ** 2 / comp, "")
+    sig_strip = abs(Ft) / 2 / ((b_strip - 8.5) * t)
+    rec("Static net stress in upper strip at an M8 hole", sig_strip, "MPa")
+    rec("Dynamic net stress in upper strip", sig_strip * DYN, "MPa")
+
+    # 5.2 spine torsion from roll of the rear frame (rider and rear frame at 0.5 g lateral)
+    rear_frame = [i for i in items if not i[5]] + [rider]
+    mrf, _, _, zrf = com(rear_frame)
+    Troll = mrf * 0.5 * G * zrf / 1000
+    rec("Rear frame and rider mass", mrf, "kg")
+    rec("Roll moment at the kingpin, 0.5 g lateral", Troll, "N m")
+    h_sp = 150.0; w_sp = 2 * P["SPINE_IN"] + t
+    J_open = 2 * (1 / 3) * h_sp * t ** 3
+    tau_open = Troll * 1e3 * t / J_open
+    A_cell = (w_sp) * (h_sp - t)
+    tau_closed = Troll * 1e3 / (2 * A_cell * t)
+    rec("Spine shear stress, open twin plates (TRL 2)", tau_open, "MPa", "yield in shear about 136 MPa")
+    rec("Spine shear stress, closed box with covers (TRL 3)", tau_closed, "MPa")
+    q = Troll * 1e3 / (2 * A_cell)
+    n_tabs = 10
+    rec("Shear flow on each cover edge", q, "N/mm")
+    rec("Tab bearing stress, 10 tabs per edge over 280 mm", q * 280 / n_tabs / (t * t), "MPa")
+    Gs = 81e3
+    k_open = Gs * J_open / 1e6; k_closed = Gs * 4 * A_cell ** 2 * t / (2 * (w_sp + h_sp)) / 1e6
+    rec("Spine torsional stiffness GJ, open", k_open, "N m2")
+    rec("Spine torsional stiffness GJ, closed", k_closed, "N m2")
+
+    # 5.3 spine bending: kingpin reaction as a cantilever from the front node
+    bed_lst = [i for i in items + [cargo] if i[5]]
+    Fk = sum(i[1] * G * (wb - i[2]) for i in bed_lst) / (wb - kp)
+    rec("Kingpin vertical load from the bed, loaded (static)", Fk, "N", "negative = bed lifts the kingpin")
+    bed_empty = [i for i in items if i[5]]
+    Fk0 = sum(i[1] * G * (wb - i[2]) for i in bed_empty) / (wb - kp)
+    rec("Kingpin vertical load from the bed, empty (static)", Fk0, "N")
+    brake_h = 0.5 * G * mrf
+    M_sp = (max(abs(Fk), abs(Fk0)) * DYN * (kp - front_node[0]) + brake_h * 0.25) / 1000
+    Z_box = 2 * t * h_sp ** 2 / 6 + 2 * w_sp * t * (h_sp / 2) / 1  # webs plus covers, mm3 (approx.)
+    rec("Spine bending moment at the front node (dynamic plus 0.5 g braking)", M_sp, "N m")
+    rec("Spine bending stress", M_sp * 1e3 / Z_box, "MPa")
+
+    # 5.4 front axle beam and fork crown
+    w_front = front * G * DYN
+    span = 2 * (tr - P["FORK_GAP"] / 2)
+    M_ab = w_front * (span / 1000) / 8
+    Z_ab = 2 * t * (110 ** 3 - 50 ** 3) / (6 * 110)     # twin plates with 50 mm lightening windows
+    rec("Front load, dynamic", w_front, "N")
+    rec("Axle beam bending stress (twin 3 x 110 mm, UDL)", M_ab * 1e6 / Z_ab / 1000, "MPa")
+    p_out = w_front / 2 / 2
+    arm = P["FORK_GAP"]
+    Z_flat = 160 * t ** 2 / 6
+    Z_crown = 2 * t * 80 ** 2 / 6
+    rec("Outer fork plate load per wheel, dynamic", p_out, "N")
+    rec("Crown stress, flat bridge plate (TRL 2)", p_out * arm / Z_flat, "MPa")
+    rec("Crown stress, two vertical crown plates (TRL 3)", p_out * arm / Z_crown, "MPa")
+
+    # 5.5 headset bearings under the roll moment
+    rec("Headset radial load per bearing, 0.5 g roll", Troll / (P["HT_LEN"] / 1000), "N")
+    rec("Headset axial load, dynamic", abs(Fk) * DYN, "N")
+
+    # 5.6 bolted joints
+    slip = MU_SLIP * BOLT_PRELOAD
+    rec("M8 8.8 preload at 25 N m", BOLT_PRELOAD, "N")
+    rec("Slip load per bolt per faying face (mu 0.20)", slip, "N")
+    node_force = max(abs(Ft), abs(Fb)) / 2 * DYN
+    rec("Stay node force per plate, dynamic", node_force, "N")
+    rec("Bolts per plate per node for no slip (1 face; spacer stack in series)", math.ceil(node_force / slip), "")
+    bearing = 2.5 * 360 * 8 * t / 1.25
+    rec("Bearing resistance of 3 mm plate at one M8 bolt", bearing, "N")
+    rec("Bearing utilisation if the node slips onto 2 bolts", node_force / (2 * bearing) * 100, "%")
+
+    # 5.7 fatigue screening
+    rng_road = sig_strip * 1.0
+    rng_big = sig_strip * (DYN - 1) * 2
+    rec("Stress range, routine road cycle (+/- 0.5 g)", rng_road, "MPa")
+    rec("Stress range, pothole cycle (to 2.5 g and back)", rng_big, "MPa")
+    rec("Constant-amplitude fatigue limit, 90 MPa detail", FAT_CAFL, "MPa")
+    rec("Cycles in 5 years (300 days, 20 km, 1 per 10 m)", 5 * 300 * 20 * 100.0, "")
+    # proof load
+    proof = (2 * CARGO) * G
+    rec("Proof load, twice rated cargo (R2)", proof, "N")
+    rec("Axle beam stress under proof load", proof / 2 * (span / 1000) / 8 * 2 * 1e6 / Z_ab / 1000, "MPa")
+
+    # ------------------------------------------------------------ 6 braking and parking
+    head("6. Braking and parking (R11)")
+    v15 = 15 / 3.6
+    decel = v15 ** 2 / (2 * 6.0)
+    rec("Kinetic energy at 15 km/h, gross", 0.5 * gross * v15 ** 2 / 1000, "kJ")
+    rec("Deceleration to stop in 6 m (no reaction time)", decel, "m/s2")
+    rec("Deceleration to stop in 6 m with 0.5 s reaction", v15 ** 2 / (2 * (6.0 - v15 * 0.5)), "m/s2")
+    rec("Drum torque needed per wheel, equal share", gross * decel * R / 3, "N m")
+    rec("Tyre grip needed at the front pair alone", gross * decel / (front * G), "", "friction coefficient")
+    f_hold = gross * G * math.sin(math.atan(0.10))
+    rec("Parking force on a 10 % grade", f_hold, "N")
+    rec("Drum torque per front wheel to park (latch on the front pair)", f_hold * R / 2, "N m")
+    p_desc = gross * G * 0.05 * (10 / 3.6) - f_roll * (10 / 3.6) - k_air * (10 / 3.6) ** 3
+    rec("Brake power, 10 km/h down a 5 % grade", p_desc, "W")
+    C_drum = 0.35 * 460 + 0.30 * 900
+    hA = 0.5
+    dT_ss = p_desc / 3 / hA
+    tau = C_drum / hA
+    t100 = -tau * math.log(1 - 100 / dT_ss) if dT_ss > 100 else float("inf")
+    rec("Drum heat capacity per wheel (0.35 kg iron, 0.30 kg aluminium)", C_drum, "J/K")
+    rec("Steady drum temperature rise (hA 0.5 W/K)", dT_ss, "K")
+    rec("Time to a 100 K rise", t100 / 60, "min")
+    rec("Descent length to a 100 K rise at 10 km/h", t100 * 10 / 3.6 / 1000, "km")
+
+    # ------------------------------------------------------------ 7 assembly, repair, life
+    head("7. Assembly, repair and service life (R7, R14, R16)")
+    t_bolt = 1.5
+    t_other = {"wheels (3)": 30, "headset and kingpin": 20, "drivetrain and chain": 25, "brakes and cables": 30,
+               "seat and bars": 10, "box to bed": 20, "deburr check and final torque": 30}
+    t_total = n_bolts * t_bolt + sum(t_other.values())
+    rec("Assembly work content", t_total / 60, "person-h")
+    rec("Elapsed time, two people (70 % parallel)", t_total / 60 * (1 - 0.7 / 2), "h", "R7 target 4 h")
+    spine_bolts = 10 + 12 + 8 + 8 + 4
+    rec("Bolts disturbed to replace one spine side plate", spine_bolts, "")
+    rec("Time to replace one spine side plate (0.75 min per bolt each way, plus 15 min)",
+        spine_bolts * 0.75 * 2 + 15, "min", "R14 target 30 min")
+    rec("Time to replace one fork plate (6 bolts, wheel off)", 6 * 0.75 * 2 + 15, "min")
+    for cat, rate in (("C3", 50.0), ("C4", 80.0)):
+        rec(f"Unprotected loss, 5 years at the {cat} first-year upper rate (both faces)",
+            rate * 5 ** 0.6 * 2 / 1000, "mm", "bilogarithmic law, exponent 0.6 assumed")
+
+    # ------------------------------------------------------------ 8 cost
+    head("8. Cost (R15, R18)")
+    rows = list(csv.DictReader(open(ROOT / "bom/bom.csv")))
+    base = sum(float(r["qty"]) * float(r["unit_cost_usd"]) for r in rows if "Optional" not in r["item"])
+    opt = sum(float(r["qty"]) * float(r["unit_cost_usd"]) for r in rows if "Optional" in r["item"])
+    rec("BOM lines", len(rows))
+    rec("Base prototype, pedal only (bom.csv)", base, "USD", "budget 800")
+    rec("Budget margin", 800 - base, "USD")
+    rec("Optional assist kit, route C, excluding the SwapCell pack", opt, "USD")
+    # production at 100 units
+    cut_len = 0.0
+    for p_ in M.PLATES:
+        w, h = p_["size"]
+        cut_len += 2 * (w + h) * 1.6   # perimeter plus windows and holes, factor from the profiles
+    sheet_kg = 1.25 * 2.5 * t / 1000 * RHO_STEEL
+    rec("Cut length per frame (estimate)", cut_len / 1000, "m")
+    steel_usd = sheet_kg * 1.0
+    cut_usd = cut_len / 1000 * 0.30
+    rec("Steel, one full sheet at 1.0 USD/kg", steel_usd, "USD")
+    rec("Laser cutting at 0.30 USD/m (volume rate, assumed)", cut_usd, "USD")
+    bought = sum(float(r["qty"]) * float(r["unit_cost_usd"]) for r in rows
+                 if r["make_buy"] == "buy" and "Optional" not in r["item"])
+    carp = sum(float(r["qty"]) * float(r["unit_cost_usd"]) for r in rows if r["item"].startswith("9 "))
+    prod = steel_usd + cut_usd + 0.65 * bought + 0.6 * carp + 15
+    rec("Bought parts at 65 % of prototype retail", 0.65 * bought, "USD")
+    rec("Production cost at 100 units (parts, cutting, 15 USD assembly labour)", prod, "USD", "R18 target 300")
+
+    with open(ROOT / "docs/04-calcs/results.csv", "w", newline="") as f:
+        w = csv.writer(f); w.writerow(["quantity", "value", "unit", "note"])
+        for k, v_, u, n in OUT:
+            w.writerow([k, f"{v_:.4g}" if isinstance(v_, float) else v_, u, n])
+    print("\nwrote docs/04-calcs/results.csv")
+
+
+if __name__ == "__main__":
+    main()
