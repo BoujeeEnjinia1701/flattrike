@@ -6,31 +6,35 @@
 
 Bolt-together cargo tricycle whose frame is cut from flat sheet steel by any laser or waterjet shop, uses standard bicycle parts, and ships flat.
 
+![FlatTrike concept](media/hero.png)
+
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+
 ## Problem
 
 Street vendors and micro-logistics operators in emerging markets need durable cargo tricycles, but imported units are expensive and hard to repair.
 
 ## Concept
 
-Bolt-together cargo tricycle whose frame is cut from flat sheet steel by any laser or waterjet shop, uses standard bicycle parts, and ships flat.
+Bolt-together cargo tricycle whose frame is cut from flat sheet steel by any laser or waterjet shop, uses standard bicycle parts, and ships flat. The concept is a front loader: two 20 in front wheels carry a lockable plywood box on a steel bed that pivots on one kingpin, and the rider sits over a standard 20 in rear wheel with a 3-speed drum brake hub. It is sized for 150 kg of cargo and an 80 kg rider (about 300 kg gross), and the pedal-only prototype costs about $640 in parts. Layout, steering and the electric assist option are proposed, awaiting Amish.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
 ## Key components
 
-- Laser-cut 3 mm steel frame plates
-- Bolted joints with locknuts
-- Standard bicycle drivetrain
-- 20 in cargo wheels (3)
-- Drum brakes
-- Plywood or steel cargo box
-- Optional hub motor kit
+- Laser-cut 3 mm steel plates: spine, rear stays and front bed, estimated to nest on one standard sheet
+- Tab-and-slot ribs and spacers with M8 bolts and locknuts (no welding)
+- Kingpin with a standard 1 1/8 in headset (box steering)
+- 20 in wheels (3) with drum brakes; 3-speed hub at the rear
+- Standard bicycle drivetrain, seat and handlebar
+- Lockable plywood cargo box with a counter lid
+- Optional electric assist kit (proposed, not in the base cost)
 
 The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 
 ## Safety
 
-> Frames must be load-tested to twice the rated payload before use on public roads.
+> **Safety:** The frame's strength and fatigue life are unverified. Frames must be load-tested to twice the rated payload before use on public roads. Cut plate edges must be deburred, and the empty trike can tip in brisk turns. See the safety section of the [design precis](docs/02-concept.md).
 
 ## Repository layout
 
