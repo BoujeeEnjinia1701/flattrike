@@ -4,8 +4,8 @@ Run from the repo root:  python cad/src/concept_media.py
 Massing-plus model; CONCEPT, NOT FOR FABRICATION.
 
 Coordinates in mm. X forward, Y to the left, Z up, ground at Z = 0, rear axle at X = 0.
-Layout (decided by Amish, 2026-09-25, FTK-DDR-001): tadpole front loader with box steering
-for the first prototype. Every steel part is a flat 3 mm plate that bolts to its neighbors;
+Layout (decided by Amish, 2026-09-25, FTK-DDR-001): tadpole front loader; Ackermann steering
+with a fixed box (decided by Amish, 2026-09-25, FTK-DDR-002). Every steel part is a flat 3 mm plate that bolts to its neighbors;
 nothing is welded.
 """
 import sys
@@ -27,14 +27,14 @@ if __name__ == "__main__":
     render_all(
         parts, project="FlatTrike", title="Bolt-together cargo tricycle concept", dwg_no="FTK-DWG-010",
         date="2026-09-25",
-        key_figures=["Tadpole front loader, box steering (decided)",
-                     "2.11 x 0.99 x 0.93 m; 1.45 m wheelbase; 0.84 m track",
-                     "150 kg cargo plus 80 kg rider; 297.5 kg gross",
-                     "Empty 67.5 kg (55 kg target not met)",
-                     "27 flat 3 mm plates on one 1.25 x 2.5 m sheet, bolted",
-                     "Pedal-only prototype parts $647 (budget $800)"],
+        key_figures=["Tadpole front loader, Ackermann steering, fixed box (decided)",
+                     "2.14 x 0.99 x 0.93 m; 1.45 m wheelbase; 0.84 m track",
+                     "150 kg cargo plus 80 kg rider; 299.8 kg gross",
+                     "Empty 69.8 kg (70 kg target met)",
+                     "34 flat 3 mm plates on one 1.25 x 2.5 m sheet, bolted",
+                     "Pedal-only prototype parts $709 (budget $800)"],
         cut=False,
-        flow={"title": "rider power to the road, W (estimates, FTK-CAL-001: 297.5 kg gross, flat dirt road, 7.6 km/h)",
+        flow={"title": "rider power to the road, W (estimates, FTK-CAL-001: 299.8 kg gross, flat dirt road, 7.6 km/h)",
               "unit": "W",
               "stages": [("Rider at pedals", 110), ("At the rear wheel", 98), ("Rolling on dirt road", 93)],
               "losses": [(0, "Chain and 3-speed hub (11 %)", 12), (1, "Air drag", 5)]},

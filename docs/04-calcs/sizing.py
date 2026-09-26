@@ -1,4 +1,4 @@
-"""FlatTrike sizing calculations, FTK-CAL-001 v0.1 (TRL 3).
+"""FlatTrike sizing calculations, FTK-CAL-001 v0.2 (TRL 3, after FTK-DDR-002).
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Prints every number quoted in docs/04-calcs/01-sizing.md and writes docs/04-calcs/results.csv.
@@ -47,18 +47,80 @@ HUB_RATIOS = (0.75, 1.00, 1.333)       # typical 3-speed hub gear
 BOUGHT = {   # kg, assumed masses of bought parts (BOM items 5 to 8 and 10 to 14)
     "Front wheels with drum hubs (2)": (6, 5.8), "Rear wheel with 3-speed drum hub": (7, 3.8),
     "Drivetrain (BB, cranks, ring, chain, pedals, guard)": (8, 3.0),
-    "Headset, head tube, steerer": (5, 1.3), "Seat and seatpost": (10, 1.4), "Handlebar and stem": (11, 1.2),
+    "Steering: 3 headsets, head tubes, column, two 20 in forks, drag link, tie rod": (5, 4.7), "Seat and seatpost": (10, 1.4), "Handlebar and stem": (11, 1.2),
     "Brake levers, cables, latch": (12, 0.7), "Box hinges, hasp, lock, screws, battens": (9, 1.0),
     "Paint": (13, 0.6), "Accessories (mudguards, reflectors, bell, bumpers)": (14, 1.5),
 }
 BOLTS = {   # M8 class 8.8 bolt sets (bolt, two washers, all-metal locknut) per joint group
     "Spine top and bottom cover cross-bolts": 10, "Spine ribs": 12, "Stay to spine nodes (4 per node)": 8,
     "Stay bridge": 2, "Head tube collar plates": 8, "Bottom bracket collars": 4, "Yokes to bulkhead": 8,
-    "Bulkhead to rails": 6, "Rails to axle beam": 8, "Axle beam to inner fork plates": 12,
-    "Crown plates to fork plates": 16, "Box to rails": 8, "Stem to bulkhead": 4, "Seatpost clamp": 2,
-    "Steerer to yokes": 4,
+    "Bulkhead to rails": 6, "Rails to axle beam": 8, "Axle beam to knuckle posts": 12,
+    "Knuckle post plates, cheeks and collars": 16, "Box to rails": 8, "Seatpost clamp": 2,
+    "Yokes to head tube collar plates (fixed bed)": 8, "Drop arm and steering arm clamps": 4,
 }
 BOLT_KG = 0.028
+
+
+def true_shape_nest(plates, SW, SL, EDGE, cell=5.0):
+    """Greedy bottom-left nest of the true plate shapes (outline minus windows) on a raster.
+    Parts are placed largest first in 4 orientations; a part may sit inside another part's window.
+    Each rasterized part is grown by one cell for raster error and by 2 more cells (10 mm) for the gap
+    between parts. Returns (length used, count)."""
+    import numpy as np
+    from matplotlib.path import Path as MPath
+    nx, ny = int((SW - 2 * EDGE) // cell), int((SL - 2 * EDGE) // cell)
+
+    def raster(pl):
+        us = [u for u, _ in pl["poly"]]; vs = [v for _, v in pl["poly"]]
+        u0, v0 = min(us), min(vs)
+        w, h = int(math.ceil((max(us) - u0) / cell)) + 1, int(math.ceil((max(vs) - v0) / cell)) + 1
+        gu, gv = np.meshgrid(u0 + (np.arange(w) + 0.5) * cell, v0 + (np.arange(h) + 0.5) * cell)
+        pts = np.column_stack([gu.ravel(), gv.ravel()])
+        m = MPath(pl["poly"]).contains_points(pts)
+        for hole in pl["holes"]:
+            m &= ~MPath(hole).contains_points(pts)
+        return grow(m.reshape(h, w), 1)     # one extra cell all round, so thin edges and window rims are kept
+
+    def grow(m, k):
+        out = np.pad(m, k)
+        base = out.copy()
+        for dy in range(-k, k + 1):
+            for dx in range(-k, k + 1):
+                out |= np.roll(np.roll(base, dy, 0), dx, 1)
+        return out
+
+    occ = np.zeros((ny, nx), bool)
+    order = sorted(plates, key=lambda p: -p["area_mm2"])
+    used, placed = 0, 0
+    for pl in order:
+        m0 = raster(pl)
+        best = None
+        for r in range(4):
+            mat = np.rot90(m0, r)
+            big = grow(mat, 2)
+            h, w = big.shape
+            if h > ny or w > nx:
+                continue
+            H, W = ny + h, nx + w
+            F = np.fft.rfft2(occ.astype(float), (H, W)) * np.conj(np.fft.rfft2(big.astype(float), (H, W)))
+            corr = np.fft.irfft2(F, (H, W))[: ny - h + 1, : nx - w + 1]
+            ok = np.argwhere(corr < 0.5)
+            if len(ok) == 0:
+                continue
+            key = ok[:, 0] + h
+            i = np.lexsort((ok[:, 1], key))[0]
+            cand = (key[i], ok[i, 1], r, ok[i, 0], mat)
+            if best is None or cand[:2] < best[:2]:
+                best = cand
+        if best is None:
+            continue
+        _, x, r, y, mat = best
+        h, w = mat.shape
+        occ[y + 2: y + 2 + h, x + 2: x + 2 + w] |= mat
+        placed += 1
+    rows = np.where(occ.any(axis=1))[0]
+    used = (rows.max() + 1) * cell + 2 * EDGE if len(rows) else 0.0
+    return float(used), placed
 
 
 def main():
@@ -111,9 +173,12 @@ def main():
         best = min(best, ffdh(pcs))
     used, n_sh = best
     rec("Shelf-nest of bounding rectangles: sheet length used (of 2500 mm)", used, "mm",
-        f"{n_sh} shelves; conservative, true-shape nesting is tighter")
+        f"{n_sh} shelves; conservative, ignores the plates' shapes and windows")
     rec("Sheet utilisation by net area", area / (SW * SL / 1e6) * 100, "%")
-    r4_ok = used <= SL
+    used_ts, placed = true_shape_nest(M.PLATES, SW, SL, EDGE)
+    rec("True-shape raster nest: sheet length used (of 2500 mm)", used_ts, "mm",
+        f"{placed} of {len(M.PLATES)} plates placed; 5 mm raster, 10 mm or more between parts, small parts in windows")
+    r4_ok = used_ts <= SL
 
     # box and flat pack
     x0 = P["BOX_X0"]; L_in = P["BOX_L"] - 2 * P["PLY_WALL"]; W_in = P["BOX_W"] - 2 * P["PLY_WALL"]
@@ -124,12 +189,14 @@ def main():
     box_kg = rec("Box mass (12 mm floor, 9 mm walls and lid, 700 kg/m3)", parts[9].volume / 1e9 * RHO_PLY, "kg")
     stack = (n_plates + 6) * 3.0 * 1.1 + (P["PLY_FLOOR"] + 5 * P["PLY_WALL"]) * 1.1
     rec("Flat stack of plates and box panels", stack, "mm")
-    crate = (1.35, 0.80, max(0.36, 3 * 0.12))
-    rec("Crate: plates and panels 0.80 x 0.80, three wheels stacked beside", crate[0] * crate[1] * crate[2], "m3",
-        "1.35 x 0.80 x 0.36 m")
+    foot_l = max(max(v["size"]) for v in sched.values()) / 1000 + 0.005
+    foot_w = max(max(min(v["size"]) for v in sched.values()) / 1000, P["BOX_W"] / 1000) + 0.04
+    crate = (round(foot_l + 0.52, 2), round(max(foot_w, 0.52), 2), 0.36)
+    rec(f"Crate: plates and panels {foot_l:.2f} x {foot_w:.2f}, three wheels and forks stacked beside",
+        crate[0] * crate[1] * crate[2], "m3", f"{crate[0]:.2f} x {crate[1]:.2f} x {crate[2]:.2f} m")
     longest = max(max(v["size"]) for v in sched.values())
     rec("Longest cut plate", longest, "mm")
-    rec("Longest single piece (box floor panel, 795 mm)", float(P["BOX_L"]), "mm")
+    rec("Longest single piece (box floor panel)", float(P["BOX_L"]), "mm")
 
     # ------------------------------------------------------------ 2 mass and centre of mass
     head("2. Mass budget and centre of mass (R1, R8)")
@@ -155,12 +222,14 @@ def main():
         print(f"    {i[0]:52s} {i[1]:6.1f} kg")
     rec("Bolt sets (count)", n_bolts)
     rec("Bolts and spacer washers", bolts_kg + washer_kg, "kg")
-    rec("Empty mass", empty, "kg", "R8 target 55 kg")
+    rec("Empty mass", empty, "kg", "R8 target 70 kg (55 kg before FTK-DDR-002)")
     rec("Plate share of empty mass", plate_kg / empty * 100, "%")
     rec("Box share of empty mass", box_kg / empty * 100, "%")
     gross = rec("Gross mass, 80 kg rider and 150 kg cargo", empty + RIDER + CARGO, "kg")
     rec("Gross mass, 90 kg rider and 150 kg cargo", empty + RIDER_MAX + CARGO, "kg")
-    rec("Cargo allowed with a 90 kg rider inside 300 kg", 300 - empty - RIDER_MAX, "kg")
+    rec("Cargo allowed with an 80 kg rider inside 300 kg", 300 - empty - RIDER, "kg", "R1 rated cargo 150 kg")
+    rec("Cargo allowed with a 90 kg rider inside 300 kg", 300 - empty - RIDER_MAX, "kg", "R1 rated cargo 140 kg")
+    rec("Gross mass, 90 kg rider and 140 kg cargo", empty + RIDER_MAX + 140, "kg")
 
     saddle_x = M.seat_xy(P["SADDLE_TOP"] - 25)
     rider = ("Rider", RIDER, saddle_x + 20, 0.0, P["SADDLE_TOP"] + 160, False)
@@ -242,75 +311,67 @@ def main():
     kp, wb, tr = P["KP_X"], P["WB"], P["TRACK"] / 2
     lock = math.radians(P["STEER_LOCK"])
 
-    def rot_bed(x, y, d):
-        dx, dy = x - kp, y
-        return kp + dx * math.cos(d) - dy * math.sin(d), dx * math.sin(d) + dy * math.cos(d)
-
-    def threshold(lst, d, ackermann=False):
-        """Lateral acceleration (g) at tip-up in a left turn with bed angle d (box steering)."""
-        pts = []
-        for i in lst:
-            x, y = (i[2], i[3])
-            if i[5] and not ackermann:
-                x, y = rot_bed(x, y, d)
-            pts.append((i[1], x, y, i[4]))
-        m = sum(p[0] for p in pts)
-        cx = sum(p[0] * p[1] for p in pts) / m; cy = sum(p[0] * p[2] for p in pts) / m
-        cz = sum(p[0] * p[3] for p in pts) / m
-        ox, oy = (wb, -tr) if ackermann else rot_bed(wb, -tr, d)   # outer (right) front contact
+    def threshold(lst):
+        """Lateral acceleration (g) at tip-up in a left turn. Ackermann steering with the kingpins through the
+        wheel centres: the contact triangle and every mass stay where they are at any lock."""
+        m = sum(i[1] for i in lst)
+        cx = sum(i[1] * i[2] for i in lst) / m; cy = sum(i[1] * i[3] for i in lst) / m
+        cz = sum(i[1] * i[4] for i in lst) / m
+        ox, oy = wb, -tr                        # outer (right) front contact
         L = math.hypot(ox, oy)
-        dist = (cx * (-oy) + cy * ox) / L     # signed distance of CoM from the rear-to-outer-front axis
-        return dist / cz, cx, cz, (ox, oy)
+        dist = (cx * (-oy) + cy * ox) / L       # distance of CoM from the rear-to-outer-front axis
+        return dist / cz, cx, cz
 
-    ax, ay = rot_bed(wb, 0, lock)
-    t_ic = ax / math.sin(lock)
-    y_ic = ay + t_ic * math.cos(lock)
-    ox, oy = rot_bed(wb, -tr, lock)
-    r_outer = math.hypot(ox, oy - y_ic) + P["TYRE_W"] / 2
-    corner = rot_bed(x0 + P["BOX_L"], -P["BOX_W"] / 2, lock)
-    r_box = math.hypot(corner[0], corner[1] - y_ic)
-    rec("Steering lock (assumed clearance limit)", P["STEER_LOCK"], "deg")
-    rec("Turning circle, outer tyre (box steering)", 2 * r_outer / 1000, "m", "R9 target 6 m")
+    # Ackermann: turn centre on the rear axle line; inner wheel at full lock
+    y_ic = tr + wb / math.tan(lock)
+    d_outer = math.degrees(math.atan(wb / (y_ic + tr)))
+    r_outer = math.hypot(wb, y_ic + tr) + P["TYRE_W"] / 2
+    r_box = math.hypot(x0 + P["BOX_L"], y_ic + P["BOX_W"] / 2)
+    rec("Inner wheel lock (box clearance limit)", P["STEER_LOCK"], "deg")
+    rec("Outer wheel lock (Ackermann)", d_outer, "deg")
+    rec("Turn centre from the centre line, on the rear axle line", y_ic / 1000, "m")
+    rec("Turning circle, outer tyre (Ackermann)", 2 * r_outer / 1000, "m", "R9 target 6 m")
     rec("Swept circle, box front corner", 2 * r_box / 1000, "m")
-    rec("Outer front wheel moves inward at full lock", (tr - abs(oy)) , "mm", "effective half track")
+    # clearance of the steered inner tyre under the box floor and inside the knuckle posts
+    zf = P["BOX_Z0"]; Rw = P["WHEEL_R"]
+    chord = math.sqrt(max(Rw ** 2 - (zf - Rw) ** 2, 0))
+    y_in = tr - chord * math.sin(lock) - P["TYRE_W"] / 2 * math.cos(lock)
+    rec("Steered tyre inner edge at the box floor height, full lock", y_in, "mm",
+        f"box side at {P['BOX_W'] / 2:.0f} mm")
+    s_post = P["POST_X"] / math.cos(lock)
+    y_post = tr - s_post * math.sin(lock) - P["TYRE_W"] / 2 / math.cos(lock)
+    rec("Steered tyre inner edge at the knuckle post plates, full lock", y_post, "mm",
+        f"post outer face at {P['POST_Y0'] + P['POST_W']:.0f} mm")
+    rec("Ackermann arm length and angle to the centre line", P["ARM_L"], "mm",
+        f"{math.degrees(math.atan(tr / wb)):.1f} deg, arms aimed at the rear axle centre")
 
     cases = {}
     for label, lst in (("loaded", items + [rider, cargo]), ("rider only", items + [rider]),
-                       ("rider only, 90 kg", items + [rider[:1] + (RIDER_MAX,) + rider[2:]])):
-        a0, cx, cz, _ = threshold(lst, 0.0)
-        cases[label] = a0
-        rec(f"Tipping threshold, {label}, straight", a0, "g", f"CoM {cx/1000:.2f} m ahead, {cz/1000:.2f} m high")
+                       ("rider only, 90 kg", items + [rider[:1] + (RIDER_MAX,) + rider[2:]]),
+                       ("90 kg rider and 140 kg cargo", items + [rider[:1] + (RIDER_MAX,) + rider[2:],
+                                                              cargo[:1] + (140.0,) + cargo[2:]])):
+        a0, cx, cz = threshold(lst)
+        cases[label] = (a0, cx)
+        rec(f"Tipping threshold, {label}, any lock", a0, "g", f"CoM {cx/1000:.2f} m ahead, {cz/1000:.2f} m high")
         rec(f"  speed at threshold on a 5 m radius, {label}", math.sqrt(a0 * G * 5) * 3.6, "km/h")
-    lock_res = {}
-    for label, lst in (("loaded", items + [rider, cargo]), ("rider only", items + [rider])):
-        a1, cx, cz, _ = threshold(lst, lock)
-        lock_res[label] = a1
-        rec(f"Tipping threshold, {label}, box steering at full lock", a1, "g")
+    for label in ("loaded", "rider only"):
+        a0, cx = cases[label]
         rc = math.hypot(cx, y_ic)
-        rec(f"  tip-up speed at full lock, {label}", math.sqrt(max(a1, 0) * G * rc / 1000) * 3.6, "km/h",
+        rec(f"  tip-up speed at full lock, {label}", math.sqrt(a0 * G * rc / 1000) * 3.6, "km/h",
             f"CoM path radius {rc/1000:.2f} m")
-    for label, lst in (("loaded", items + [rider, cargo]), ("rider only", items + [rider])):
-        a2, _, _, _ = threshold(lst, lock, ackermann=True)
-        rec(f"Tipping threshold, {label}, option B (Ackermann) at any lock", a2, "g")
-    # sensitivity: what would meet 0.30 g with the rider only?
-    need_x = None
-    for dx in range(0, 2000, 10):
-        lst = items + [rider[:2] + (rider[2] + dx,) + rider[3:]]
-        if threshold(lst, 0.0)[0] >= 0.30:
-            need_x = dx; break
-    rec("Rider shift forward for 0.30 g rider only (sensitivity)", float(need_x), "mm")
+    a_r, cx_r = cases["rider only"]
+    rc = math.hypot(cx_r, y_ic)
+    label_kmh = math.floor(math.sqrt(0.7 * a_r * G * rc / 1000) * 3.6)
+    rec("Cornering-speed label, empty, full-lock turns (70 % of tip-up lateral acceleration, rounded down)",
+        float(label_kmh), "km/h")
+    rec("Cornering-speed label, empty, 10 m radius turns (same rule)",
+        float(math.floor(math.sqrt(0.7 * a_r * G * 10) * 3.6)), "km/h")
     ballast = None
     for kg in range(0, 200, 5):
         lst = items + [rider, ("Ballast", float(kg), x0 + P["BOX_L"] / 2, 0.0, P["BOX_Z0"] + 30, True)]
-        if threshold(lst, 0.0)[0] >= 0.30:
+        if threshold(lst)[0] >= 0.30:
             ballast = kg; break
-    rec("Ballast low in the box for 0.30 g rider only", float(ballast), "kg")
-    for trk in (900, 1000):
-        s_tr = tr
-        tr = trk / 2
-        a_w, _, _, _ = threshold(items + [rider], 0.0)
-        rec(f"Rider-only threshold with a {trk} mm track (breaks R9 width)", a_w, "g")
-        tr = s_tr
+    rec("Ballast low in the box for 0.30 g rider only (sensitivity)", float(ballast), "kg")
 
     # ------------------------------------------------------------ 5 structure
     head("5. Structure (R2)")
@@ -366,37 +427,49 @@ def main():
     rec("Spine torsional stiffness GJ, open", k_open, "N m2")
     rec("Spine torsional stiffness GJ, closed", k_closed, "N m2")
 
-    # 5.3 spine bending: kingpin reaction as a cantilever from the front node
-    bed_lst = [i for i in items + [cargo] if i[5]]
-    Fk = sum(i[1] * G * (wb - i[2]) for i in bed_lst) / (wb - kp)
-    rec("Kingpin vertical load from the bed, loaded (static)", Fk, "N", "negative = bed lifts the kingpin")
-    bed_empty = [i for i in items if i[5]]
-    Fk0 = sum(i[1] * G * (wb - i[2]) for i in bed_empty) / (wb - kp)
-    rec("Kingpin vertical load from the bed, empty (static)", Fk0, "N")
+    # 5.3 bed-to-spine joint (fixed bed, FTK-DDR-002 item 13) and spine bending
+    rear_lst = [i for i in items if not i[5]] + [rider]
+    W_rf = sum(i[1] for i in rear_lst) * G
+    R_r = (mt - front) * G
+    V_j = W_rf - R_r
+    M_j = R_r * kp - sum(i[1] * G * (kp - i[2]) for i in rear_lst)
+    rec("Vertical shear at the bed-to-spine joint, loaded (static)", V_j, "N", "negative = bed lifts the rear frame")
+    rec("Pitch moment at the bed-to-spine joint, loaded (static)", M_j / 1000, "N m")
     brake_h = 0.5 * G * mrf
-    M_sp = (max(abs(Fk), abs(Fk0)) * DYN * (kp - front_node[0]) + brake_h * 0.25) / 1000
+    M_sp = ((abs(M_j) + abs(V_j) * (kp - front_node[0])) * DYN + brake_h * 0.25 * 1000) / 1000
     Z_box = 2 * t * h_sp ** 2 / 6 + 2 * w_sp * t * (h_sp / 2) / 1  # webs plus covers, mm3 (approx.)
     rec("Spine bending moment at the front node (dynamic plus 0.5 g braking)", M_sp, "N m")
     rec("Spine bending stress", M_sp * 1e3 / Z_box, "MPa")
 
-    # 5.4 front axle beam and fork crown
+    # 5.4 front axle beam and knuckle posts
     w_front = front * G * DYN
-    span = 2 * (tr - P["FORK_GAP"] / 2)
+    span = 2 * P["POST_Y0"]
     M_ab = w_front * (span / 1000) / 8
-    Z_ab = 2 * t * (110 ** 3 - 50 ** 3) / (6 * 110)     # twin plates with 50 mm lightening windows
+    hab = P["BOX_Z0"] - 290.0
+    Z_ab = 2 * t * (hab ** 3 - 110 ** 3) / (6 * hab)     # twin plates with 110 mm lightening windows
     rec("Front load, dynamic", w_front, "N")
-    rec("Axle beam bending stress (twin 3 x 110 mm, UDL)", M_ab * 1e6 / Z_ab / 1000, "MPa")
-    p_out = w_front / 2 / 2
-    arm = P["FORK_GAP"]
-    Z_flat = 160 * t ** 2 / 6
-    Z_crown = 2 * t * 80 ** 2 / 6
-    rec("Outer fork plate load per wheel, dynamic", p_out, "N")
-    rec("Crown stress, flat bridge plate (TRL 2)", p_out * arm / Z_flat, "MPa")
-    rec("Crown stress, two vertical crown plates (TRL 3)", p_out * arm / Z_crown, "MPa")
+    rec(f"Axle beam bending stress (twin 3 x {hab:.0f} mm, UDL over {span:.0f} mm)", M_ab * 1e6 / Z_ab / 1000, "MPa")
+    p_w = w_front / 2
+    py1 = P["POST_Y0"] + P["POST_W"]
+    rec("Knuckle load per wheel, dynamic", p_w, "N")
+    d_top = (P["KN_Z0"] + P["KN_LEN"] + 35) - 530
+    I_cant = 2 * t * (d_top ** 3 - (d_top - 36) ** 3) / 12
+    rec("Knuckle post cantilever stress at the window (two plates, flanges 18 mm)",
+        p_w * (tr - py1 - 20) / (I_cant / (d_top / 2)), "MPa")
+    bw = P["POST_W"]
+    I_col = 2 * t * bw ** 3 / 12 + 2 * 40 * t * (bw / 2 - t / 2) ** 2
+    m_col = p_w * (tr - (P["POST_Y0"] + bw / 2))
+    rec("Knuckle post column bending moment", m_col / 1000, "N m")
+    rec("Knuckle post column stress (closed 45 x 90 mm box of 3 mm plate)", m_col / (I_col / (bw / 2)), "MPa")
+    rec("Column stress if the cheeks were left out (two plates only)", m_col / (2 * t * bw ** 2 / 6), "MPa")
+    rec("Knuckle headset axial load, dynamic", p_w, "N")
 
-    # 5.5 headset bearings under the roll moment
-    rec("Headset radial load per bearing, 0.5 g roll", Troll / (P["HT_LEN"] / 1000), "N")
-    rec("Headset axial load, dynamic", abs(Fk) * DYN, "N")
+    # 5.5 head tube joint under the roll moment (item 19: longer head tube)
+    rec("Joint couple at the head tube, 0.5 g roll, 150 mm head tube (TRL 3, v0.1)", Troll / 0.150, "N")
+    couple = Troll / (P["HT_LEN"] / 1000)
+    rec(f"Joint couple at the head tube, 0.5 g roll, {P['HT_LEN']:.0f} mm head tube", couple, "N",
+        "carried by collar and yoke clamps and bolts; the fixed bed takes it off the headset bearings")
+    rec("Force per yoke-to-collar bolt (4 per yoke)", couple / 4, "N")
 
     # 5.6 bolted joints
     slip = MU_SLIP * BOLT_PRELOAD
@@ -448,7 +521,7 @@ def main():
     # ------------------------------------------------------------ 7 assembly, repair, life
     head("7. Assembly, repair and service life (R7, R14, R16)")
     t_bolt = 1.5
-    t_other = {"wheels (3)": 30, "headset and kingpin": 20, "drivetrain and chain": 25, "brakes and cables": 30,
+    t_other = {"wheels (3)": 30, "steering column, two knuckle headsets and forks, tie rod, drag link": 50, "drivetrain and chain": 25, "brakes and cables": 30,
                "seat and bars": 10, "box to bed": 20, "deburr check and final torque": 30}
     t_total = n_bolts * t_bolt + sum(t_other.values())
     rec("Assembly work content", t_total / 60, "person-h")
@@ -456,8 +529,9 @@ def main():
     spine_bolts = 10 + 12 + 8 + 8 + 4
     rec("Bolts disturbed to replace one spine side plate", spine_bolts, "")
     rec("Time to replace one spine side plate (0.75 min per bolt each way, plus 15 min)",
-        spine_bolts * 0.75 * 2 + 15, "min", "R14 target 30 min")
-    rec("Time to replace one fork plate (6 bolts, wheel off)", 6 * 0.75 * 2 + 15, "min")
+        spine_bolts * 0.75 * 2 + 15, "min", "R14 target 90 min for the spine side plates only")
+    rec("Time to replace one knuckle post plate (8 bolts)", 8 * 0.75 * 2 + 15, "min",
+        "R14 target 30 min; wheel, fork and collars stay in place")
     for cat, rate in (("C3", 50.0), ("C4", 80.0)):
         rec(f"Unprotected loss, 5 years at the {cat} first-year upper rate (both faces)",
             rate * 5 ** 0.6 * 2 / 1000, "mm", "bilogarithmic law, exponent 0.6 assumed")

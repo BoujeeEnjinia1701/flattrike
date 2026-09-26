@@ -143,3 +143,55 @@ The TRL 2 note listed no unchecked citations. The EN 17860 summary (ACT Lab) was
 ### Recommended next step
 
 Amish decides items 13 to 19 in FTK-DDR-001, then a TRL 3 refinement session on paper: a plate-and-joint FEA of the spine box, stays and bed, Ackermann steering geometry if chosen, headset sizing, true-shape nesting from DXF, and supplier data for hubs, drums and prices. **TRL 4 is on hold by Amish's instruction.** For the record only, TRL 4 would need: the EN 17860 load cases, DXF files and a chosen partner and laser shop, one frame cut and assembled, lab test reports (TST, `environment: lab`) for the proof load, stay buckling, joint slip, tipping threshold and braking, build-log entries, and a build budget decision.
+
+## Session 2026-09-25: recommendations accepted
+
+Amish wrote on 2026-09-25: "i accept all your recommendations, go with them across all repos." Every open item with a recommendation (items 13 to 19) is now **Decided by Amish, 2026-09-25: go with recommendation**, recorded in `docs/decisions/0002-recommendations-accepted.md` (FTK-DDR-002 v0.1) and marked in FTK-DDR-001 v0.2. Item 10 has no recommendation and stays open. **TRL 4 remains on hold by Amish's instruction**; `trl` and `trl_target` stay at 3.
+
+### Decisions applied and what changed
+
+| # | Decision | Before | After |
+| --- | --- | --- | --- |
+| 13 | Ackermann steering with a fixed box for the first prototype | Box steering on one kingpin; rider-only tipping 0.11 g (5.8 km/h) at full lock | Fixed bed; two 20 in forks on knuckle headsets in closed knuckle posts, tie rod, drag link; rider-only 0.24 g at any lock; 27 plates to 34; box 795 x 700 to 820 x 560 mm, floor 400 to 470 mm, 184 to 151 L, lid 0.77 to 0.84 m; turning circle 5.67 to 5.95 m; BOM item 5 $25 to $85 |
+| 14 | R8 relaxed to 70 kg with the box | Target 55 kg; 67.5 kg (not met) | Target 70 kg; 69.8 kg (met, 0.2 kg margin) after larger windows in the axle beam, rails and bulkhead |
+| 15 | R10 rider-only case 0.22 g with Ackermann and a cornering-speed label | Target 0.30 g; 0.24 g straight (not met) | Target 0.22 g; 0.24 g (met); label "6 km/h in full-lock turns when empty" added to BOM item 14; loaded 0.43 to 0.41 g |
+| 16 | Cargo 140 kg for riders over 80 kg | 307.5 kg gross with a 90 kg rider (not met) | 299.8 kg with 90 kg and 140 kg, and with 80 kg and 150 kg (met, 0.2 kg margin) |
+| 17 | R14 allows 90 min for the spine side plates only | 78 min against 30 min (not met) | 78 min against 90 min (met); knuckle post plate 27 min |
+| 18 | Keep the $300 production target; wholesale prices from the first partner first | $414 estimate | Target unchanged; estimate $456 with the steering parts (not met); prices wait on item 10 |
+| 19 | Longer head tube | 150 mm; 3.34 kN per headset bearing in roll | 200 mm; roll couple 2.56 kN, carried by the collar and yoke clamps of the fixed bed, not the bearings |
+
+Other changes: prototype parts $647 to $709 (`budget_usd` stays $800; R15 met); empty mass 67.5 to 69.8 kg; assembly 3.6 to 4.0 h; bolt sets 112 to 116; 5 % climb 238 to 240 W; crate 0.39 to 0.30 m³. FTK-CAL-001 v0.2 adds a true-shape raster nest, because 34 plates no longer fit by bounding rectangles (2,805 mm); the true-shape nest uses 2,190 of 2,500 mm. Files: `cad/src/model.py` (STEP and STL re-exported), `cad/src/sheets.py` and FTK-DWG-001 Rev P2, `cad/src/concept_media.py` and `media/`, `docs/04-calcs/sizing.py`, `results.csv` and `01-sizing.md` (v0.2), `bom/bom.csv`, `bom/bom-notes.md`, FTK-PRB-001, FTK-PRC-001 and FTK-REQ-001 (v0.4), `project.yaml` (evidence list) and `README.md`.
+
+README: added "Concept rationale", "Burning platform", "Where it could be used" and "What sparked the idea" before "## Problem". The inspiration point is the Global Vehicle Trust OX flat-pack truck by Gordon Murray Design (CarsGuide, 2016). All generated files were re-rendered with designmolecule.com.
+
+### Requirement status (FTK-CAL-001 v0.2; 12 met, 2 not met, 3 at risk, 1 not verifiable)
+
+| ID | Status | Value |
+| --- | --- | --- |
+| R13 | **Not met** unassisted | 240 W at the pedals needed; 6.0 km/h with route C assist |
+| R18 | **Not met** | about $456 at 100 units against $300 |
+| R2 | At risk | stresses 47 MPa or less (knuckle post column); stay buckling SF 2.09 |
+| R7 | At risk | about 4.0 h for two people, at the limit |
+| R11 | At risk | about 37 N·m per drum needed; fade after about 1.9 km of 5 % descent |
+| R16 | Not verifiable at TRL 3 | coating-dependent |
+| R1, R8 | Met, 0.2 kg margin | 299.8 kg gross; 69.8 kg empty |
+| R3, R4, R5, R6, R9, R10, R12, R14, R15, R17 | Met | 34 flat plates; 2,190 mm of sheet; standard parts; 0.30 m³; 0.986 m wide, 5.95 m turning circle; 0.41 and 0.24 g; 7.6 km/h; 78 min; $709; 151 L and 0.84 m |
+
+### Still awaiting Amish
+
+- Item 10: first partner organization and city (no recommendation; partners are picked per area later). Item 18's wholesale prices wait on it.
+
+### Cross-repo actions
+
+None. Assist route C still cites SwapCell interface v0.3 items W, C and V, unchanged.
+
+### Safety concerns
+
+- The empty trike still tips at 0.24 g; the bar label (6 km/h in full-lock turns when empty) is the control.
+- The knuckle post columns (47 MPa, 155 MPa without their cheek plates) and the head tube clamps now carry the highest loads; the tie rod and drag link rod ends are single points of failure for steering.
+- Mass has only 0.2 kg of margin against the 300 kg class; any added part reduces the rated cargo.
+- Earlier concerns (stay buckling, drum fade, cut edges, lithium-ion hazards on route C) are unchanged.
+
+### Recommended next step
+
+A TRL 3 refinement on paper: plate-and-joint FEA of the knuckle posts, head tube clamps, spine box and stays; a steering geometry study (caster, trail, kingpin inclination, self-centering with bought forks); and a mass review to recover margin under 70 kg. **TRL 4 is on hold by Amish's instruction.** For the record only, TRL 4 would need a partner and laser shop, DXF files, one frame cut and assembled, and lab tests of the proof load, knuckle posts, tipping threshold and braking.
