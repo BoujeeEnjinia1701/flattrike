@@ -20,7 +20,7 @@ Keeping the design open and garage-buildable is the point, not a side effect. A 
 
 About two billion people, more than 61 % of the world's employed population, work in the informal economy, rising to 85.8 % of employment in Africa ([ILO, 2018](https://www.ilo.org/resource/news/more-60-cent-world%E2%80%99s-employed-population-are-informal-economy)). Street vending and small-scale carrying are a large part of that work, and they run on human-powered vehicles. In India alone, the government's PM SVANidhi microcredit scheme had lent to more than 68 lakh (6.8 million) street vendors by July 2025 and is being extended to 2030 ([Press Information Bureau, 2025](https://www.pib.gov.in/PressReleasePage.aspx?PRID=2161157&reg=48&lang=2)).
 
-The vehicles these workers use have barely changed. ITDP found that the traditional Indian cycle rickshaw weighs about 80 kg, has a single gear, and needs a new wooden frame every two to three years ([ITDP, 2006](https://itdp.org/2006/07/01/rickshaws-in-the-new-millennium/)). Every extra kilogram and every repair comes out of an income measured in trips per day, so a lighter, longer-lived and locally repairable cargo trike is worth more to these users than almost any other tool.
+The vehicles these workers use have barely changed. ITDP found that the traditional Indian cycle rickshaw weighs about 80 kg, has a single high gear, and has a wooden passenger structure that must be replaced every two to three years ([ITDP, 2006](https://itdp.org/2006/07/01/rickshaws-in-the-new-millennium/)). Every extra kilogram and every repair comes out of an income measured in trips per day, so a lighter, longer-lived and locally repairable cargo trike is worth more to these users than almost any other tool.
 
 ## Where it could be used
 
@@ -42,12 +42,12 @@ The vehicles these workers use have barely changed. ITDP found that the traditio
 | India | More than 6.8 million street vendors have borrowed under PM SVANidhi ([PIB, 2025](https://www.pib.gov.in/PressReleasePage.aspx?PRID=2161157&reg=48&lang=2)); loading rickshaws and *thelas* are everywhere, and laser shops are common in industrial estates |
 | Sub-Saharan Africa (for example Kenya and Nigeria) | 85.8 % of employment in Africa is informal ([ILO, 2018](https://www.ilo.org/resource/news/more-60-cent-world%E2%80%99s-employed-population-are-informal-economy)); goods move by handcart and bicycle on rough roads, where local repair matters most |
 | Southeast and South Asia (for example Bangladesh and Indonesia) | 68.2 % of employment in Asia and the Pacific is informal ([ILO, 2018](https://www.ilo.org/resource/news/more-60-cent-world%E2%80%99s-employed-population-are-informal-economy)); cycle rickshaws and vending tricycles are a mainstay of city trade |
-| Latin America (for example Mexico and Peru) | Tricycle vendors (*triciclos*) sell food and goods in city streets; a plate frame could be cut by the region's many metal workshops |
+| The Americas (for example Mexico and Peru) | 40.0 % of employment in the Americas is informal ([ILO, 2018](https://www.ilo.org/resource/news/more-60-cent-world%E2%80%99s-employed-population-are-informal-economy)); a frame cut from open files suits small vendors and cooperatives in that informal economy |
 | United States (New York City) | The city ran a commercial cargo bicycle pilot with delivery firms and published an evaluation ([NYC DOT](https://www.nyc.gov/html/dot/downloads/pdf/commercial-cargo-bicycle-pilot-evaluation-report.pdf)); an open, repairable frame suits small operators and community delivery schemes |
 
 ## What sparked the idea
 
-The starting point was the OX, the flat-pack truck that Gordon Murray Design developed for the Global Vehicle Trust. Six OX kits fit in a standard 40 ft shipping container, and the maker estimated that three skilled people could assemble one in about 12 hours with a set of spanners and an Allen key, for use in parts of Africa and the developing world where vehicle distribution barely exists ([CarsGuide, 2016](https://www.carsguide.com.au/car-news/gordon-murray-designs-worlds-first-flat-pack-truck-global-vehicle-trust-ox-45835)). FlatTrike takes the same idea one scale down and one step further: instead of shipping a factory kit, it ships the files, so the flat parts can be cut in the city where the trike will work and re-cut there when one breaks.
+The starting point was the OX, a flat-pack truck that Gordon Murray, the designer behind McLaren's road cars, developed for the Global Vehicle Trust, which the British philanthropist Torquil Norman founded to develop cost-effective transport for the developing world. TechCrunch reported in 2016 that six OX trucks pack into one shipping crate in flat-pack form and that a trained team of three can unpack and assemble one in about 12 hours ([TechCrunch, 2016](https://techcrunch.com/?p=1393387)). FlatTrike takes the same idea one scale down and one step further: instead of shipping a factory kit, it ships the files, so the flat parts can be cut in the city where the trike will work and re-cut there when one breaks.
 
 ## Problem
 
@@ -92,6 +92,12 @@ The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 ## Documentation
 
 Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (FTK-PRC-001 for the precis), a version and a revision history. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `FTK-PRC-001/v1.0`.
+
+## Credits
+
+Designed by Amish Chadha. See [CONTRIBUTORS.md](CONTRIBUTORS.md) for roles. To cite this design, use [CITATION.cff](CITATION.cff) (GitHub shows it as "Cite this repository").
+
+AI assistance (Claude) was used to accelerate concept renders, prototype documentation and first-pass sizing calculations. Design direction and all decisions are Amish Chadha's, recorded in this repository's decision records (`docs/decisions/`).
 
 ## Licenses
 

@@ -195,3 +195,15 @@ None. Assist route C still cites SwapCell interface v0.3 items W, C and V, uncha
 ### Recommended next step
 
 A TRL 3 refinement on paper: plate-and-joint FEA of the knuckle posts, head tube clamps, spine box and stays; a steering geometry study (caster, trail, kingpin inclination, self-centering with bought forks); and a mass review to recover margin under 70 kg. **TRL 4 is on hold by Amish's instruction.** For the record only, TRL 4 would need a partner and laser shop, DXF files, one frame cut and assembled, and lab tests of the proof load, knuckle posts, tipping threshold and braking.
+
+## Session 2026-09-26: sources strengthened
+
+Amish asked for the weaker sources to be fixed. README sections "Concept rationale" to "What sparked the idea" were checked link by link; every kept link was fetched and supports its claim.
+
+| Where | Old source | New source |
+| --- | --- | --- |
+| What sparked the idea (Global Vehicle Trust OX) | CarsGuide, 2016 (trade press, alone) | TechCrunch, 27 September 2016, "The OX is a flat-pack truck for the developing world". The claim now states only what that report supports: six per shipping crate flat-packed, a trained team of three, about 12 hours. The 40 ft container, spanner and Allen key details were removed because they could not be verified from a primary or reputable source. |
+| By country or region, row "Latin America (for example Mexico and Peru)" | None (uncited claim about *triciclo* vendors) | Rewritten as "The Americas (for example Mexico and Peru)", citing ILO, 2018: 40.0 % of employment in the Americas is informal |
+| Burning platform, ITDP rickshaw sentence | ITDP, 2006 (kept) | Same source; wording corrected to match it: a single high gear, and a wooden passenger structure replaced every two to three years |
+
+Kept and re-verified: ILO, 2018 (two billion, 61 %, 85.8 % Africa, 68.2 % Asia and the Pacific); Press Information Bureau, 2025 (more than 68 lakh vendors, lending extended to 31 March 2030); NYC DOT commercial cargo bicycle pilot evaluation report. The Gordon Murray Design press page could not be reached from this session, so no primary OX page is cited. `INSPIRATIONS.md` line for flattrike updated to the new source. No budget change. `docs/01-problem.md` does not cite CarsGuide, so it is unchanged; its IndiaMART price listing (a marketplace, cited alone) is outside this session's scope and is left for a later pass.
