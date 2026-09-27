@@ -207,3 +207,35 @@ Amish asked for the weaker sources to be fixed. README sections "Concept rationa
 | Burning platform, ITDP rickshaw sentence | ITDP, 2006 (kept) | Same source; wording corrected to match it: a single high gear, and a wooden passenger structure replaced every two to three years |
 
 Kept and re-verified: ILO, 2018 (two billion, 61 %, 85.8 % Africa, 68.2 % Asia and the Pacific); Press Information Bureau, 2025 (more than 68 lakh vendors, lending extended to 31 March 2030); NYC DOT commercial cargo bicycle pilot evaluation report. The Gordon Murray Design press page could not be reached from this session, so no primary OX page is cited. `INSPIRATIONS.md` line for flattrike updated to the new source. No budget change. `docs/01-problem.md` does not cite CarsGuide, so it is unchanged; its IndiaMART price listing (a marketplace, cited alone) is outside this session's scope and is left for a later pass.
+
+## Session 2026-09-26: product appearance model and photoreal renders
+
+Amish chose this repo for the first batch of product renders on 2026-09-26. This session adds an appearance model for photoreal renders; it changes no dimension, interface, decision or number in the design.
+
+### What was added
+
+- `cad/src/product_model.py`: `product_parts()` returns 107 named parts (colour, material, BOM line, group and explode offset), plus `TITLE` and three `RENDER_VIEWS` (hero, exploded and a close "detail" of the core frame and drivetrain). It imports `PARAMS`, the plate profiles (`SPINE`, `STAY` and the bed profiles), `plate()` and the helpers from `model.py`, so every main dimension and interface is unchanged. It adds:
+  - powder-coated flat 3 mm plates with laser-cut corner radii, the left and right plates as separate parts so the exploded view shows the flat-cut kit;
+  - rib tabs showing through their slots, zinc M8 bolt heads, washers and locknuts at the spine, stay, bed and knuckle-post joints, and grooved cut spacer-washer stacks;
+  - tyres with tread, 36-spoke wheels, drum brake hubs with brake arms, the 3-speed rear hub and its click box, axle nuts;
+  - a toothed 32T chainring and 24T sprocket, a roller chain, a flat-cut chain guard ring, tapered cranks and platform pedals with pins;
+  - headset cups, filleted fork crowns, rod ends on the drag link and tie rod;
+  - a sprung saddle, rubber grips, brake levers, the parking latch, a bell and the cornering-speed label on the bar;
+  - the plywood box with panel seams, counter lid, hinges, hasp and padlock, rubber corner bumpers, a name plate and reflectors; mudguards;
+  - context: a produce crate strapped to the lid and the shared clay mannequin (1.76 m, pose "ride"), fitted from its landmarks so it sits on the saddle, its feet meet the pedals at the model's 55 degree crank angle and its hands meet the grips.
+- `README.md`: the hero image now points to `media/render-hero.png`, and the links line starts with the exploded render. The render files are produced later by the orchestrator.
+
+### Where the appearance model differs from model.py (each Proposed, awaiting Amish)
+
+1. **Frame colour.** The spine side plates, stays, bed rails and knuckle posts are shown in the kit accent teal (#0F766E) powder coat, with graphite covers, ribs, yokes, bulkhead, axle beams and collar plates. BOM item 13 leaves the finish open. Recommendation: accept teal and graphite as the render finish only; choose the production coating with the partner.
+2. **Chain side.** `model.py` puts the chain line at +44 mm on +Y, which its own axes call the left, while the precis (step 5) says the chain runs on the right. The appearance model keeps `model.py`, so the drivetrain is on the left and the detail view is taken from the front left. Recommendation: confirm right-hand drive (standard bicycle parts expect it) and flip the sign in `model.py` in the next CAD session.
+3. **Yoke-to-collar bolts.** Four bolts are drawn just ahead of the head tube; BOM item 4 counts eight and `model.py` does not place them. Recommendation: accept as representative; place all eight in the plate-and-joint FEA session.
+4. **Fork legs.** The bought forks are drawn with a small forward bend (18 mm) and a filleted crown; `model.py` shows straight legs. Dropout, crown height and width are unchanged. Recommendation: accept as appearance only; rake and trail belong to the steering geometry study.
+5. **Tyre section.** Tyres are round in section (torus) with tread blocks instead of the flat-sided massing ring. Outer radius (254 mm) and width (54 mm) are unchanged. Recommendation: accept.
+6. **Box hardware positions.** Hinges on the rear edge, hasp and padlock centred on the front face, corner bumpers and a name plate are placed for the render; BOM items 9 and 14 do not fix their positions. Recommendation: accept for renders; revisit with the lid-as-counter use once a partner is chosen.
+7. **Chain guard.** BOM item 8 lists a chain guard without a form; it is shown as a flat-cut ring guard outside the chainring. Recommendation: accept, since it can be cut from the same sheet offcuts.
+8. **Brake cable runs.** The long cable runs sit in the "context" group so they appear in the assembled hero but not across the exploded view. Recommendation: accept.
+
+### TRL status
+
+This is an appearance model only: no tolerances, no fabrication detail, no PCB or cut files. `trl` stays 3 and TRL 4 remains on hold by Amish's instruction.
