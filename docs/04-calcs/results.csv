@@ -1,155 +1,159 @@
 quantity,value,unit,note
-Overall length,2.139,m,
-Overall width,0.986,m,
+Overall length,2.146,m,
+Overall width,0.984,m,
 Overall height (saddle top),0.93,m,
 Wheelbase,1.45,m,
 Front track,0.84,m,
-Cut plates (count),34,,
-"Plate area, net of windows",1.247,m2,
-"Plate mass (3 mm, 23.6 kg/m2)",29.37,kg,
-Spacer washers cut from offcuts (8 stacks of 9),72,,
-Shelf-nest of bounding rectangles: sheet length used (of 2500 mm),2805,mm,"8 shelves; conservative, ignores the plates' shapes and windows"
-Sheet utilisation by net area,39.91,%,
-True-shape raster nest: sheet length used (of 2500 mm),2190,mm,"34 of 34 plates placed; 5 mm raster, 10 mm or more between parts, small parts in windows"
+Cut plates (count),35,,
+"Plate area, net of windows",1.296,m2,
+"Plate mass (3 mm, 23.6 kg/m2)",30.51,kg,
+"Spacer washers cut from offcuts (8 stacks of 9 at the stay nodes, 2 of 3 behind the box)",78,,
+Shelf-nest of bounding rectangles: sheet length used (of 2500 mm),2695,mm,"8 shelves; conservative, ignores the plates' shapes and windows"
+Sheet utilisation by net area,41.46,%,
+True-shape raster nest: sheet length used (of 2500 mm),1940,mm,"35 of 35 plates placed; 5 mm raster, 10 mm or more between parts, small parts in windows"
 Box inside volume,151.3,L,
 Lid (counter) height,0.839,m,
-"Box mass (12 mm floor, 9 mm walls and lid, 700 kg/m3)",12.72,kg,
-Flat stack of plates and box panels,194.7,mm,
-"Crate: plates and panels 0.83 x 0.62, three wheels and forks stacked beside",0.3013,m3,1.35 x 0.62 x 0.36 m
-Longest cut plate,825,mm,
+"Box mass (12 mm floor, 9 mm walls and lid, 700 kg/m3)",12.73,kg,
+Flat stack of plates and box panels,198,mm,
+"Crate: plates and panels 0.86 x 0.62, three wheels and forks stacked beside",0.308,m3,1.38 x 0.62 x 0.36 m
+Longest cut plate,852,mm,
 Longest single piece (box floor panel),820,mm,
-Bolt sets (count),116,,
-Bolts and spacer washers,4.052,kg,
-Empty mass,69.84,kg,R8 target 70 kg (55 kg before FTK-DDR-002)
-Plate share of empty mass,42.05,%,
-Box share of empty mass,18.22,%,
-"Gross mass, 80 kg rider and 150 kg cargo",299.8,kg,
-"Gross mass, 90 kg rider and 150 kg cargo",309.8,kg,
-Cargo allowed with an 80 kg rider inside 300 kg,150.2,kg,R1 rated cargo 150 kg
-Cargo allowed with a 90 kg rider inside 300 kg,140.2,kg,R1 rated cargo 140 kg
-"Gross mass, 90 kg rider and 140 kg cargo",299.8,kg,
+Bolt sets (count),95,,
+Bolts and spacer washers,3.531,kg,
+Empty mass,71.23,kg,R8 target 70 kg (55 kg before FTK-DDR-002)
+Plate share of empty mass,42.84,%,
+Box share of empty mass,17.88,%,
+"Gross mass, 80 kg rider and 150 kg cargo",301.2,kg,
+"Gross mass, 90 kg rider and 150 kg cargo",311.2,kg,
+Cargo allowed with an 80 kg rider inside 300 kg,148.8,kg,R1 rated cargo 150 kg
+Cargo allowed with a 90 kg rider inside 300 kg,138.8,kg,R1 rated cargo 140 kg
+"Gross mass, 90 kg rider and 140 kg cargo",301.2,kg,
 Rider centre of mass ahead of rear axle,0.4243,m,
 Rider centre of mass height,1.09,m,
-Empty trike CoM ahead of rear axle,0.9941,m,
-Empty trike CoM height,0.4923,m,
-"Front axle load, loaded (static)",2.196,kN,
-"Rear axle load, loaded (static)",0.7452,kN,
-"Rear axle load, rider only (static)",0.7705,kN,
-Rolling resistance at gross mass,44.12,N,
+Empty trike CoM ahead of rear axle,0.987,m,
+Empty trike CoM height,0.4993,m,
+"Front axle load, loaded (static)",2.209,kN,
+"Rear axle load, loaded (static)",0.7458,kN,
+"Rear axle load, rider only (static)",0.7783,kN,
+Rolling resistance at gross mass,44.33,N,
 Power at the rear wheel from 110 W,97.9,W,
-"Cruise speed, flat",7.577,km/h,R12 target 7 km/h
-  of which rolling,92.87,W,
-  of which drag,5.035,W,
-Force on a 5 % grade,191.2,N,
-Wheel power at 4 km/h on 5 %,213.2,W,
-Pedal power at 4 km/h on 5 %,239.5,W,R13; rider sustains 110 W
-Unassisted speed on 5 % at 110 W,1.842,km/h,
-"Rear tyre grip needed on 5 %, loaded (rear-wheel drive)",0.2566,,friction coefficient
-Wheel torque on 5 %,48.56,N m,
+"Cruise speed, flat",7.547,km/h,R12 target 7 km/h
+  of which rolling,92.92,W,
+  of which drag,4.975,W,
+Force on a 5 % grade,192.1,N,
+Wheel power at 4 km/h on 5 %,214.2,W,
+Pedal power at 4 km/h on 5 %,240.6,W,R13; rider sustains 110 W
+Unassisted speed on 5 % at 110 W,1.834,km/h,
+"Rear tyre grip needed on 5 %, loaded (rear-wheel drive)",0.2576,,friction coefficient
+Wheel torque on 5 %,48.79,N m,
 "Development, low gear",1.596,m per crank rev,
 "Development, middle gear",2.128,m per crank rev,
 "Development, high gear",2.836,m per crank rev,
 Cadence at 4 km/h in low gear,41.77,rpm,
 Speed at 70 rpm in high gear,11.91,km/h,
-Mean crank torque on 5 % in low gear,54.57,N m,
-Mean pedal force at 170 mm,321,N,
-Speed on 5 % with 250 W mid-drive plus rider,5.986,km/h,assist route C
-"Assist battery use, flat at 12 km/h",8.096,Wh/km,
-"SwapCell range, flat at 12 km/h",56.45,km,
-"Assist battery use, 5 % climb",52.2,Wh/km,
+Mean crank torque on 5 % in low gear,54.82,N m,
+Mean pedal force at 170 mm,322.5,N,
+Speed on 5 % with 250 W mid-drive plus rider,5.959,km/h,assist route C
+"Assist battery use, flat at 12 km/h",8.176,Wh/km,
+"SwapCell range, flat at 12 km/h",55.9,km,
+"Assist battery use, 5 % climb",52.44,Wh/km,
 Inner wheel lock (box clearance limit),40,deg,
 Outer wheel lock (Ackermann),29.45,deg,
+Outer wheel lock through the model's tie rod at 40 deg inner lock,31.29,deg,the trapezoid only approximates Ackermann; the turning circle below uses the ideal
+"Column (handlebar) turn at full inner lock, left wheel through the drag link",40,deg,drop arm parallel to the left steering arm (FTK-DDR-003); was about 1.7 times the wheel angle
 "Turn centre from the centre line, on the rear axle line",2.148,m,
 "Turning circle, outer tyre (Ackermann)",5.952,m,R9 target 6 m
-"Swept circle, box front corner",6.148,m,
+"Swept circle, box front corner",6.156,m,
 "Steered tyre inner edge at the box floor height, full lock",313.4,mm,box side at 280 mm
-"Steered tyre inner edge at the knuckle post plates, full lock",347,mm,post outer face at 328 mm
+"Steered tyre inner edge at the knuckle post plates, full lock",363.8,mm,post outer face at 328 mm
 Ackermann arm length and angle to the centre line,120,mm,"16.2 deg, arms aimed at the rear axle centre"
-"Tipping threshold, loaded, any lock",0.4116,g,"CoM 1.08 m ahead, 0.73 m high"
-"  speed at threshold on a 5 m radius, loaded",16.17,km/h,
-"Tipping threshold, rider only, any lock",0.2383,g,"CoM 0.69 m ahead, 0.81 m high"
-"  speed at threshold on a 5 m radius, rider only",12.31,km/h,
-"Tipping threshold, rider only, 90 kg, any lock",0.2276,g,"CoM 0.67 m ahead, 0.83 m high"
-"  speed at threshold on a 5 m radius, rider only, 90 kg",12.03,km/h,
-"Tipping threshold, 90 kg rider and 140 kg cargo, any lock",0.3906,g,"CoM 1.05 m ahead, 0.75 m high"
-"  speed at threshold on a 5 m radius, 90 kg rider and 140 kg cargo",15.76,km/h,
-"  tip-up speed at full lock, loaded",11.22,km/h,CoM path radius 2.41 m
-"  tip-up speed at full lock, rider only",8.268,km/h,CoM path radius 2.26 m
+"Tipping threshold, loaded, any lock",0.4109,g,"CoM 1.08 m ahead, 0.73 m high"
+"  speed at threshold on a 5 m radius, loaded",16.16,km/h,
+"Tipping threshold, rider only, any lock",0.2364,g,"CoM 0.69 m ahead, 0.81 m high"
+"  speed at threshold on a 5 m radius, rider only",12.26,km/h,
+"Tipping threshold, rider only, 90 kg, any lock",0.226,g,"CoM 0.67 m ahead, 0.83 m high"
+"  speed at threshold on a 5 m radius, rider only, 90 kg",11.99,km/h,
+"Tipping threshold, 90 kg rider and 140 kg cargo, any lock",0.3899,g,"CoM 1.05 m ahead, 0.75 m high"
+"  speed at threshold on a 5 m radius, 90 kg rider and 140 kg cargo",15.74,km/h,
+"  tip-up speed at full lock, loaded",11.21,km/h,CoM path radius 2.41 m
+"  tip-up speed at full lock, rider only",8.235,km/h,CoM path radius 2.26 m
 "Cornering-speed label, empty, full-lock turns (70 % of tip-up lateral acceleration, rounded down)",6,km/h,
 "Cornering-speed label, empty, 10 m radius turns (same rule)",14,km/h,
 Ballast low in the box for 0.30 g rider only (sensitivity),30,kg,
-"Rear axle load, loaded (static)",745.2,N,
-"Upper stay strip force (both plates, static)",-1991,N,negative = compression
-"Lower stay strip force (both plates, static)",1563,N,
-"Compression per plate, dynamic x2.5",2488,N,
+"Rear axle load, loaded (static)",745.8,N,
+"Upper stay strip force (both plates, static)",-2069,N,negative = compression
+"Lower stay strip force (both plates, static)",1645,N,
+"Compression per plate, dynamic x2.5",2586,N,
 Narrowest upper stay strip (edge to window),100.4,mm,
-"Strip buckling load, if unbraced from axle to seat node",1263,N,"L = 609 mm, pinned ends"
-"  safety factor on dynamic compression, if unbraced from axle to seat node",0.5074,,
+"Strip buckling load, if unbraced from axle to seat node",1267,N,"L = 608 mm, pinned ends"
+"  safety factor on dynamic compression, if unbraced from axle to seat node",0.4897,,
 "Strip buckling load, braced by the stay bridge (300 mm)",5201,N,"L = 300 mm, pinned ends"
-"  safety factor on dynamic compression, braced by the stay bridge (300 mm)",2.09,,
-"Safety factor with the TRL 2 style 55 mm strip, braced",1.145,,
-Static net stress in upper strip at an M8 hole,3.611,MPa,
-Dynamic net stress in upper strip,9.028,MPa,
-Rear frame and rider mass,116.3,kg,
-"Roll moment at the kingpin, 0.5 g lateral",511.8,N m,
-"Spine shear stress, open twin plates (TRL 2)",568.7,MPa,yield in shear about 136 MPa
-"Spine shear stress, closed box with covers (TRL 3)",9.211,MPa,
-Shear flow on each cover edge,27.63,N/mm,
-"Tab bearing stress, 10 tabs per edge over 280 mm",85.97,MPa,
+"  safety factor on dynamic compression, braced by the stay bridge (300 mm)",2.011,,
+"Safety factor with the TRL 2 style 55 mm strip, braced",1.102,,
+Static net stress in upper strip at an M8 hole,3.753,MPa,
+Dynamic net stress in upper strip,9.383,MPa,
+Rear frame and rider mass,117.4,kg,
+"Roll moment at the kingpin, 0.5 g lateral",516.1,N m,
+"Spine shear stress, open twin plates (TRL 2)",573.5,MPa,yield in shear about 136 MPa
+"Spine shear stress, closed box with covers (TRL 3)",9.289,MPa,
+Shear flow on each cover edge,27.87,N/mm,
+"Tab bearing stress, 10 tabs per edge over 280 mm of closed box (3 x 3 mm bearing face)",86.75,MPa,
 "Spine torsional stiffness GJ, open",218.7,N m2,
 "Spine torsional stiffness GJ, closed",1.957e+05,N m2,
-"Vertical shear at the bed-to-spine joint, loaded (static)",395.6,N,negative = bed lifts the rear frame
-"Pitch moment at the bed-to-spine joint, loaded (static)",155,N m,
-Spine bending moment at the front node (dynamic plus 0.5 g braking),876.4,N m,
-Spine bending stress,17.23,MPa,
-"Front load, dynamic",5491,N,
-"Axle beam bending stress (twin 3 x 180 mm, UDL over 566 mm)",15.54,MPa,
-"Knuckle load per wheel, dynamic",2745,N,
-"Knuckle post cantilever stress at the window (two plates, flanges 18 mm)",12.5,MPa,
-Knuckle post column bending moment,314.3,N m,
-Knuckle post column stress (closed 45 x 90 mm box of 3 mm plate),46.71,MPa,
-Column stress if the cheeks were left out (two plates only),155.2,MPa,
-"Knuckle headset axial load, dynamic",2745,N,
-"Joint couple at the head tube, 0.5 g roll, 150 mm head tube (TRL 3, v0.1)",3412,N,
-"Joint couple at the head tube, 0.5 g roll, 200 mm head tube",2559,N,carried by collar and yoke clamps and bolts; the fixed bed takes it off the headset bearings
-Force per yoke-to-collar bolt (4 per yoke),639.8,N,
+"Vertical shear at the bed-to-spine joint, loaded (static)",406.1,N,negative = bed lifts the rear frame
+"Pitch moment at the bed-to-spine joint, loaded (static)",149.8,N m,
+Spine bending moment at the front node (dynamic plus 0.5 g braking),873.8,N m,
+Spine bending stress,17.18,MPa,
+"Front load, dynamic",5523,N,
+"Axle beam bending stress (twin 3 x 120 mm, UDL over 566 mm)",36.38,MPa,
+"Knuckle load per wheel, dynamic",2762,N,
+"Knuckle post cantilever stress at its root (two plates, 120 mm deep)",15.73,MPa,
+Lower knuckle collar plate: cup flange radius against the plate supports (half span),2.5,mm,"the flange bears on the plate within 2.5 mm of the transverse plates' edges, so the plate is not bent"
+Knuckle post column bending moment,316.2,N m,
+Knuckle post column stress (closed 45 x 50 mm box of 3 mm plate),40,MPa,
+Column stress if the cheeks were left out (two plates only),156.1,MPa,
+"Knuckle headset axial load, dynamic",2762,N,
+"Joint couple at the head tube, 0.5 g roll, 150 mm head tube (TRL 3, v0.1)",3441,N,
+"Joint couple at the head tube, 0.5 g roll, 200 mm head tube",2581,N,carried by the cups into the yokes and by the yokes' tabs into the spine side plates
+"Bearing stress, roll couple on one yoke's two tabs (16 x 3 mm side faces)",26.88,MPa,
 M8 8.8 preload at 25 N m,1.56e+04,N,
 Slip load per bolt per faying face (mu 0.20),3120,N,
-"Stay node force per plate, dynamic",2488,N,
+"Stay node force per plate, dynamic",2586,N,
 Bolts per plate per node for no slip (1 face; spacer stack in series),1,,
 Bearing resistance of 3 mm plate at one M8 bolt,1.728e+04,N,
-Bearing utilisation if the node slips onto 2 bolts,7.2,%,
-"Stress range, routine road cycle (+/- 0.5 g)",3.611,MPa,
-"Stress range, pothole cycle (to 2.5 g and back)",10.83,MPa,
+Bearing utilisation if the node slips onto 2 bolts,7.483,%,
+"Stress range, routine road cycle (+/- 0.5 g)",3.753,MPa,
+"Stress range, pothole cycle (to 2.5 g and back)",11.26,MPa,
 "Constant-amplitude fatigue limit, 90 MPa detail",66.33,MPa,
 "Cycles in 5 years (300 days, 20 km, 1 per 10 m)",3e+06,,
 "Proof load, twice rated cargo (R2)",2943,N,
-Axle beam stress under proof load,8.327,MPa,
-"Kinetic energy at 15 km/h, gross",2.603,kJ,
+Axle beam stress under proof load,19.38,MPa,
+"Kinetic energy at 15 km/h, gross",2.615,kJ,
 Deceleration to stop in 6 m (no reaction time),1.447,m/s2,
 Deceleration to stop in 6 m with 0.5 s reaction,2.216,m/s2,
-"Drum torque needed per wheel, equal share",36.73,N m,
-Tyre grip needed at the front pair alone,0.1975,,friction coefficient
-Parking force on a 10 % grade,292.7,N,
-Drum torque per front wheel to park (latch on the front pair),37.17,N m,
-"Brake power, 10 km/h down a 5 % grade",274.4,W,
+"Drum torque needed per wheel, equal share",36.9,N m,
+Tyre grip needed at the front pair alone,0.1973,,friction coefficient
+Parking force on a 10 % grade,294,N,
+Drum torque per front wheel to park (latch on the front pair),37.34,N m,
+"Brake power, 10 km/h down a 5 % grade",275.7,W,
 "Drum heat capacity per wheel (0.35 kg iron, 0.30 kg aluminium)",431,J/K,
-Steady drum temperature rise (hA 0.5 W/K),182.9,K,
-Time to a 100 K rise,11.37,min,
-Descent length to a 100 K rise at 10 km/h,1.894,km,
-Assembly work content,6.15,person-h,
-"Elapsed time, two people (70 % parallel)",3.998,h,R7 target 4 h
-Bolts disturbed to replace one spine side plate,42,,
-"Time to replace one spine side plate (0.75 min per bolt each way, plus 15 min)",78,min,R14 target 90 min for the spine side plates only
-Time to replace one knuckle post plate (8 bolts),27,min,"R14 target 30 min; wheel, fork and collars stay in place"
+Steady drum temperature rise (hA 0.5 W/K),183.8,K,
+Time to a 100 K rise,11.28,min,
+Descent length to a 100 K rise at 10 km/h,1.88,km,
+Assembly work content,6.208,person-h,
+"Elapsed time, two people (70 % parallel)",4.035,h,R7 target 4 h
+Bolts disturbed to replace one spine side plate,30,,
+"Time to replace one spine side plate (0.75 min per bolt each way, 15 min, 20 min for the column and bottom bracket)",80,min,R14 target 90 min for the spine side plates only
+Bolts disturbed to replace one knuckle post plate (both collar plates come off),12,,
+"Time to replace one knuckle post plate (0.75 min per bolt each way, 15 min, 20 min for wheel, fork and cups)",53,min,R14 target 30 min
 "Unprotected loss, 5 years at the C3 first-year upper rate (both faces)",0.2627,mm,"bilogarithmic law, exponent 0.6 assumed"
 "Unprotected loss, 5 years at the C4 first-year upper rate (both faces)",0.4202,mm,"bilogarithmic law, exponent 0.6 assumed"
 BOM lines,15,,
-"Base prototype, pedal only (bom.csv)",709,USD,budget 800
-Budget margin,91,USD,
+"Base prototype, pedal only (bom.csv)",724,USD,budget 800
+Budget margin,76,USD,
 "Optional assist kit, route C, excluding the SwapCell pack",300,USD,
-Cut length per frame (estimate),58.9,m,
+Cut length per frame (estimate),56.34,m,
 "Steel, one full sheet at 1.0 USD/kg",73.59,USD,
-"Laser cutting at 0.30 USD/m (volume rate, assumed)",17.67,USD,
-Bought parts at 65 % of prototype retail,313.9,USD,
-"Production cost at 100 units (parts, cutting, 15 USD assembly labour)",456.2,USD,R18 target 300
+"Laser cutting at 0.30 USD/m (volume rate, assumed)",16.9,USD,
+Bought parts at 65 % of prototype retail,323.7,USD,
+"Production cost at 100 units (parts, cutting, 15 USD assembly labour)",465.2,USD,R18 target 300

@@ -1,4 +1,4 @@
-"""FlatTrike sizing calculations, FTK-CAL-001 v0.2 (TRL 3, after FTK-DDR-002).
+"""FlatTrike sizing calculations, FTK-CAL-001 v0.3 (TRL 3, constructable design, FTK-DDR-003).
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Prints every number quoted in docs/04-calcs/01-sizing.md and writes docs/04-calcs/results.csv.
@@ -50,14 +50,10 @@ BOUGHT = {   # kg, assumed masses of bought parts (BOM items 5 to 8 and 10 to 14
     "Steering: 3 headsets, head tubes, column, two 20 in forks, drag link, tie rod": (5, 4.7), "Seat and seatpost": (10, 1.4), "Handlebar and stem": (11, 1.2),
     "Brake levers, cables, latch": (12, 0.7), "Box hinges, hasp, lock, screws, battens": (9, 1.0),
     "Paint": (13, 0.6), "Accessories (mudguards, reflectors, bell, bumpers)": (14, 1.5),
+    "Seat tube (31.8 x 2.3 mm) and two shaft collars (FTK-DDR-003)": (10, 0.45),
+    "Spacer tubes (4) and U-bolts (4) (FTK-DDR-003)": (4, 0.30),
 }
-BOLTS = {   # M8 class 8.8 bolt sets (bolt, two washers, all-metal locknut) per joint group
-    "Spine top and bottom cover cross-bolts": 10, "Spine ribs": 12, "Stay to spine nodes (4 per node)": 8,
-    "Stay bridge": 2, "Head tube collar plates": 8, "Bottom bracket collars": 4, "Yokes to bulkhead": 8,
-    "Bulkhead to rails": 6, "Rails to axle beam": 8, "Axle beam to knuckle posts": 12,
-    "Knuckle post plates, cheeks and collars": 16, "Box to rails": 8, "Seatpost clamp": 2,
-    "Yokes to head tube collar plates (fixed bed)": 8, "Drop arm and steering arm clamps": 4,
-}
+BOLTS = {}  # M8 class 8.8 bolt sets (bolt, washer, all-metal locknut) per joint group: counted from the model in main()
 BOLT_KG = 0.028
 
 
@@ -126,6 +122,7 @@ def true_shape_nest(plates, SW, SL, EDGE, cell=5.0):
 def main():
     parts = M.build_parts()
     sched = M.plate_schedule()
+    BOLTS.update(M.bolt_count())
     kgm2 = P["T"] / 1000 * RHO_STEEL
 
     # ------------------------------------------------------------ 1 geometry and plates
@@ -142,8 +139,8 @@ def main():
     rec("Cut plates (count)", n_plates)
     rec("Plate area, net of windows", area, "m2")
     plate_kg = rec("Plate mass (3 mm, 23.6 kg/m2)", area * kgm2, "kg")
-    washers = 8 * 9
-    rec("Spacer washers cut from offcuts (8 stacks of 9)", washers)
+    washers = 8 * 9 + 2 * 3
+    rec("Spacer washers cut from offcuts (8 stacks of 9 at the stay nodes, 2 of 3 behind the box)", washers)
 
     # shelf nesting of bounding rectangles on one 1250 x 2500 sheet, 8 mm gap, 10 mm edge margin
     SW, SL, GAP, EDGE = 1250.0, 2500.0, 8.0, 10.0
@@ -329,6 +326,10 @@ def main():
     r_box = math.hypot(x0 + P["BOX_L"], y_ic + P["BOX_W"] / 2)
     rec("Inner wheel lock (box clearance limit)", P["STEER_LOCK"], "deg")
     rec("Outer wheel lock (Ackermann)", d_outer, "deg")
+    rec("Outer wheel lock through the model's tie rod at 40 deg inner lock", math.degrees(M._right_angle(lock)), "deg",
+        "the trapezoid only approximates Ackermann; the turning circle below uses the ideal")
+    rec("Column (handlebar) turn at full inner lock, left wheel through the drag link", math.degrees(M._column_angle(lock)), "deg",
+        "drop arm parallel to the left steering arm (FTK-DDR-003); was about 1.7 times the wheel angle")
     rec("Turn centre from the centre line, on the rear axle line", y_ic / 1000, "m")
     rec("Turning circle, outer tyre (Ackermann)", 2 * r_outer / 1000, "m", "R9 target 6 m")
     rec("Swept circle, box front corner", 2 * r_box / 1000, "m")
@@ -379,7 +380,8 @@ def main():
     # 5.1 rear stays as a two-member truss from the rear axle to the seat node and the front node
     R_rear = (mt - front) * G
     ax_, az_ = 0.0, P["WHEEL_R"]
-    seat_node, front_node = (435.0, 680.0), (650.0, 550.0)
+    seat_node = tuple(sum(c) / 2 for c in zip(*M.NODES[:2]))      # the two rear stay-to-spine bolts
+    front_node = tuple(sum(c) / 2 for c in zip(*M.NODES[2:]))     # the two front ones
     ut = ((seat_node[0] - ax_), (seat_node[1] - az_)); lt = math.hypot(*ut); ut = (ut[0] / lt, ut[1] / lt)
     ub = ((front_node[0] - ax_), (front_node[1] - az_)); lb = math.hypot(*ub); ub = (ub[0] / lb, ub[1] / lb)
     import numpy as np
@@ -419,9 +421,12 @@ def main():
     rec("Spine shear stress, open twin plates (TRL 2)", tau_open, "MPa", "yield in shear about 136 MPa")
     rec("Spine shear stress, closed box with covers (TRL 3)", tau_closed, "MPa")
     q = Troll * 1e3 / (2 * A_cell)
-    n_tabs = 10
+    s_closed = (720.0 - M.SPINE[0][0]) / ((M.SPINE[1][0] - M.SPINE[0][0]) / math.dist(M.SPINE[0], M.SPINE[1]))
+    L_closed = math.dist(M.SPINE[0], M.SPINE[1]) - s_closed
+    n_tabs = sum(1 for k, s_ in M.ST_TOP if k == "tab" and s_ >= s_closed)
     rec("Shear flow on each cover edge", q, "N/mm")
-    rec("Tab bearing stress, 10 tabs per edge over 280 mm", q * 280 / n_tabs / (t * t), "MPa")
+    rec(f"Tab bearing stress, {n_tabs} tabs per edge over {L_closed:.0f} mm of closed box (3 x 3 mm bearing face)",
+        q * L_closed / n_tabs / (t * t), "MPa")
     Gs = 81e3
     k_open = Gs * J_open / 1e6; k_closed = Gs * 4 * A_cell ** 2 * t / (2 * (w_sp + h_sp)) / 1e6
     rec("Spine torsional stiffness GJ, open", k_open, "N m2")
@@ -445,22 +450,26 @@ def main():
     w_front = front * G * DYN
     span = 2 * P["POST_Y0"]
     M_ab = w_front * (span / 1000) / 8
-    hab = P["BOX_Z0"] - 290.0
-    Z_ab = 2 * t * (hab ** 3 - 110 ** 3) / (6 * hab)     # twin plates with 110 mm lightening windows
+    hab = P["BOX_Z0"] - P["AB_Z0"]
+    hw_ = hab - 44.0                                      # lightening windows, 22 mm of plate above and below
+    Z_ab = 2 * t * (hab ** 3 - hw_ ** 3) / (6 * hab)      # twin plates with lightening windows
     rec("Front load, dynamic", w_front, "N")
     rec(f"Axle beam bending stress (twin 3 x {hab:.0f} mm, UDL over {span:.0f} mm)", M_ab * 1e6 / Z_ab / 1000, "MPa")
     p_w = w_front / 2
     py1 = P["POST_Y0"] + P["POST_W"]
     rec("Knuckle load per wheel, dynamic", p_w, "N")
-    d_top = (P["KN_Z0"] + P["KN_LEN"] + 35) - 530
-    I_cant = 2 * t * (d_top ** 3 - (d_top - 36) ** 3) / 12
-    rec("Knuckle post cantilever stress at the window (two plates, flanges 18 mm)",
-        p_w * (tr - py1 - 20) / (I_cant / (d_top / 2)), "MPa")
+    d_top = P["KN_LEN"]                                   # the knuckle head tube's own length of plate, solid
+    I_cant = 2 * t * d_top ** 3 / 12
+    rec("Knuckle post cantilever stress at its root (two plates, 120 mm deep)",
+        p_w * (tr - py1 - 10) / (I_cant / (d_top / 2)), "MPa")
+    lo_ring = 22.5; span_c = 2 * P["POST_X"]
+    rec("Lower knuckle collar plate: cup flange radius against the plate supports (half span)", span_c / 2 - lo_ring, "mm",
+        "the flange bears on the plate within 2.5 mm of the transverse plates' edges, so the plate is not bent")
     bw = P["POST_W"]
-    I_col = 2 * t * bw ** 3 / 12 + 2 * 40 * t * (bw / 2 - t / 2) ** 2
+    I_col = 2 * t * bw ** 3 / 12 + 2 * (2 * P["POST_X"]) * t * (bw / 2 - t / 2) ** 2
     m_col = p_w * (tr - (P["POST_Y0"] + bw / 2))
     rec("Knuckle post column bending moment", m_col / 1000, "N m")
-    rec("Knuckle post column stress (closed 45 x 90 mm box of 3 mm plate)", m_col / (I_col / (bw / 2)), "MPa")
+    rec(f"Knuckle post column stress (closed {bw:.0f} x {2 * P['POST_X']:.0f} mm box of 3 mm plate)", m_col / (I_col / (bw / 2)), "MPa")
     rec("Column stress if the cheeks were left out (two plates only)", m_col / (2 * t * bw ** 2 / 6), "MPa")
     rec("Knuckle headset axial load, dynamic", p_w, "N")
 
@@ -468,8 +477,8 @@ def main():
     rec("Joint couple at the head tube, 0.5 g roll, 150 mm head tube (TRL 3, v0.1)", Troll / 0.150, "N")
     couple = Troll / (P["HT_LEN"] / 1000)
     rec(f"Joint couple at the head tube, 0.5 g roll, {P['HT_LEN']:.0f} mm head tube", couple, "N",
-        "carried by collar and yoke clamps and bolts; the fixed bed takes it off the headset bearings")
-    rec("Force per yoke-to-collar bolt (4 per yoke)", couple / 4, "N")
+        "carried by the cups into the yokes and by the yokes' tabs into the spine side plates")
+    rec("Bearing stress, roll couple on one yoke's two tabs (16 x 3 mm side faces)", couple / (2 * 16 * t), "MPa")
 
     # 5.6 bolted joints
     slip = MU_SLIP * BOLT_PRELOAD
@@ -521,17 +530,33 @@ def main():
     # ------------------------------------------------------------ 7 assembly, repair, life
     head("7. Assembly, repair and service life (R7, R14, R16)")
     t_bolt = 1.5
-    t_other = {"wheels (3)": 30, "steering column, two knuckle headsets and forks, tie rod, drag link": 50, "drivetrain and chain": 25, "brakes and cables": 30,
+    t_other = {"wheels (3)": 30, "steering column, two knuckle headsets and forks, tie rod, drag link": 50,
+               "headset and bottom bracket cups pressed and screwed in": 20, "seat tube, spacer tubes, U-bolts": 15,
+               "drivetrain and chain": 25, "brakes and cables": 30,
                "seat and bars": 10, "box to bed": 20, "deburr check and final torque": 30}
     t_total = n_bolts * t_bolt + sum(t_other.values())
     rec("Assembly work content", t_total / 60, "person-h")
     rec("Elapsed time, two people (70 % parallel)", t_total / 60 * (1 - 0.7 / 2), "h", "R7 target 4 h")
-    spine_bolts = 10 + 12 + 8 + 8 + 4
+    J = M.JOINTS
+    side = "Spine side plate, left"
+
+    def jb(cond):
+        return sum(j["bolts"] for j in J if cond(j))
+    # a side plate's edge tabs sit in the covers and the lower yoke, so those come off; ribs, saddles and the upper
+    # yoke stay on the other plate; the steering column and the bottom bracket come out
+    spine_bolts = (jb(lambda j: j["group"] in ("Spine top cover", "Spine bottom cover", "Lower yoke to spine"))
+                   + jb(lambda j: j["group"] == "Yokes to bulkhead" and j["edge"] == "Lower yoke")
+                   + jb(lambda j: j["group"] in ("Upper yoke to spine", "Spine ribs", "Seat tube saddles") and j["face"] == side)
+                   + len(M.NODES))
     rec("Bolts disturbed to replace one spine side plate", spine_bolts, "")
-    rec("Time to replace one spine side plate (0.75 min per bolt each way, plus 15 min)",
-        spine_bolts * 0.75 * 2 + 15, "min", "R14 target 90 min for the spine side plates only")
-    rec("Time to replace one knuckle post plate (8 bolts)", 8 * 0.75 * 2 + 15, "min",
-        "R14 target 30 min; wheel, fork and collars stay in place")
+    rec("Time to replace one spine side plate (0.75 min per bolt each way, 15 min, 20 min for the column and bottom bracket)",
+        spine_bolts * 0.75 * 2 + 35, "min", "R14 target 90 min for the spine side plates only")
+    kp_plate = "Knuckle post plate, left rear"
+    kn_bolts = jb(lambda j: j["group"] == "Knuckle collar plates" and j["face"].startswith("Knuckle collar plate, left")) \
+        + jb(lambda j: j["group"] == "Knuckle post corners" and kp_plate in (j["face"], j["edge"]))
+    rec("Bolts disturbed to replace one knuckle post plate (both collar plates come off)", kn_bolts, "")
+    rec("Time to replace one knuckle post plate (0.75 min per bolt each way, 15 min, 20 min for wheel, fork and cups)",
+        kn_bolts * 0.75 * 2 + 35, "min", "R14 target 30 min")
     for cat, rate in (("C3", 50.0), ("C4", 80.0)):
         rec(f"Unprotected loss, 5 years at the {cat} first-year upper rate (both faces)",
             rate * 5 ** 0.6 * 2 / 1000, "mm", "bilogarithmic law, exponent 0.6 assumed")

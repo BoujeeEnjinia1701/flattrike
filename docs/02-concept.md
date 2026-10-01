@@ -3,9 +3,9 @@ doc_id: FTK-PRC-001
 title: FlatTrike design precis
 project: FlatTrike
 doc_type: Design precis
-version: "0.4"
+version: "0.6"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,11 +25,19 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.5"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Design made constructable (FTK-DDR-003); key numbers from FTK-CAL-001 v0.3; build plan FTK-BLD-001
+- version: "0.6"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Budget treated as a value-engineering target
 ---
 
 # FlatTrike design precis
 
-FlatTrike is a front-loading cargo tricycle whose whole steel structure is a kit of 34 flat 3 mm plates, cut by any laser or waterjet shop from open files and bolted together through tabs, slots and spacer washers with no welding or bending. Two 20 in front wheels, each turning in a standard bicycle fork on its own headset, carry a fixed, lockable plywood cargo box; a tie rod links them in Ackermann geometry, and the rider sits over a standard 20 in rear wheel with a 3-speed drum brake hub. The TRL 3 calculations (FTK-CAL-001 v0.2) show that the trike carries 150 kg of cargo and an 80 kg rider at 299.8 kg gross, weighs 69.8 kg empty, resists tipping to 0.41 g loaded and 0.24 g with the rider only at any steering angle, cruises at 7.6 km/h on the flat on 110 W, nests on one standard sheet, packs into 0.30 m³ and costs $709 in prototype parts against the $800 budget. Two requirements are not met: a loaded 5 % hill needs 240 W at the pedals without assist, and the production estimate is about $456 against $300.
+FlatTrike is a front-loading cargo tricycle whose whole steel structure is a kit of 35 flat 3 mm plates, cut by any laser or waterjet shop from open files and bolted together through tabs, slots and spacer washers with no welding or bending. Two 20 in front wheels, each turning in a standard bicycle fork on its own headset, carry a fixed, lockable plywood cargo box; a tie rod links them in Ackermann geometry, and the rider sits over a standard 20 in rear wheel with a 3-speed drum brake hub. The TRL 3 calculations (FTK-CAL-001 v0.3, on the constructable design of FTK-DDR-003) show that the trike weighs 71.2 kg empty, carries 150 kg of cargo and an 80 kg rider at 301.2 kg gross, resists tipping to 0.41 g loaded and 0.24 g with the rider only at any steering angle, cruises at 7.5 km/h on the flat on 110 W, nests on one standard sheet, packs into 0.31 m³ and costs an estimated $724 in prototype parts against the $800 value-engineering target (USD 76 under). Four requirements are not met: a loaded 5 % hill needs 241 W at the pedals without assist; making the design buildable added 1.4 kg, so the empty and gross masses are 1.2 kg over their limits (R8, R1); and a knuckle post plate takes about 53 min to replace against 30 min (R14). The production estimate is about $465 against the $300 value-engineering target, USD 165 over (R18). How to settle R1, R8 and R14 is an open decision for Amish. The [prototype build plan](05-build-plan.md) shows how every part is made and fitted.
 
 ![Hero render](../media/hero.png)
 
@@ -39,15 +47,15 @@ FlatTrike is a front-loading cargo tricycle whose whole steel structure is a kit
 
 1. **Cut.** A laser or waterjet shop cuts 34 plates and 72 spacer washers from one 1,250 x 2,500 x 3 mm mild steel sheet using open DXF files, with the small plates nested in the windows of the large ones. Tabs, slots and bolt holes are cut in the same pass, so hole positions are as accurate as the cutter.
 2. **Assemble.** The two spine side plates (item 1) are closed into a box beam by a top and a bottom cover plate held in slots, three ribs and cross-bolts. The box runs from the seat node to the head tube and has a drop lobe that clamps the bottom bracket shell. The rear stay plates (item 2) bolt to the outside of the spine through stacks of cut spacer washers at two nodes and carry the rear dropouts. The front bed (item 3) is a second bolted assembly: two yoke plates, a bulkhead, two rails, a twin-plate axle beam, and at each end of the beam a closed knuckle post of two transverse plates and two cheeks. No jig is needed because the plates locate one another.
-3. **Fix the bed.** A 200 mm steel head tube (item 5) is clamped to the front of the spine by two collar plates, and the bed's yoke plates bolt to those collar plates through spacer stacks, so the bed and box are fixed to the frame.
-4. **Steer.** The handlebar (item 11) turns a steering column in a standard 1 1/8 in threaded headset inside the head tube. A drop arm under the lower yoke drives a drag link to the left wheel's steering arm, and a tie rod links both steering arms. Each front wheel sits in a bought 20 in fork that turns on its own headset in a 120 mm knuckle head tube, clamped above the tyre between two collar plates on the knuckle post. The steering arms point at the rear axle centre, so the wheels follow Ackermann geometry.
+3. **Fix the bed.** A 200 mm steel head tube (item 5) stands between two yoke plates at the front of the spine; each pressed headset cup passes through a yoke and clamps it to the tube's end. The yokes tab into the spine and into the bed's bulkhead, so the bed and box are fixed to the frame (FTK-DDR-003).
+4. **Steer.** The handlebar (item 11) turns a steering column, a bought threaded fork cut off at its crown, in a standard 1 1/8 in threaded headset inside the head tube. A drop arm bolted under the crown, parallel to the left steering arm, drives a drag link to that arm, and a tie rod links both steering arms. Each front wheel sits in a bought 20 in fork that turns on its own headset in a 120 mm knuckle head tube, clamped above the tyre between two collar plates on the knuckle post. The steering arms clamp to the inboard fork legs below the knuckle posts and point at the rear axle centre, so the wheels follow Ackermann geometry.
 5. **Ride.** A standard bottom bracket and cranks (item 8) drive the 20 in rear wheel (item 7) through a 32/24 chain and a 3-speed hub with a built-in drum brake. The chain runs at a 44 mm chain line in the gap between the right spine plate and the right stay plate.
 6. **Stop and park.** Drum brakes in all three hubs (items 6 and 7) are sealed from rain and dust. A lever lock (item 12) holds the front pair when the trike is parked on a slope.
 7. **Sell.** The plywood box (item 9) holds 151 L, locks, and has a hinged lid at 0.84 m that doubles as a counter. Its floor sits at 0.47 m so the steered tyres pass beneath it.
 
 ![Rider power flow](../media/flow.png)
 
-*Figure 2. Where 110 W of rider power goes at 299.8 kg gross on a flat dirt road (FTK-CAL-001 section 4). All values are estimates.*
+*Figure 2. Where 110 W of rider power goes at 301.2 kg gross on a flat dirt road (FTK-CAL-001 section 4). All values are estimates.*
 
 ## Main components
 
@@ -59,9 +67,9 @@ Table 1. Main components.
 | --- | --- | --- | --- |
 | 1 | Spine plates and covers | Two 3 mm side plates about 681 x 585 mm, 60 mm apart, with top and bottom cover plates forming a closed 63 mm wide box, 150 to 215 mm deep | The open twin plates would see 569 MPa in torsion, the closed box 9 MPa; deepened at the front to clamp the 200 mm head tube |
 | 2 | Rear stay plates (pair) | 3 mm plates about 745 x 555 mm, 120 mm apart for a 120 mm hub, upper strip at least 100 mm wide | Braced by a stay bridge; buckling safety factor 2.09 |
-| 3 | Front bed and knuckle post plates | Lower and upper yoke, bulkhead, two rails, twin 180 mm axle beam, and per side a closed knuckle post (two transverse plates, two cheeks) with two collar plates, all 3 mm | Fixed to the spine; the knuckle post column sees 47 MPa, the highest plate stress |
-| 4 | Ribs, spacer washers and M8 bolts | Three spine ribs, a stay bridge, 72 cut spacer washers; 116 M8 class 8.8 bolt sets with all-metal locknuts | Decided hardware (FTK-DDR-001 item 5) |
-| 5 | Steering column, knuckles and linkage | Steering column in a 1 1/8 in threaded headset inside a bought 200 mm head tube; two knuckle headsets in 120 mm head tubes; two bought 20 in forks; drop arm and Ackermann steering arms cut from plate; drag link and tie rod with rod ends | Ackermann steering decided (FTK-DDR-002 item 13); 200 mm head tube decided (item 19) |
+| 3 | Front bed and knuckle post plates | Lower and upper yoke (they clamp the head tube), bulkhead, two rails, twin 120 mm axle beam, and per side a closed knuckle post (two post plates, two cheeks) with two collar plates, all 3 mm | Fixed to the spine; the knuckle post column sees 40 MPa, the highest plate stress |
+| 4 | Ribs, saddles, spacer washers and M8 bolts | Two spine ribs, a stay bridge, two seat tube saddles, 78 cut spacer washers, four spacer tubes; 95 M8 class 8.8 bolt sets with all-metal locknuts held in windows in the plates | Decided hardware (FTK-DDR-001 item 5); joints made physical in FTK-DDR-003 |
+| 5 | Steering column, knuckles and linkage | Steering column in a 1 1/8 in threaded headset inside a bought 200 mm head tube; two knuckle headsets in 120 mm head tubes; two bought 20 in forks; drop arm, Ackermann steering arms and their clamp plates cut from plate; a cut-down fork as the column; U-bolts; drag link and tie rod with rod ends | Ackermann steering decided (FTK-DDR-002 item 13); 200 mm head tube decided (item 19); linkage made a parallelogram (FTK-DDR-003) |
 | 6 | Front wheels (2) | 20 x 2.125 in (ISO 406), 36-hole rims, 90 mm class front drum brake hubs for 100 mm fork dropouts | Each drum needs about 37 N·m |
 | 7 | Rear wheel | 20 x 2.125 in with a 3-speed drum brake hub, 120 mm over locknuts, 24T sprocket | Development 1.60 to 2.84 m per crank turn |
 | 8 | Drivetrain | Bought 68 mm bottom bracket shell clamped in the spine lobe, 170 mm cranks, 32T chainring, 1/8 in chain | Shell accepts a mid-drive later (assist route C) |
@@ -84,21 +92,21 @@ Table 2. Key numbers and requirement status.
 
 | Quantity | Value | Requirement |
 | --- | --- | --- |
-| Length, width, height | 2.14 x 0.986 x 0.93 m; wheelbase 1.45 m; track 0.84 m | R9 met |
+| Length, width, height | 2.15 x 0.984 x 0.93 m; wheelbase 1.45 m; track 0.84 m | R9 met |
 | Turning circle, Ackermann, 40° inner lock | 5.95 m | R9 met |
-| Plates | 34 plates, 1.25 m² net, 29.4 kg; 2,190 mm of a 2,500 mm sheet in a true-shape nest | R3 and R4 met |
-| Empty mass | 69.8 kg (plates 42 %, box 18 %) | R8 (70 kg) met, 0.2 kg margin |
-| Gross mass | 299.8 kg (80 kg rider, 150 kg cargo; or 90 kg rider, 140 kg cargo) | R1 met, 0.2 kg margin |
-| Flat-pack crate | about 1.35 x 0.62 x 0.36 m, 0.30 m³ | R6 met |
-| Cruise on the flat at 110 W | 7.6 km/h | R12 met |
-| 5 % grade at 4 km/h | 240 W at the pedals; 6.0 km/h with route C assist | **R13 not met unassisted** |
+| Plates | 35 plates, 1.30 m² net, 30.5 kg; 1,940 mm of a 2,500 mm sheet in a true-shape nest | R3 and R4 met |
+| Empty mass | 71.2 kg (plates 43 %, box 18 %) | **R8 (70 kg) not met**, 1.2 kg over; open decision |
+| Gross mass | 301.2 kg (80 kg rider, 150 kg cargo; or 90 kg rider, 140 kg cargo) | **R1 not met**, 1.2 kg over; open decision |
+| Flat-pack crate | about 1.38 x 0.62 x 0.36 m, 0.31 m³ | R6 met |
+| Cruise on the flat at 110 W | 7.5 km/h | R12 met |
+| 5 % grade at 4 km/h | 241 W at the pedals; 6.0 km/h with route C assist | **R13 not met unassisted** |
 | Tipping threshold, any lock | 0.41 g loaded; 0.24 g rider only; label 6 km/h in full-lock turns when empty | R10 met |
-| Highest plate stress (dynamic) | 47 MPa (knuckle post column); stay buckling safety factor 2.09 | R2 at risk |
+| Highest plate stress (dynamic) | 40 MPa (knuckle post column); stay buckling safety factor 2.01 | R2 at risk |
 | Braking and parking | About 37 N·m per drum; fade after about 1.9 km of 5 % descent | R11 at risk |
-| Assembly | About 4.0 h for two people | R7 at risk |
-| Repair of a spine side plate | About 78 min (90 min allowed) | R14 met |
-| Pedal-only prototype parts | $709 | R15 met |
-| Production at 100 units | About $456 | **R18 ($300) not met** |
+| Assembly | About 4.04 h for two people | R7 at risk |
+| Repair | Spine side plate about 80 min (90 min allowed); knuckle post plate about 53 min (30 min allowed) | **R14 not met** for knuckle post plates |
+| Pedal-only prototype parts | $724 | R15 within the value-engineering target ($800) |
+| Production at 100 units | About $465 | **R18 over the value-engineering target by USD 165** (target $300) |
 
 ## TRL 3 design changes
 
@@ -107,8 +115,9 @@ The TRL 3 calculations found three failures in the TRL 2 concept and one steerin
 - **Closed-box spine.** The single rear wheel cannot resist roll, so the rear frame and rider (116 kg) hang from the head tube joint, and a 0.5 g roll puts 512 N·m of torsion into the spine. Two separate 3 mm plates would see 569 MPa; with top and bottom cover plates the closed box sees 9 MPa.
 - **Wider stay strips.** The upper stay strip is a compression member. The smaller TRL 3 window leaves a 100 mm strip with a buckling safety factor of 2.09, and only because the stay bridge braces it.
 - **Ackermann steering with a fixed box (FTK-DDR-002 item 13).** Under box steering the outer wheel moved 334 mm inward at full lock and the empty trike could tip at 5.8 km/h. Each front wheel now turns in its own fork, so the track stays at 0.84 m at any lock and the rider-only threshold is 0.24 g throughout. The flat fork plates and crown plates of v0.3 are replaced by closed knuckle posts; the box is narrower (560 mm) and its floor higher (0.47 m) so the steered tyres pass under it.
-- **Longer head tube (item 19).** The head tube grew from 150 to 200 mm, cutting the roll couple at the joint from 3.41 to 2.56 kN. With the bed fixed, the couple passes through the collar and yoke clamps rather than the headset bearings.
-- **Mass and stability (FTK-DDR-001 item 8, FTK-DDR-002 items 14 to 16).** Lightening windows, a 9 mm box, a seat 110 mm further forward and a 0.84 m track did not reach the original 55 kg and 0.30 g targets. Amish accepted relaxing R8 to 70 kg and the rider-only case of R10 to 0.22 g with a cornering-speed label, and rating the cargo at 140 kg for riders over 80 kg. Larger windows in the axle beam, rails and bulkhead keep the Ackermann version at 69.8 kg.
+- **Longer head tube (item 19).** The head tube grew from 150 to 200 mm, cutting the roll couple at the joint from 3.41 to 2.56 kN. With the bed fixed, the couple passes through the yokes rather than the headset bearings.
+- **Design for construction (FTK-DDR-003, open for Amish's review).** Writing the build plan made every joint physical (tabs in slots, bolts into T-slots with captive locknuts), moved two stay bolts off a window, opened the rear dropouts, put the chain on the right, made the yokes the head tube clamps, made the steering linkage a parallelogram so it no longer locks on right turns, moved the steering arms below the knuckle posts and rebuilt the posts. It added 1.4 kg.
+- **Mass and stability (FTK-DDR-001 item 8, FTK-DDR-002 items 14 to 16).** Lightening windows, a 9 mm box, a seat 110 mm further forward and a 0.84 m track did not reach the original 55 kg and 0.30 g targets. Amish accepted relaxing R8 to 70 kg and the rider-only case of R10 to 0.22 g with a cornering-speed label, and rating the cargo at 140 kg for riders over 80 kg. Larger windows in the axle beam, rails and bulkhead kept the Ackermann version at 69.8 kg before the design-for-construction changes.
 
 ## Key design choices
 
@@ -121,9 +130,9 @@ Items marked decided were decided by Amish on 2026-09-25 (FTK-DDR-001 and FTK-DD
 - **Head tube and bottom bracket housings.** Bought steel sections clamped between plates. Decided. Central head tube 200 mm long (FTK-DDR-002 item 19).
 - **Wheels and brakes.** 20 in on all three positions with drum brakes; 3-speed drum hub at the rear; bought 20 in forks at the front. Decided.
 - **Electric assist.** None in the prototype. Decided. Route C, a 48 V mid-drive on a SwapCell pack, is the preferred route (decided). If built, it cites **SwapCell interface v0.3** items W (wake for hosts without CAN), C (charge while discharging) and V (latch class V1 for vehicles); the receiver meets latch class V1 and leaves the pack's back and lid faces open to air. The pack is priced once in the SwapCell repo and excluded from the FlatTrike budget.
-- **Budget.** `budget_usd` stays at $800 for the pedal-only prototype. Decided.
+- **Budget.** `budget_usd` stays at $800 for the pedal-only prototype, as a hypothetical value-engineering target, not a limit. Decided.
 - **Targets.** R1 restated (150 kg cargo with a rider up to 80 kg, 140 kg with a rider up to 90 kg), R8 70 kg, R10 rider-only 0.22 g with a label, R14 90 min for the spine side plates only. Decided (FTK-DDR-002).
-- **Production cost target.** $300 or less per trike at 100 units (R18), kept until the first partner supplies wholesale prices. Decided; not met by the estimate.
+- **Production cost target.** $300 or less per trike at 100 units (R18), kept as a value-engineering target until the first partner supplies wholesale prices. Decided; the estimate is USD 165 over it.
 - **Partner and city.** Proposed, awaiting Amish; partners are picked per area later.
 
 ## Safety

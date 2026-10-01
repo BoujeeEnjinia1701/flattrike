@@ -245,3 +245,68 @@ This is an appearance model only: no tolerances, no fabrication detail, no PCB o
 - Kit 1.5.0 synced: STANDARDS v1.5 (sections 12 to 15: product renders, storefront images and image quality, public release, authorship and signing), `.kit/cards.py`, `.kit/image_qc.py`, `.kit/release_gate.py`, issue templates, and the `/render-product` and `/release` commands. `CLAUDE.md` now matches `.kit/CLAUDE.md`.
 - Every `media/render-*.png` recaptioned from its original render with the new layout: the title, concept label and repository sit in a band above the render and the view note in a band below it, each line wrapped to the image width, so no text overlaps other text or the render or runs off the image. `media/card.png` and `media/social-preview.png` regenerated with the same rules.
 - `python .kit/image_qc.py` and `python .kit/release_gate.py` pass. trl stays 3.
+
+## Session 2026-10-01: build plan and design for construction (kit 1.7.0)
+
+Following Amish's 2026-09-30 approval of the build plan format, with outstanding decisions kept in a separate register, and his instruction: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations."
+
+### What was done
+
+- Kit 1.7.0 installed (`.kit/`, `.claude/commands/`); `CLAUDE.md` now matches `.kit/CLAUDE.md`.
+- `cad/src/model.py` rewritten so every physical piece is its own solid: 35 cut plates with their tabs, slots, bolt holes and T-slots, the bought parts and 95 bolt sets (163 pieces). `python cad/src/model.py --check` runs the constructability checks: every tab, slot, hole and T-slot lies on solid plate; no two pieces overlap; every piece touches the assembly; and the wheels, forks, arms, drag link, tie rod and steering column sweep from full left to full right lock without touching the fixed structure. **All pass.** `build_parts()` still returns the twelve BOM groups for the calculations, concept media and drawing.
+- `docs/decisions/0003-design-for-construction.md` (FTK-DDR-003, Draft): every change below, with the reason, made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review.
+- `cad/src/build_plan_media.py`: overview, making sketches FTK-DWG-101 to 123 (23 sheets), 14 joint close-ups and 21 assembly step pictures, all drawn from the model.
+- `docs/05-build-plan.md` (FTK-BLD-001 v0.1) and `docs/06-design-decisions.md` (FTK-DEC-001 v0.1).
+- `docs/04-calcs/sizing.py` now reads bolt, tab and node counts from the model; FTK-CAL-001 v0.3, FTK-REQ-001 v0.5 and FTK-PRC-001 v0.5 carry the new numbers. `bom/bom.csv` lines 1, 3, 4, 5, 8, 9, 10 and 11 respecified ($724, was $709). FTK-DWG-001 Rev P3; concept media regenerated (concept sheet Rev P2). `project.yaml`: `design_state: constructable`, evidence list. README: links line and "Building the prototype".
+
+### Design changes made for construction (FTK-DDR-003)
+
+1. Every plate joint made physical: tabs in slots carry the load; M8 bolts go through the face plate into a T-slot in the edge plate, with the all-metal locknut held in a window. Spine covers widened to 90 mm so their bolt holes have plate round them; ten tabs per edge in the closed box.
+2. Two stay-to-spine bolts moved off the spine's rear window; a spacer tube inside the spine on each of the four bolts.
+3. Rear dropouts opened to the stays' rear edge (they were closed holes).
+4. Chain moved to the right-hand side (standard parts are right-hand drive).
+5. Bottom bracket shell 60 mm, between the spine plates; its cups clamp the plates.
+6. Bought seat tube in two cut saddles with shaft collars; the rib at 380 mm removed; oval hole in the top cover.
+7. Yokes made the head tube clamps (cups through them); upper yoke between the spine plates, lower yoke under a new level edge of the spine; the two head tube collar plates removed.
+8. Steering column from a bought forged-crown fork with its legs cut off; drop arm bolted under the crown.
+9. Steering linkage made a parallelogram (120 mm drop arm parallel to the left steering arm): the concept's linkage locked after about 10° of right turn. The handlebar now turns as far as the left wheel.
+10. Steering arms moved below the knuckle posts (321 mm up) on clamp plates held to the inboard fork legs by two U-bolts; knuckle posts and axle beams start at 350 mm (were 290 mm); axle beams 120 mm deep.
+11. Knuckle posts rebuilt: post plates 25 mm either side of the head tube so the cup flange loads them directly (the concept's collar plates were bent by the wheel load); inner cheek a face plate; outer cheek inset; post plates step clear of the fork crown's sweep.
+12. Bulkhead window split, bulkhead bottom raised 6 mm; rails extended 20 mm behind the bulkhead, rear lower edge raised, first window reduced.
+13. Rails and axle beams joined by halving joints; beam windows moved off the crossings.
+14. Box fixed by six bolts into the rails and two into the bulkhead on 9 mm washer stacks (box 9 mm further forward); counterbores in the box sides for the knuckle post bolt heads.
+15. Front hubs 100 mm (they were drawn 106 mm in 100 mm forks).
+
+### Key results (FTK-CAL-001 v0.3)
+
+- Empty mass 71.2 kg (was 69.8 kg); gross 301.2 kg with the rated loads. **R1 and R8 are not met by 1.2 kg.**
+- **R14 not met** for a knuckle post plate (about 53 min against 30 min); spine side plate about 80 min (met).
+- R7 at risk: about 4.04 h for two people (95 bolt sets, was 116).
+- R13 not met as before (241 W); R18 over its value-engineering target as before (about $465 against $300, USD 165 over). R2 and R11 at risk; R16 not verifiable.
+- Plates 35 (was 34); true-shape nest 1,940 mm of 2,500 mm; stay buckling safety factor 2.01; knuckle post column 40 MPa (was 47 MPa); axle beam 36 MPa; tab bearing 87 MPa; tyre to knuckle post 36 mm at full lock (was 19 mm).
+- Prototype parts $724 against the $800 value-engineering target (unchanged; USD 76 under).
+
+### Proposed, awaiting Amish (all in `docs/06-design-decisions.md`)
+
+1. Review and accept the design-for-construction changes (FTK-DDR-003).
+2. Rated load and mass: cargo 148 kg (80 kg rider) and 138 kg (90 kg rider) and R8 72 kg now, and look for 1.2 kg at the FEA session (recommended).
+3. R14: allow 60 min for knuckle post plates (recommended).
+4. R7: accept 4.04 h and time it at TRL 4 (recommended).
+5. Steering lock stops: two stop bolts on the lower yoke (recommended).
+6. Steering ratio: keep 1:1 (recommended).
+7. Steering geometry study; first partner (item 10); render colour and appearance model details from the 2026-09-26 session.
+
+### Stale files (made on Amish's Mac, not regenerated here)
+
+`media/render-hero.png`, `media/render-exploded.png`, `media/render-detail.png`, `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept: the chain on the left, the head tube collar plates, steering arms at 400 mm, wider knuckle posts with windows, narrow spine covers and no visible tabs. They need updating with `/render-product`. The appearance deviations of 2026-09-26 item 2 (chain side) and item 3 (yoke-to-collar bolts) are now settled by FTK-DDR-003.
+
+### Safety concerns
+
+- The steering arms are held by U-bolt friction on the fork legs; their grip must be checked before any ride (build plan safety stops).
+- The tab-and-slot joints carry the frame loads by bearing; they need FEA and a proof load (R2).
+- Nothing stops the steering at 40° until stop bolts are added (open decision 5).
+- Earlier concerns stand: rider-only tipping at 0.24 g, stay buckling, drum fade, cut edges.
+
+### Recommended next step
+
+Amish reviews FTK-DDR-003 and the register. Then a TRL 3 refinement on paper: plate-and-joint FEA with the tab joints, the mass review for decision 2, the steering stops and a steering geometry study; and new renders on the Mac. **TRL 4 remains on hold by Amish's instruction.**
