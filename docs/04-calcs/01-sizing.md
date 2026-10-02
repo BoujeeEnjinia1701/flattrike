@@ -3,9 +3,9 @@ doc_id: FTK-CAL-001
 title: FlatTrike sizing and first-principles checks
 project: FlatTrike
 doc_type: Calculation note
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.5"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Requirement table restated for the 2026-10-02 decisions (R1 148 and 138 kg, R8 72 kg, R14 60 min for knuckle post plates); text only, no computed number changed"
 ---
 
 # FlatTrike sizing and first-principles checks
@@ -79,7 +83,7 @@ The empty trike is **71.2 kg** against the 70 kg target (R8 **not met** by 1.2 k
 | Empty trike centre of mass | 0.99 m ahead of the rear axle, 0.50 m high |
 | Axle loads, loaded | front 2.21 kN, rear 0.75 kN |
 
-Any growth in mass comes straight off the rated cargo: every kilogram added to the trike must be taken off the 150 kg and 140 kg ratings to stay inside the 300 kg class.
+On 2026-10-02 Amish accepted rating the cargo at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, and R8 at 72 kg (FTK-DDR-003, A1), so the gross is 299.2 kg in both cases; the figures in this section and `results.csv` are still computed at 150 and 140 kg until `sizing.py` is updated. Any growth in mass comes straight off the rated cargo: every kilogram added to the trike must be taken off the 150 kg and 140 kg ratings to stay inside the 300 kg class.
 
 ## 4. Riding power, gearing and assist
 
@@ -160,13 +164,13 @@ At 100 units the estimate is **$465** per trike: $74 of steel (one full sheet), 
 
 | ID | Requirement (target) | Value | Status |
 | --- | --- | --- | --- |
-| R1 | Gross 300 kg or less: 150 kg cargo with an 80 kg rider, 140 kg with a 90 kg rider | 301.2 kg in both cases | **Not met** by 1.2 kg (open decision) |
-| R8 | Empty mass 70 kg or less including the box | 71.2 kg | **Not met** by 1.2 kg (open decision) |
+| R1 | Gross 300 kg or less: 148 kg cargo with an 80 kg rider, 138 kg with a 90 kg rider (restated 2026-10-02) | 301.2 kg at 150 and 140 kg; 299.2 kg at the restated rating | Met on paper at the restated rating (FTK-DDR-003, A1) |
+| R8 | Empty mass 72 kg or less including the box (relaxed 2026-10-02) | 71.2 kg | Met on paper (FTK-DDR-003, A1) |
 | R13 | 5 % grade at 4 km/h without dismounting | 241 W at the pedals needed unassisted; 6.0 km/h with route C assist | **Not met** unassisted |
-| R14 | 30 min per plate or part; 90 min for a spine side plate | 80 min spine side plate; 53 min knuckle post plate | **Not met** for the knuckle post plates (open decision) |
+| R14 | 30 min per plate or part; 90 min for a spine side plate; 60 min for a knuckle post plate (2026-10-02) | 80 min spine side plate; 53 min knuckle post plate | Met on paper (FTK-DDR-003, A2) |
 | R18 | Production cost $300 or less at 100 units | about $465 | **Over the value-engineering target by USD 165** |
 | R2 | Frame strength and fatigue | Stresses 40 MPa or less; stay buckling SF 2.01; knuckle post column 40 MPa | At risk |
-| R7 | Two people, 4 h or less, hand tools | about 4.04 h | At risk (2 minutes over; open decision) |
+| R7 | Two people, 4 h or less, hand tools | about 4.04 h | At risk (2 minutes over; accepted 2026-10-02, timed at TRL 4) |
 | R11 | Stop from 15 km/h in 6 m; park on 10 % | 37 N·m per drum needed; fade after about 1.9 km of 5 % descent | At risk |
 | R16 | 5 years of commercial service | Up to 0.42 mm corrosion loss if unprotected | Not verifiable at TRL 3 |
 | R3 | Flat 3 mm plate only, bolted | 35 plates and 78 washers, all flat; bought tube sections cut to length | Met |

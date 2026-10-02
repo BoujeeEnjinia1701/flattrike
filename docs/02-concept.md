@@ -3,9 +3,9 @@ doc_id: FTK-PRC-001
 title: FlatTrike design precis
 project: FlatTrike
 doc_type: Design precis
-version: "0.6"
+version: "0.7"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -33,6 +33,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Decisions of 2026-10-02: design for construction accepted; rating 148 and 138 kg, R8 72 kg, R14 60 min for knuckle post plates; steering lock stops and geometry study before the first ride; partner selection rule"
 ---
 
 # FlatTrike design precis
@@ -95,8 +99,8 @@ Table 2. Key numbers and requirement status.
 | Length, width, height | 2.15 x 0.984 x 0.93 m; wheelbase 1.45 m; track 0.84 m | R9 met |
 | Turning circle, Ackermann, 40° inner lock | 5.95 m | R9 met |
 | Plates | 35 plates, 1.30 m² net, 30.5 kg; 1,940 mm of a 2,500 mm sheet in a true-shape nest | R3 and R4 met |
-| Empty mass | 71.2 kg (plates 43 %, box 18 %) | **R8 (70 kg) not met**, 1.2 kg over; open decision |
-| Gross mass | 301.2 kg (80 kg rider, 150 kg cargo; or 90 kg rider, 140 kg cargo) | **R1 not met**, 1.2 kg over; open decision |
+| Empty mass | 71.2 kg (plates 43 %, box 18 %) | R8 (72 kg, restated 2026-10-02) met on paper |
+| Gross mass | 299.2 kg (80 kg rider, 148 kg cargo; or 90 kg rider, 138 kg cargo) | R1 met on paper at the rating restated on 2026-10-02 |
 | Flat-pack crate | about 1.38 x 0.62 x 0.36 m, 0.31 m³ | R6 met |
 | Cruise on the flat at 110 W | 7.5 km/h | R12 met |
 | 5 % grade at 4 km/h | 241 W at the pedals; 6.0 km/h with route C assist | **R13 not met unassisted** |
@@ -104,7 +108,7 @@ Table 2. Key numbers and requirement status.
 | Highest plate stress (dynamic) | 40 MPa (knuckle post column); stay buckling safety factor 2.01 | R2 at risk |
 | Braking and parking | About 37 N·m per drum; fade after about 1.9 km of 5 % descent | R11 at risk |
 | Assembly | About 4.04 h for two people | R7 at risk |
-| Repair | Spine side plate about 80 min (90 min allowed); knuckle post plate about 53 min (30 min allowed) | **R14 not met** for knuckle post plates |
+| Repair | Spine side plate about 80 min (90 min allowed); knuckle post plate about 53 min (60 min allowed since 2026-10-02) | R14 met on paper |
 | Pedal-only prototype parts | $724 | R15 within the value-engineering target ($800) |
 | Production at 100 units | About $465 | **R18 over the value-engineering target by USD 165** (target $300) |
 
@@ -116,7 +120,7 @@ The TRL 3 calculations found three failures in the TRL 2 concept and one steerin
 - **Wider stay strips.** The upper stay strip is a compression member. The smaller TRL 3 window leaves a 100 mm strip with a buckling safety factor of 2.09, and only because the stay bridge braces it.
 - **Ackermann steering with a fixed box (FTK-DDR-002 item 13).** Under box steering the outer wheel moved 334 mm inward at full lock and the empty trike could tip at 5.8 km/h. Each front wheel now turns in its own fork, so the track stays at 0.84 m at any lock and the rider-only threshold is 0.24 g throughout. The flat fork plates and crown plates of v0.3 are replaced by closed knuckle posts; the box is narrower (560 mm) and its floor higher (0.47 m) so the steered tyres pass under it.
 - **Longer head tube (item 19).** The head tube grew from 150 to 200 mm, cutting the roll couple at the joint from 3.41 to 2.56 kN. With the bed fixed, the couple passes through the yokes rather than the headset bearings.
-- **Design for construction (FTK-DDR-003, open for Amish's review).** Writing the build plan made every joint physical (tabs in slots, bolts into T-slots with captive locknuts), moved two stay bolts off a window, opened the rear dropouts, put the chain on the right, made the yokes the head tube clamps, made the steering linkage a parallelogram so it no longer locks on right turns, moved the steering arms below the knuckle posts and rebuilt the posts. It added 1.4 kg.
+- **Design for construction (FTK-DDR-003, accepted by Amish on 2026-10-02).** Writing the build plan made every joint physical (tabs in slots, bolts into T-slots with captive locknuts), moved two stay bolts off a window, opened the rear dropouts, put the chain on the right, made the yokes the head tube clamps, made the steering linkage a parallelogram so it no longer locks on right turns, moved the steering arms below the knuckle posts and rebuilt the posts. It added 1.4 kg, so the cargo is now rated at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, and R8 at 72 kg (decided 2026-10-02); the final load label is set from the weighed trike.
 - **Mass and stability (FTK-DDR-001 item 8, FTK-DDR-002 items 14 to 16).** Lightening windows, a 9 mm box, a seat 110 mm further forward and a 0.84 m track did not reach the original 55 kg and 0.30 g targets. Amish accepted relaxing R8 to 70 kg and the rider-only case of R10 to 0.22 g with a cornering-speed label, and rating the cargo at 140 kg for riders over 80 kg. Larger windows in the axle beam, rails and bulkhead kept the Ackermann version at 69.8 kg before the design-for-construction changes.
 
 ## Key design choices
@@ -131,9 +135,10 @@ Items marked decided were decided by Amish on 2026-09-25 (FTK-DDR-001 and FTK-DD
 - **Wheels and brakes.** 20 in on all three positions with drum brakes; 3-speed drum hub at the rear; bought 20 in forks at the front. Decided.
 - **Electric assist.** None in the prototype. Decided. Route C, a 48 V mid-drive on a SwapCell pack, is the preferred route (decided). If built, it cites **SwapCell interface v0.3** items W (wake for hosts without CAN), C (charge while discharging) and V (latch class V1 for vehicles); the receiver meets latch class V1 and leaves the pack's back and lid faces open to air. The pack is priced once in the SwapCell repo and excluded from the FlatTrike budget.
 - **Budget.** `budget_usd` stays at $800 for the pedal-only prototype, as a hypothetical value-engineering target, not a limit. Decided.
-- **Targets.** R1 restated (150 kg cargo with a rider up to 80 kg, 140 kg with a rider up to 90 kg), R8 70 kg, R10 rider-only 0.22 g with a label, R14 90 min for the spine side plates only. Decided (FTK-DDR-002).
+- **Targets.** R1 restated (148 kg cargo with a rider up to 80 kg, 138 kg with a rider up to 90 kg), R8 72 kg, R10 rider-only 0.22 g with a label, R14 90 min for the spine side plates and 60 min for the knuckle post plates. Decided (FTK-DDR-002; FTK-DDR-003, A1 and A2, 2026-10-02).
 - **Production cost target.** $300 or less per trike at 100 units (R18), kept as a value-engineering target until the first partner supplies wholesale prices. Decided; the estimate is USD 165 over it.
-- **Partner and city.** Proposed, awaiting Amish; partners are picked per area later.
+- **Partner and city.** Decided 2026-10-02 as a selection rule: a city with dense goods delivery on narrow streets, a laser-cutting shop and a bicycle parts market. First candidate type to approach: a cycle-rickshaw or cargo-bike programme such as those ITDP has documented in South Asia; nothing is agreed.
+- **Steering.** 1:1 parallelogram ratio kept; a lock stop at each knuckle post, met by its steering arm clamp plate at 40 degrees, is fitted before the first ride. Decided 2026-10-02.
 
 ## Safety
 
@@ -144,7 +149,7 @@ Items marked decided were decided by Amish on 2026-09-25 (FTK-DDR-001 and FTK-DD
 - **Steering joints.** The head tube clamps and yoke bolts carry the rear frame's roll moment (a 2.6 kN couple at 0.5 g), and the knuckle posts carry each front wheel. The tie rod and drag link rod ends must be secured with locknuts; a loose rod end means loss of steering. Check the clamps, bolts, headsets and rod ends at every service.
 - **Braking and descents.** Drum brakes may fade after about 2 km of continuous loaded descent at 5 %. Descend slowly and in stages. The parking latch must hold the loaded trike on a slope, because a runaway trike in a market is a serious hazard.
 - **Sharp edges.** Laser- and waterjet-cut edges and corners can be sharp and burred. Deburr every plate and radius every exposed corner before painting; protect hands during assembly.
-- **Moving parts and pinch points.** The chain, chainring and spokes can catch clothing and fingers; fit a chain guard. The steered front wheels, tie rod and drag link move beneath the box and beside the rider's feet; keep hands and feet clear of the wheels and linkage.
+- **Moving parts and pinch points.** The chain, chainring and spokes can catch clothing and fingers; fit a chain guard. The steered front wheels, tie rod and drag link move beneath the box and beside the rider's feet; keep hands and feet clear of the wheels and linkage. Steering lock stops at each knuckle post (40 degrees) must be fitted, and the steering geometry studied on paper, before the first ride.
 - **Traffic visibility.** A slow, wide vehicle in mixed traffic needs reflectors, a bell and, for dusk use, lights.
 - **Coatings.** Priming, painting and powder coating involve solvents and fine particles; use ventilation and masks.
 - **Electric assist (route C only).** The lithium-ion pack needs its BMS, a fused output and safe charging, as set out in the SwapCell design. A pack that leaves its mount is a projectile with live contacts, so the receiver must meet latch class V1.
@@ -152,7 +157,7 @@ Items marked decided were decided by Amish on 2026-09-25 (FTK-DDR-001 and FTK-DD
 ## Open questions
 
 - Plate-and-joint FEA of the spine box, stays, knuckle posts, head tube clamps and bed against the EN 17860 load cases, once the standard is obtained.
-- Steering geometry beyond the ideal: caster, trail, kingpin inclination and scrub, and whether bought forks give usable self-centering on a trike.
+- Steering geometry beyond the ideal: caster, trail, kingpin inclination and scrub, and whether bought forks give usable self-centering on a trike. To be studied on paper in the FEA session, with the bought fork's rake as input, before the first ride (decided 2026-10-02).
 - Drum brake torque, hub input torque, fork and headset ratings from the makers.
 - DXF nesting by the cutting shop; the raster nest in FTK-CAL-001 leaves 310 mm spare but relies on cutting small parts from the windows of large ones.
 - Partner, city, laser-shop quotes and wholesale prices for wheels, hubs and forks (R18 waits on these).

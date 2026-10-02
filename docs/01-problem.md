@@ -3,9 +3,9 @@ doc_id: FTK-PRB-001
 title: FlatTrike problem statement
 project: FlatTrike
 doc_type: Problem statement
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.5"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Rated cargo restated (148 and 138 kg) and partner selection rule recorded, decisions of 2026-10-02"
 ---
 
 # FlatTrike problem statement
@@ -66,7 +70,7 @@ The gap FlatTrike addresses is a frame that is precise without a jig and without
 
 - Garage-buildable pedal-only prototype for about $800 USD in parts (`project.yaml`); the optional electric assist and any SwapCell pack are outside this budget (decided by Amish, 2026-09-25, FTK-DDR-001).
 - Production cost of $300 or less per trike at 100 units, so that the design can compete on value with local workshop tricycles (decided by Amish, 2026-09-25; FTK-REQ-001 R18). The target is kept until the first partner supplies wholesale prices (FTK-DDR-002).
-- Gross mass of 300 kg or less, so the rated cargo is 150 kg with a rider up to 80 kg and 140 kg with a rider up to 90 kg (decided by Amish, 2026-09-25, FTK-DDR-002).
+- Gross mass of 300 kg or less, so the rated cargo is 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg (decided by Amish, 2026-09-25, FTK-DDR-002, and restated for the constructable design on 2026-10-02, FTK-DDR-003 A1).
 - Every steel part is cut from flat sheet by laser or waterjet from open files. No welding.
 - Joints are bolted with locknuts and can be taken apart and rebuilt.
 - Moving parts (wheels, hubs, brakes, drivetrain, headset, seat) are standard bicycle parts available in regional markets.
@@ -94,9 +98,9 @@ No open, commercially usable cargo tricycle cut entirely from flat plate was fou
 
 ## Open questions
 
-- Which partner organization and which city first (for example a vendor union, a livelihood NGO or a university engineering department)? Proposed, awaiting Amish. By the portfolio rule decided on 2026-09-25, co-design partners are picked per area later.
+- Which partner organization and which city first (for example a vendor union, a livelihood NGO or a university engineering department)? By the portfolio rule decided on 2026-09-25, co-design partners are picked per area later. Selection rule decided 2026-10-02: a city with dense goods delivery on narrow streets, a laser-cutting shop and a bicycle parts market; first candidate type to approach, a cycle-rickshaw or cargo-bike programme such as those ITDP has documented in South Asia.
 - The layout is decided as a front loader (FTK-DDR-001). Do vendors in the partner city accept a front loader rather than the common rear-loading *thela*? This must be checked in co-design before the design is frozen.
-- What payload do users actually carry, including routine overloading, and what is the steepest regular grade on their routes? The cargo rating now depends on the rider's weight (150 kg up to 80 kg, 140 kg up to 90 kg); co-design must check that vendors can work with that.
+- What payload do users actually carry, including routine overloading, and what is the steepest regular grade on their routes? The cargo rating now depends on the rider's weight (148 kg up to 80 kg, 138 kg up to 90 kg); co-design must check that vendors can work with that.
 - Can laser shops in the target city cut 3 mm plate to the needed tolerance at the assumed price?
 - Can the $300 production target (FTK-REQ-001 R18) be reached with wholesale bicycle parts? FTK-CAL-001 v0.2 estimates about $456 per trike at 100 units with Ackermann steering.
 

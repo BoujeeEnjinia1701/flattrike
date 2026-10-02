@@ -3,9 +3,9 @@ doc_id: FTK-DDR-003
 title: FlatTrike design for construction
 project: FlatTrike
 doc_type: Design decision record
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,12 +17,16 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Accepted by Amish on 2026-10-02, including the recommendations for A1 to A3"
 ---
 
 # 0003: Design for construction
 
 - **Date:** 2026-10-01
-- **Status:** Draft. The changes in Table 1 were made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review. The items in Table 3 change a requirement or the rated load and are **Proposed, awaiting Amish**.
+- **Status:** accepted. Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." This covers every change in Tables 1 and 2 and the recommendations for A1 to A3 in Table 3, which are now decided as recommended and recorded in the design decisions register (FTK-DEC-001).
 
 ## Context
 
@@ -67,16 +71,17 @@ The changes keep what the trike does: the same layout, wheelbase, track, wheels,
 | Drawings | FTK-DWG-001 Rev P3; making sketches FTK-DWG-101 to 123 added. | Follows the model. |
 | Renders | `media/render-*.png`, `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept (chain on the left, collar plates, steering arms at 400 mm, wider knuckle posts). They need updating on Amish's Mac. | Not regenerated here. |
 
-*Table 3. Proposed, awaiting Amish.*
+*Table 3. Items that change a requirement or the rated load: proposed, then accepted by Amish as recommended on 2026-10-02.*
 
 | # | Question | Options | Recommendation |
 | --- | --- | --- | --- |
-| A1 | R1 and R8 now fail by 1.2 kg: empty 71.2 kg against 70 kg, gross 301.2 kg against 300 kg with the rated loads. | (a) rate the cargo at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, keeping the 300 kg class, and relax R8 to 72 kg; (b) keep 150 and 140 kg and look for 1.2 kg (lightening windows in the knuckle post arms and yokes, about 0.5 kg, and a lighter box); (c) both. | (c): adopt (a) now so the stated rating is true, and try (b) in the FEA session. |
-| A2 | R14: a knuckle post plate now takes about 53 min to replace against 30 min. | (a) allow 60 min for knuckle post plates, as for the spine side plates; (b) redesign the post so a plate comes out without the collar plates. | (a). |
-| A3 | R7: assembly is about 4.04 h against 4 h. | (a) accept, time it at TRL 4; (b) relax R7 to 4.5 h. | (a): the estimate is within its own accuracy of the target. |
+| A1 | R1 and R8 now fail by 1.2 kg: empty 71.2 kg against 70 kg, gross 301.2 kg against 300 kg with the rated loads. | (a) rate the cargo at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, keeping the 300 kg class, and relax R8 to 72 kg; (b) keep 150 and 140 kg and look for 1.2 kg (lightening windows in the knuckle post arms and yokes, about 0.5 kg, and a lighter box); (c) both. | (c): adopt (a) now so the stated rating is true, and try (b) in the FEA session; the final load label is set from the weighed trike. Accepted 2026-10-02. |
+| A2 | R14: a knuckle post plate now takes about 53 min to replace against 30 min. | (a) allow 60 min for knuckle post plates, as for the spine side plates; (b) redesign the post so a plate comes out without the collar plates. | (a). Accepted 2026-10-02. |
+| A3 | R7: assembly is about 4.04 h against 4 h. | (a) accept, time it at TRL 4; (b) relax R7 to 4.5 h. | (a): the estimate is within its own accuracy of the target. Accepted 2026-10-02. |
 
 ## Consequences
 
 - `design_state: constructable` in `project.yaml`. The build plan FTK-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`); the open items are in the design decisions register FTK-DEC-001.
 - Requirement status (FTK-CAL-001 v0.3): R1 and R8 not met by 1.2 kg (A1); R7 at the limit (A3); R14 not met for the knuckle post plates (A2); R13 not met as before and R18 over its value-engineering target as before; R2 and R11 at risk; R16 not verifiable at TRL 3.
+- With A1 accepted, the rating is 148 kg of cargo with a rider up to 80 kg or 138 kg with a rider up to 90 kg (gross 299.2 kg) and R8 is 72 kg, so R1 and R8 are met on paper; with A2 accepted, R14 allows 60 min for a knuckle post plate and is met on paper (53 min); with A3 accepted, R7 stays at risk and is timed at TRL 4. FTK-CAL-001's script still states the old targets until it is updated (register, follow-up actions in `docs/REVIEW.md`).
 - Parts to confirm when bought are listed in the register: the steering fork with a forged crown, the tall quill stem, the rod ends' misalignment, the hub axle lengths and the U-bolts' grip on the fork legs.

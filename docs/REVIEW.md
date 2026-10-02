@@ -310,3 +310,40 @@ Following Amish's 2026-09-30 approval of the build plan format, with outstanding
 ### Recommended next step
 
 Amish reviews FTK-DDR-003 and the register. Then a TRL 3 refinement on paper: plate-and-joint FEA with the tab joints, the mass review for decision 2, the steering stops and a steering geometry study; and new renders on the Mac. **TRL 4 remains on hold by Amish's instruction.**
+
+## Session 2026-10-02: open decisions decided
+
+On 2026-10-02 Amish approved the recommendations for every open decision: "i approve your recommendations for all 555 open decisions." The 10 open decisions of the design decisions register are now in its Decisions made table, dated 2026-10-02.
+
+FTK-DDR-003 (design for construction) is accepted, with A1 to A3 decided as recommended. The cargo rating is restated at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, R8 at 72 kg and R14 at 60 min for a knuckle post plate, so R1, R8 and R14 are met on paper; R13 stays not met without assist and R18 over its value-engineering target. The calculation script still computes at the old rating until it is updated (follow-up 1). Item 5 was decided on a changed recommendation: steering lock stops at the knuckle posts rather than through-bolts in the lower yoke; the stop and the steering geometry study are now in safety stop S6 of the build plan.
+
+### Documents changed
+
+- `docs/06-design-decisions.md` (FTK-DEC-001 v0.3)
+- `docs/decisions/0003-design-for-construction.md` (FTK-DDR-003 v0.3)
+- `docs/01-problem.md` (FTK-PRB-001 v0.5)
+- `docs/02-concept.md` (FTK-PRC-001 v0.7)
+- `docs/03-requirements.md` (FTK-REQ-001 v0.7)
+- `docs/04-calcs/01-sizing.md` (FTK-CAL-001 v0.5)
+- `docs/05-build-plan.md` (FTK-BLD-001 v0.3)
+- `README.md` (not a controlled document)
+
+### Follow-up actions to carry approved decisions into the design
+
+1. Decision 2: Calculations: change the rated cargo in `docs/04-calcs/sizing.py` to 148 kg (80 kg rider) and 138 kg (90 kg rider) and R8 to 72 kg, and rerun so the mass, tipping and braking figures and `results.csv` use the restated rating and statuses.
+2. Decision 2: Model and calculations: try lightening windows in the knuckle post arms and yokes (about 0.5 kg) and a lighter box in the FEA session; set the final load label from the weighed trike.
+3. Decision 3: Calculations: change R14's target in `sizing.py` to 60 min for a knuckle post plate.
+4. Decision 5: Model: add a steering lock stop at each knuckle post that its steering arm clamp plate meets at 40 degrees, with a constructability check that the stop is met at 40 degrees on both sides.
+5. Decision 5: Drawings: add a making sketch for the lock stop and show it on FTK-DWG-001.
+6. Decision 5: Build plan pictures: show the lock stops in the knuckle post making sketch and in steps 14 and 17, and list the stop in the build plan's parts (review flag 2).
+7. Decision 5: BOM: add the two lock stops (and their bolts) to the knuckle post line.
+8. Decision 7: Calculations: add a steering geometry study (caster, trail, kingpin inclination, scrub radius, self-centring) to FTK-CAL-001 in the FEA session, with the bought fork's rake as input, before the first ride.
+9. Decision 1: Calculations: compute the turning circle from the built linkage (31.3 degrees at the outer wheel) instead of ideal Ackermann (review flag 1).
+10. Decision 1: Renders: regenerate the photoreal renders, `media/card.png` and `media/social-preview.png` on Amish's Mac to show the accepted design for construction (items 9 and 10 follow with them).
+
+### Points found in the review
+
+1. The turning circle calculation still uses ideal Ackermann, while the built linkage gives 31.3 degrees at the outer wheel against 29.5 degrees ideal.
+2. Item 5 says the stop is 'a part to add before the first ride, not before the build'; since it is safety-critical, it should be in the build plan's parts list.
+
+No CAD model, BOM quantity or price, calculation result or picture was changed. TRL stays at 3; TRL 4 remains on hold.

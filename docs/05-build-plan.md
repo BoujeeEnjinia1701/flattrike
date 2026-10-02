@@ -3,9 +3,9 @@ doc_id: FTK-BLD-001
 title: FlatTrike prototype build plan
 project: FlatTrike
 doc_type: Build plan
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,6 +17,10 @@ revisions:
     date: '2026-10-01'
     author: Amish Chadha
     change: Budget treated as a value-engineering target
+  - version: "0.3"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: "Decisions of 2026-10-02: rated load 148 and 138 kg and 72 kg empty-mass limit; steering lock stops and steering geometry study added to safety stop S6 and the steering check. Pictures unchanged"
 ---
 
 # FlatTrike prototype build plan
@@ -54,7 +58,7 @@ The concept showed what the trike does, but its plates were drawn as loose shape
 | Bulkhead, rails, axle beams | Yoke met a window; rails and beams passed through each other | Bulkhead window split; rails extended; halving joints (Figure 23) | Every joint has plate round it |
 | Box | No fixing | Eight bolts to the bed, standing 9 mm off the bulkhead on spacer washers (Figure 38) | Clears the bolt heads behind it |
 
-The changes add 1.4 kg: the empty trike is 71.2 kg. How that sits with the 70 kg and 300 kg limits is an open decision in the register.
+The changes add 1.4 kg: the empty trike is 71.2 kg. The cargo is therefore rated at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, keeping the 300 kg class, and the empty-mass limit is 72 kg; the final load label is set from the weighed trike.
 
 ## 3. Making the components
 
@@ -640,9 +644,9 @@ These are the checks a TRL 4 test report would record; this plan only lists them
 | --- | --- | --- | --- |
 | Joints closed | R3, R7 | Look at every tab and bolt; record the time the build took | Every tab seated; every bolt at 25 N·m with a locknut; build time recorded against 4 h |
 | Frame square | R2 | Diagonals of the spine and bed; wheel alignment with a string line | Diagonals within 3 mm; front wheels parallel to the rear within 2 mm over their diameter |
-| Steering | R9, R10 | Turn lock to lock; measure each wheel's angle; mark the turning circle on the ground | Nothing touches; inner lock 40°; outer tyre circle 6 m or less |
-| Empty mass | R8 | Weigh the trike with its box | Recorded against 70 kg (71.2 kg estimated) |
-| Proof load | R2 | Twice the rated cargo (300 kg of sandbags) in the box, rider seat loaded with 80 kg, for 10 minutes | No permanent set: box floor and frame heights back within 1 mm after unloading; no tab moved in its slot |
+| Steering | R9, R10 | Turn lock to lock; measure each wheel's angle; mark the turning circle on the ground | Nothing touches; each steering arm clamp plate meets its knuckle post stop at 40°; outer tyre circle 6 m or less |
+| Empty mass | R8 | Weigh the trike with its box | Recorded against 72 kg (71.2 kg estimated); sets the final load label |
+| Proof load | R2 | At least twice the rated cargo (300 kg of sandbags, the R2 proof load of FTK-CAL-001) in the box, rider seat loaded with 80 kg, for 10 minutes | No permanent set: box floor and frame heights back within 1 mm after unloading; no tab moved in its slot |
 | Parking brake | R11 | Loaded, on a 10 % slope, front pair latched | Does not move |
 | Tipping | R10 | Tilt table, rider-only ballast | Tips at 0.22 g or more |
 | Box | R17 | Lid height and inside volume | Lid 0.75 to 0.95 m; 150 L or more; locks |
@@ -656,7 +660,7 @@ Stop at each point. Carry on only when everything listed is true.
 - **S3. Before the trike stands on its wheels.** Every M8 bolt tightened to 25 N·m with a locknut; every rod end bolt has its locknut; the U-bolts are tight; the headsets have no play.
 - **S4. Before anyone sits on it.** The steering turns lock to lock without touching anything; all three brakes stop the wheel by hand; the parking latch holds; the chain guard is on.
 - **S5. Before any load goes in the box.** S3 and S4 passed; the proof load is applied with the trike on a level floor, chocked, with nobody on it or beside the box.
-- **S6. Before the first ride (outside this plan).** The proof load is passed with no permanent set; the rider rides slowly on closed private ground, empty first, keeping to 6 km/h in full-lock turns; never on a public road until R2 is verified.
+- **S6. Before the first ride (outside this plan).** A steering lock stop is fitted at each knuckle post, met by its steering arm clamp plate at 40°; the steering geometry study (caster, trail, kingpin inclination, scrub, self-centring) is done on paper; the proof load is passed with no permanent set; the rider rides slowly on closed private ground, empty first, keeping to 6 km/h in full-lock turns; never on a public road until R2 is verified.
 
 ## 7. Tools, skills and workspace
 

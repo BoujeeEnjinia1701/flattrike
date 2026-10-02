@@ -3,9 +3,9 @@ doc_id: FTK-DEC-001
 title: FlatTrike design decisions register
 project: FlatTrike
 doc_type: Design decisions register
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,6 +17,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Amish approved the recommendations for all open decisions 1 to 10 on 2026-10-02 (FTK-DDR-003 accepted; rating 148 and 138 kg, R8 72 kg, R14 60 min for knuckle post plates; steering stops at the knuckle posts); moved to decisions made"
 ---
 
 # FlatTrike design decisions register
@@ -25,24 +29,11 @@ Every design decision still to be made, and every decision made, in one place. E
 
 ## Open decisions
 
-*Table 1. Open decisions, all Proposed, awaiting Amish.*
-
-| # | Decision needed | Options | Recommendation | Affects in the build | Source |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Review the design-for-construction changes P1 to P15 (joints, stay bolts, dropouts, chain side, bottom bracket, seat tube, yokes as head tube clamps, steering column, parallelogram steering linkage, steering arms under the knuckle posts, knuckle posts, bulkhead, halving joints, box fixing, front hub width) | Accept; or reject single changes | Accept: each one is needed for the trike to be built and none changes what it does | The whole build plan follows them | FTK-DDR-003, Table 1 |
-| 2 | Rated load and empty mass: the construction changes add 1.4 kg, so R1 and R8 fail by 1.2 kg (empty 71.2 kg, gross 301.2 kg) | (a) cargo 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, R8 72 kg; (b) find 1.2 kg (windows in the knuckle post arms and yokes, a lighter box); (c) both | (c): (a) now, so the rating is true; (b) in the FEA session | The load label and the first load check | FTK-DDR-003, A1 |
-| 3 | Repair time of a knuckle post plate: about 53 min against R14's 30 min, because both collar plates and the headset cups come off to release it | (a) allow 60 min for knuckle post plates; (b) redesign the post | (a) | None now | FTK-DDR-003, A2 |
-| 4 | Assembly time about 4.04 h against R7's 4 h | (a) accept and time it at TRL 4; (b) relax R7 to 4.5 h | (a) | None | FTK-DDR-003, A3 |
-| 5 | Steering lock stops: nothing in the model stops the steering at 40° | (a) two M8 stop bolts through the lower yoke that the drop arm meets at full lock; (b) stops on the knuckle posts that the steering arm clamp plates meet | (a): one pair of stops sets both wheels through the linkage | A part to add before the first ride, not before the build | Build plan work |
-| 6 | Steering ratio: the parallelogram drop arm turns the left wheel 1:1 with the handlebar (the concept's linkage would have been about 1.7:1 had it worked) | (a) keep 1:1; (b) a longer drop arm for a slower ratio, with the linkage rechecked | (a): a direct ratio suits a low-speed load carrier and keeps the linkage simple | Drop arm length | FTK-DDR-003, P9 |
-| 7 | Steering geometry beyond the ideal: caster, trail, kingpin inclination and self-centring with bought forks | Study at the FEA session; or test at TRL 4 | Study on paper first | None now | FTK-PRC-001, open questions |
-| 8 | First partner organization and city | Pick per area later (portfolio rule) | None (partners are picked per area later) | Wholesale prices (R18), laser shop | FTK-DDR-002, item 10 |
-| 9 | Render frame colour: teal and graphite powder coat in the photoreal renders; BOM line 13 leaves the finish open | Accept as the render finish only; or choose now | Accept for renders; choose the coating with the partner | None | Review note 2026-09-26, item 1 |
-| 10 | Appearance model details: bent fork legs, round tyre section, box hardware positions, a flat-cut ring chain guard, brake cable runs in the context group | Accept each as appearance only; or change | Accept; the renders are redone anyway after FTK-DDR-003 | None | Review note 2026-09-26, items 4 to 8 |
+None. All open decisions were decided on 2026-10-02.
 
 ## To confirm when parts are bought
 
-*Table 2. Items to confirm when parts are bought.*
+*Table 1. Items to confirm when parts are bought.*
 
 | # | What to confirm | Why it matters | Source |
 | --- | --- | --- | --- |
@@ -69,7 +60,7 @@ Value-engineering target: USD 800 (a hypothetical control target, not a limit). 
 
 ## Decisions made
 
-*Table 3. Decisions made.*
+*Table 2. Decisions made.*
 
 | Date | Decision | Decided by | Record |
 | --- | --- | --- | --- |
@@ -79,3 +70,13 @@ Value-engineering target: USD 800 (a hypothetical control target, not a limit). 
 | 2026-09-25 | TRL 4 on hold; the repo stays at TRL 3 | Amish's instruction | `project.yaml`; review note |
 | 2026-09-26 | FlatTrike in the first batch of product renders | Amish | Review note, 2026-09-26 |
 | 2026-09-30 | Write the illustrated build plan and make the design physically buildable as it is drawn; keep open decisions out of the build plan, in this register | Amish: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." and "don't log outstanding decisions in this build plan - that is not the place for it. that should be in a separate design document logged and named as such" | FTK-DDR-003 (Draft, open for review); this register |
+| 2026-10-02 | Design for construction accepted: the changes P1 to P15 of FTK-DDR-003 and their knock-on changes, as made | Amish: "i approve your recommendations for all 555 open decisions." | FTK-DDR-003, Tables 1 and 2 |
+| 2026-10-02 | Rated load (option c): rated now at 148 kg of cargo with a rider up to 80 kg, or 138 kg with a rider up to 90 kg, and R8 relaxed to 72 kg; the lightening windows are tried in the FEA session, and the final load label is set from the weighed trike | Amish: "i approve your recommendations for all 555 open decisions." | FTK-DDR-003, A1 |
+| 2026-10-02 | Repair time: 60 min allowed for a knuckle post plate (R14) | Amish: "i approve your recommendations for all 555 open decisions." | FTK-DDR-003, A2 |
+| 2026-10-02 | Assembly time: about 4.04 h accepted against R7's 4 h, timed at TRL 4 | Amish: "i approve your recommendations for all 555 open decisions." | FTK-DDR-003, A3 |
+| 2026-10-02 | Steering lock stops (option b, changed from a): a stop at each knuckle post that its steering arm clamp plate meets at 40 degrees, fitted before the first ride | Amish: "i approve your recommendations for all 555 open decisions." | Build plan work; this register |
+| 2026-10-02 | Steering ratio: the 1:1 parallelogram linkage is kept | Amish: "i approve your recommendations for all 555 open decisions." | FTK-DDR-003, P9 |
+| 2026-10-02 | Steering geometry: caster, trail, kingpin inclination, scrub radius and self-centring are studied on paper in the FEA session, with the bought fork's rake as input, before the first ride | Amish: "i approve your recommendations for all 555 open decisions." | FTK-PRC-001, open questions |
+| 2026-10-02 | First partner and city: kept open under the portfolio rule, chosen as a city with dense goods delivery on narrow streets, a laser-cutting shop and a bicycle parts market. First candidate type to approach: a cycle-rickshaw or cargo-bike programme such as those the Institute for Transportation and Development Policy (ITDP) has documented in South Asia | Amish: "i approve your recommendations for all 555 open decisions." | FTK-DDR-002, item 10 |
+| 2026-10-02 | Render frame colour: teal and graphite for the renders only; the coating is chosen with the partner | Amish: "i approve your recommendations for all 555 open decisions." | Review note 2026-09-26, item 1 |
+| 2026-10-02 | Appearance model details (bent fork legs, round tyre section, box hardware positions, flat-cut chain guard, brake cable runs) accepted as appearance only | Amish: "i approve your recommendations for all 555 open decisions." | Review note 2026-09-26, items 4 to 8 |
