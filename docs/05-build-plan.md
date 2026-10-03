@@ -3,7 +3,7 @@ doc_id: FTK-BLD-001
 title: FlatTrike prototype build plan
 project: FlatTrike
 doc_type: Build plan
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -21,6 +21,10 @@ revisions:
     date: '2026-10-02'
     author: Amish Chadha
     change: "Decisions of 2026-10-02: rated load 148 and 138 kg and 72 kg empty-mass limit; steering lock stops and steering geometry study added to safety stop S6 and the steering check. Pictures unchanged"
+  - version: "0.4"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: "Steering lock stops carried into the design: new making sketch FTK-DWG-124 and section 3.24; knuckle post plate, clamp plate, joint and step pictures 13 to 21 redrawn; figures from 37 renumbered; masses, bolt counts and turning circle from FTK-CAL-001 v0.6"
 ---
 
 # FlatTrike prototype build plan
@@ -33,13 +37,13 @@ revisions:
 
 *Figure 1. Every component pulled apart and numbered in build order. The bolts that join the plates are left out of this picture.*
 
-The prototype is a front-loading cargo tricycle: a steel frame of 35 flat plates, cut from one 1,250 x 2,500 x 3 mm sheet of mild steel by a laser or waterjet shop, carrying a plywood box over two steered 20 in front wheels, with the rider over a 20 in rear wheel with a 3-speed hub. Figure 1 shows the 25 groups of parts in the order you make or fit them. The plates join by tabs that sit in slots, held closed by M8 bolts whose locknuts sit in windows cut in the plates; nothing is welded or bent. The other made parts are 78 spacer washers cut from the same sheet, four spacer tubes and three tube lengths sawn from bought steel tube, a bought fork cut down for the steering column, and a plywood box made by a carpenter. Everything else is bought bicycle parts: wheels, forks, headsets, bottom bracket, drivetrain, brakes, seatpost, saddle and bars. The work is deburring cut plate, sawing and facing tube, drilling a fork crown and the box, pressing headset cups, and ordinary bicycle mechanics. The parts cost about $724, from the bill of materials, against a value-engineering target of $800.
+The prototype is a front-loading cargo tricycle: a steel frame of 37 flat plates, cut from one 1,250 x 2,500 x 3 mm sheet of mild steel by a laser or waterjet shop, carrying a plywood box over two steered 20 in front wheels, with the rider over a 20 in rear wheel with a 3-speed hub. Figure 1 shows the 26 groups of parts in the order you make or fit them. The plates join by tabs that sit in slots, held closed by M8 bolts whose locknuts sit in windows cut in the plates; nothing is welded or bent. The other made parts are 78 spacer washers cut from the same sheet, four spacer tubes and three tube lengths sawn from bought steel tube, a bought fork cut down for the steering column, and a plywood box made by a carpenter. Everything else is bought bicycle parts: wheels, forks, headsets, bottom bracket, drivetrain, brakes, seatpost, saddle and bars. The work is deburring cut plate, sawing and facing tube, drilling a fork crown and the box, pressing headset cups, and ordinary bicycle mechanics. The parts cost about $728, from the bill of materials, against a value-engineering target of $800.
 
 > **Safety:** The finished trike is a vehicle of about 300 kg loaded with exposed moving parts. Laser-cut edges are sharp: deburr every plate and wear cut-resistant gloves when handling them. Keep fingers clear of the steering linkage, wheels and chain whenever the trike is moved. Do not ride it, load it or let anyone else use it until the safety stops of section 6 are passed, and never on a public road before the frame's strength is verified.
 
 ## 2. What changed to make it buildable
 
-The concept showed what the trike does, but its plates were drawn as loose shapes with no joints, and checking the model found parts that cut through each other, a steering linkage that locked and steering arms that hit the frame. Each change below keeps what the trike does. All of them are recorded in decision record FTK-DDR-003, open for Amish's review.
+The concept showed what the trike does, but its plates were drawn as loose shapes with no joints, and checking the model found parts that cut through each other, a steering linkage that locked and steering arms that hit the frame. Each change below keeps what the trike does. All of them are recorded in decision record FTK-DDR-003, accepted by Amish on 2026-10-02.
 
 *Table 1. Changes from the concept.*
 
@@ -56,9 +60,10 @@ The concept showed what the trike does, but its plates were drawn as loose shape
 | Steering arms | No fixing; they swung into the knuckle posts at lock | Below the posts, clamped to the inboard fork leg by two U-bolts (Figure 36); posts and axle beams start 60 mm higher | Clears the frame from lock to lock |
 | Knuckle posts | Collar plates bent by the wheel load; flush corners with no room for bolts | Post plates 25 mm either side of the head tube, so the load goes straight into them (Figure 30); proper slots at every corner (Figure 26) | Strong enough and buildable |
 | Bulkhead, rails, axle beams | Yoke met a window; rails and beams passed through each other | Bulkhead window split; rails extended; halving joints (Figure 23) | Every joint has plate round it |
-| Box | No fixing | Eight bolts to the bed, standing 9 mm off the bulkhead on spacer washers (Figure 38) | Clears the bolt heads behind it |
+| Steering lock | Set only by the tyres' clearance under the box | A lock stop under each knuckle post that the steering arm clamp plate meets at 40° (Figure 37; decided on 2026-10-02) | The wheels cannot be turned into the box or the posts |
+| Box | No fixing | Eight bolts to the bed, standing 9 mm off the bulkhead on spacer washers (Figure 39) | Clears the bolt heads behind it |
 
-The changes add 1.4 kg: the empty trike is 71.2 kg. The cargo is therefore rated at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, keeping the 300 kg class, and the empty-mass limit is 72 kg; the final load label is set from the weighed trike.
+The changes add 1.4 kg, and the lock stops with their longer clamp plates about 0.5 kg more: the empty trike is about 71.7 kg. The cargo is therefore rated at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, keeping the 300 kg class, and the empty-mass limit is 72 kg; the final load label is set from the weighed trike.
 
 ## 3. Making the components
 
@@ -274,7 +279,7 @@ The 120 mm knuckle head tubes sit the same way between their collar plates (Figu
 
 *Figure 19. Nine washers fill each 27 mm gap between spine and stay; the tube inside the spine stops the bolt squeezing it.*
 
-Stacks of three go behind the box (Figure 38).
+Stacks of three go behind the box (Figure 39).
 
 **Check before moving on.** Each tube is 60.0 mm long, give or take 0.2 mm.
 
@@ -336,7 +341,7 @@ Stacks of three go behind the box (Figure 38).
 
 **What it is and what it is made from.** Each knuckle post, which holds a front wheel's fork, is a box of two L-shaped plates and two cheeks, with a collar plate under and over the knuckle head tube. 3 mm steel; the post plate is a column 52 mm wide and 325 mm tall with an arm 132 mm wide and 120 mm deep at the top.
 
-**How to make it.** Deburr. All four are the same; turn two over for the right-hand post.
+**How to make it.** Deburr. All four are the same; turn two over for the right-hand post. The two slots and the hole low on the column take the lock stop (section 3.24); they are cut in all four plates but used only on the front one of each post.
 
 **How it fits the parts next to it.**
 
@@ -356,7 +361,7 @@ Stacks of three go behind the box (Figure 38).
 
 **How to make it.** Deburr; turn one over for the right-hand post.
 
-**How it fits the parts next to it.** The post plates and the axle beams tab into it (Figure 26). It stands 3 mm from the box side; the two bolt heads above the box floor sit in counterbores in the box sides (section 3.24).
+**How it fits the parts next to it.** The post plates and the axle beams tab into it (Figure 26). It stands 3 mm from the box side; the two bolt heads above the box floor sit in counterbores in the box sides (section 3.25).
 
 **Check before moving on.** The beam slots line up with the beams' end tabs.
 
@@ -452,7 +457,7 @@ The drop arm points back and to the right, parallel to the left steering arm and
 
 *Figure 35. Steering arm clamp plate making sketch (FTK-DWG-119).*
 
-**What it is and what it is made from.** A small plate that clamps each steering arm to its fork leg. 3 mm steel, 48 x 40 mm.
+**What it is and what it is made from.** A small plate that clamps each steering arm to its fork leg. 3 mm steel, 93 x 40 mm. Its long end reaches inboard so that, at full lock, its front inner corner meets the lock stop (section 3.24).
 
 **How to make it.** Deburr.
 
@@ -462,15 +467,29 @@ The drop arm points back and to the right, parallel to the left steering arm and
 
 *Figure 36. Two M6 U-bolts go round the leg from the front and pull the clamp plate against it; the arm tabs and bolts into the plate. The drag link's rod end is under the left arm and the tie rod's on top.*
 
-The arm sits 321 mm up, under the knuckle post, and turns with the wheel.
+The arm sits 321 mm up, under the knuckle post, and turns with the wheel. The red fin ahead of the clamp plate is the lock stop.
 
 **Check before moving on.** The U-bolts' legs pass through the plate without forcing.
 
-### 3.24 Cargo box
+### 3.24 Steering lock stops (make 2)
 
-![Figure 37. Drilling sketch of the cargo box](../cad/drawings/FTK-DWG-123.png)
+![Figure 37. Making sketch of the steering lock stop](../cad/drawings/FTK-DWG-124.png)
 
-*Figure 37. Cargo box drilling sketch (FTK-DWG-123).*
+*Figure 37. Steering lock stop making sketch (FTK-DWG-124). The grey clamp plate and steering arm are drawn at full lock, where the clamp plate meets the stop.*
+
+**What it is and what it is made from.** An upright fin under the front of each knuckle post that stops the steering at full lock, so the tyres cannot be turned into the box or the posts. 3 mm steel, 77 x 130 mm: an upper part and a 30 mm wide leg that hangs down at the front.
+
+**How to make it.** Deburr. Both are the same; turn one over for the right-hand post.
+
+**How it fits the parts next to it.** Two tabs on its back edge go into the slots low on the front knuckle post plate, and one M8 bolt through the post plate screws into a T-slot in the fin (step 13). The fin stands fore and aft. When the inner wheel reaches 40°, the front inner corner of that wheel's steering arm clamp plate meets the back edge of the fin's leg, so the load runs along the fin in its own plane (Figure 36).
+
+**Check before moving on.** The fin stands square to the post plate. After step 17, turn to full lock each way: each clamp plate meets its stop, and the tyres clear the box and the posts.
+
+### 3.25 Cargo box
+
+![Figure 38. Drilling sketch of the cargo box](../cad/drawings/FTK-DWG-123.png)
+
+*Figure 38. Cargo box drilling sketch (FTK-DWG-123).*
 
 **What it is and what it is made from.** A lockable exterior plywood box, 820 x 560 x 360 mm outside, 12 mm floor, 9 mm walls and lid, made by a carpenter. The lid is the counter.
 
@@ -484,18 +503,18 @@ The arm sits 321 mm up, under the knuckle post, and turns with the wheel.
 
 **How it fits the parts next to it.**
 
-![Figure 38. Joint 13: box to bulkhead and rail](05-build-plan/joint-13.png)
+![Figure 39. Joint 13: box to bulkhead and rail](05-build-plan/joint-13.png)
 
-*Figure 38. Three spacer washers keep the box 9 mm off the bulkhead, clear of the yoke bolt heads; floor bolts go down into the rails.*
+*Figure 39. Three spacer washers keep the box 9 mm off the bulkhead, clear of the yoke bolt heads; floor bolts go down into the rails.*
 
 **Check before moving on.** The box sits flat on the rails and beams with the lid closed and locked.
 
-### 3.25 Bought components
+### 3.26 Bought components
 
 Buy to specification, not brand. Line numbers are those of the bill of materials.
 
 - **Plate (lines 1 to 4).** One 1,250 x 2,500 x 3 mm sheet of S235JR or A36 steel, cut by a laser or waterjet shop from the model's outlines with the washers in the windows.
-- **Fasteners (lines 4 and 5).** 95 sets of M8 class 8.8 zinc-plated bolts with washers and all-metal prevailing-torque locknuts: 78 at 25 mm for the tab joints, eight at 35 mm for the box, four at 140 mm for the stay bolts, two at 45 mm for the drop arm and three at 40 mm for the rod ends; four M6 U-bolts for a 22 mm fork leg.
+- **Fasteners (lines 3, 4 and 5).** 97 sets of M8 class 8.8 zinc-plated bolts with washers and all-metal prevailing-torque locknuts: 80 at 25 mm for the tab joints and the two lock stops, eight at 35 mm for the box, four at 140 mm for the stay bolts, two at 45 mm for the drop arm and three at 40 mm for the rod ends; four M6 U-bolts for a 22 mm fork leg.
 - **Steering (line 5).** Three 1 1/8 in threaded headsets; two 20 in steel forks for 100 mm hubs; one 1 1/8 in threaded fork with a forged crown for the column; a tall quill stem (about 350 mm quill); three M8 rod ends with at least ±10° misalignment, on a drag link and a tie rod.
 - **Front wheels (line 6).** Two 20 x 2.125 in (ISO 406) wheels with drum brake hubs 100 mm over locknuts, hub bodies 90 mm across or less.
 - **Rear wheel (line 7).** 20 x 2.125 in with a 3-speed drum brake hub, 120 mm over locknuts, 24T sprocket and shifter.
@@ -584,13 +603,13 @@ Push each beam plate up from below so its slots straddle both rails and the rail
 
 ![Step 13](05-build-plan/step-13.png)
 
-Post plates into the inner cheek, outer cheek between the plates, collar plates on top and bottom, all bolted finger tight; slide the 120 mm head tube in between the collar plates and press its cups in. Then tighten.
+Post plates into the inner cheek, outer cheek between the plates, collar plates on top and bottom, all bolted finger tight; slide the 120 mm head tube in between the collar plates and press its cups in. Push the lock stop's tabs into the slots low on the front post plate and fit its bolt. Then tighten.
 
 ### Step 14: knuckle posts onto the axle beams
 
 ![Step 14](05-build-plan/step-14.png)
 
-Each post's inner cheek onto the beams' end tabs; bolts through the cheek into the beams. **Hold point:** with a straight edge across both knuckle head tubes, check they are parallel and plumb, and the posts are 840 mm apart centre to centre.
+Each post, with its lock stop on the front plate, goes onto the beams' end tabs, inner cheek first; bolts through the cheek into the beams. **Hold point:** with a straight edge across both knuckle head tubes, check they are parallel and plumb, and the posts are 840 mm apart centre to centre.
 
 ### Step 15: steering column and drop arm
 
@@ -608,7 +627,7 @@ Each fork's steerer up through its knuckle head tube; adjust the headsets; fit t
 
 ![Step 17](05-build-plan/step-17.png)
 
-Clamp plate behind each inboard leg, 303 to 343 mm up; two U-bolts round the leg from the front; arm tabs into the plate, one bolt.
+Clamp plate behind each inboard leg, 303 to 343 mm up, long end pointing in; two U-bolts round the leg from the front; arm tabs into the plate, one bolt. **Hold point:** turn the wheel to full lock each way; the clamp plate's front inner corner meets its lock stop (red) with the inner wheel at 40°, and nothing else touches.
 
 ### Step 18: tie rod and drag link
 
@@ -645,7 +664,7 @@ These are the checks a TRL 4 test report would record; this plan only lists them
 | Joints closed | R3, R7 | Look at every tab and bolt; record the time the build took | Every tab seated; every bolt at 25 N·m with a locknut; build time recorded against 4 h |
 | Frame square | R2 | Diagonals of the spine and bed; wheel alignment with a string line | Diagonals within 3 mm; front wheels parallel to the rear within 2 mm over their diameter |
 | Steering | R9, R10 | Turn lock to lock; measure each wheel's angle; mark the turning circle on the ground | Nothing touches; each steering arm clamp plate meets its knuckle post stop at 40°; outer tyre circle 6 m or less |
-| Empty mass | R8 | Weigh the trike with its box | Recorded against 72 kg (71.2 kg estimated); sets the final load label |
+| Empty mass | R8 | Weigh the trike with its box | Recorded against 72 kg (71.7 kg estimated); sets the final load label |
 | Proof load | R2 | At least twice the rated cargo (300 kg of sandbags, the R2 proof load of FTK-CAL-001) in the box, rider seat loaded with 80 kg, for 10 minutes | No permanent set: box floor and frame heights back within 1 mm after unloading; no tab moved in its slot |
 | Parking brake | R11 | Loaded, on a 10 % slope, front pair latched | Does not move |
 | Tipping | R10 | Tilt table, rider-only ballast | Tips at 0.22 g or more |
@@ -675,9 +694,9 @@ Stop at each point. Carry on only when everything listed is true.
 ## 8. Where the numbers come from
 
 - Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`); STEP and STL exports in `cad/step/` and `cad/stl/`.
-- Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/FTK-DWG-101` to `FTK-DWG-123`.
-- General arrangement: `cad/drawings/FTK-DWG-001.pdf`, Rev P3.
-- Calculations: `docs/04-calcs/01-sizing.md` (FTK-CAL-001 v0.3), `docs/04-calcs/sizing.py` and `docs/04-calcs/results.csv`.
+- Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/FTK-DWG-101` to `FTK-DWG-124`.
+- General arrangement: `cad/drawings/FTK-DWG-001.pdf`, Rev P4.
+- Calculations: `docs/04-calcs/01-sizing.md` (FTK-CAL-001 v0.6), `docs/04-calcs/sizing.py` and `docs/04-calcs/results.csv`.
 - Bill of materials: `bom/bom.csv` and `bom/bom-notes.md`.
-- Decisions: `docs/decisions/0003-design-for-construction.md` (FTK-DDR-003), with FTK-DDR-001 and FTK-DDR-002; open items in `docs/06-design-decisions.md` (FTK-DEC-001).
+- Decisions: `docs/decisions/0003-design-for-construction.md` (FTK-DDR-003), with FTK-DDR-001 and FTK-DDR-002; decisions of 2026-10-02 in `docs/06-design-decisions.md` (FTK-DEC-001).
 - Requirements: `docs/03-requirements.md` (FTK-REQ-001).

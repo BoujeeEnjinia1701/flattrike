@@ -347,3 +347,60 @@ FTK-DDR-003 (design for construction) is accepted, with A1 to A3 decided as reco
 2. Item 5 says the stop is 'a part to add before the first ride, not before the build'; since it is safety-critical, it should be in the build plan's parts list.
 
 No CAD model, BOM quantity or price, calculation result or picture was changed. TRL stays at 3; TRL 4 remains on hold.
+
+## Session 2026-10-02: approved follow-ups carried out
+
+Amish approved carrying out every follow-up action from the open-decision sign-off ("APPROVED CHANGES, COMPLETE THESE") and preparing the render scenes. This session carried the decisions of 2026-10-02 into the model, BOM, calculations, drawings, pictures and appearance model. TRL stays at 3; TRL 4 remains on hold.
+
+### Follow-ups
+
+1. Rated cargo 148 and 138 kg and R8 72 kg in `sizing.py`: **done.** Re-run on the model with the lock stops: empty 71.7 kg (0.3 kg under R8), gross 299.7 kg in both cases; tipping, braking and `results.csv` at the restated rating.
+2. Lightening windows and a lighter box; final load label: **not done:** the decision places the trial in the FEA session and the label on the weighed trike (TRL 4). The R8 margin is now only 0.3 kg, so the trial matters.
+3. R14 60 min for a knuckle post plate in `sizing.py`: **done** (53 min, 7 min margin).
+4. Steering lock stop at each knuckle post with a constructability check: **done.** A 77 x 130 mm fin tabbed and bolted to each front knuckle post plate; the steering arm clamp plates lengthened to 93 mm so their front inboard corner meets it. `python cad/src/model.py --check` passes: 167 components, 37 plates, 97 bolt sets, no overlaps, no sweep issues, each clamp plate meets its stop at 40° and not 1° before. STEP and STL regenerated.
+5. Making sketch for the lock stop and the stop on FTK-DWG-001: **done** (FTK-DWG-124 P1; FTK-DWG-001 Rev P4 with a lock stop note and the new figures).
+6. Lock stops in the knuckle post making sketch, steps 14 and 17 and the build plan parts: **done** (FTK-DWG-114 P2, FTK-DWG-119 P2, new section 3.24, steps 13 to 21 and joints 9 and 11 redrawn).
+7. Two lock stops and bolts in BOM line 3: **done** ($89, was $85; basis in `bom/bom-notes.md`). Base prototype $728.
+8. Steering geometry study: **done as a first pass** (FTK-CAL-001 section 5a): head tubes vertical, so no caster, kingpin inclination or scrub; a fork fitted with its offset forward gives negative trail (about 6.6 N·m per wheel pulling into the turn at 0.2 g with a 30 mm offset). The repeat with the chosen fork's measured rake stays in the FEA session, as decided.
+9. Turning circle from the built linkage: **done.** 31.3° at the outer wheel; 5.64 m outer tyre circle (5.95 m upper bound).
+10. Photoreal renders, `media/card.png` and `media/social-preview.png`: **not done:** made on Amish's Mac. The appearance model and render scenes are prepared (below).
+
+### Requirement status changes
+
+None. R1, R8 and R14 stay met on paper (now computed rather than restated); R8's margin fell from 0.8 kg to 0.3 kg. R7 is about 4.07 h (97 bolt sets), still at risk as accepted. R9 improves to 5.64 m. R15: Value-engineering target: USD 800. Estimated cost of the constructable design: USD 728 (USD 72 under the target). R18 about $466, USD 166 over its target.
+
+### Documents changed
+
+- `cad/src/model.py`, `cad/step/*`, `cad/stl/*` (lock stops, longer clamp plates, lock stop check)
+- `bom/bom.csv`, `bom/bom-notes.md`
+- `docs/04-calcs/sizing.py`, `docs/04-calcs/results.csv`, `docs/04-calcs/01-sizing.md` (FTK-CAL-001 v0.6)
+- `docs/03-requirements.md` (FTK-REQ-001 v0.8)
+- `docs/02-concept.md` (FTK-PRC-001 v0.8)
+- `docs/05-build-plan.md` (FTK-BLD-001 v0.4): new section 3.24 and Figure 37 (later figures renumbered); "Pictures unchanged" no longer applies
+- `docs/06-design-decisions.md` (FTK-DEC-001 v0.4): value engineering restated
+- `cad/drawings/FTK-DWG-001` Rev P4; `FTK-DWG-114` P2, `FTK-DWG-119` P2, `FTK-DWG-124` P1 (new)
+- `docs/05-build-plan/overview.png`, `joint-09.png`, `joint-11.png`, `step-13.png` to `step-21.png`
+- `media/` concept media (blueprint FTK-DWG-010 P3, hero, exploded, flow, model.glb)
+- `cad/src/product_model.py`: the frame, bed, knuckle posts, lock stops, steering and every bolt set now come from `model.build_components()`; chain guard and crank spider moved outboard of the right-hand chain line. Render scenes exported to `/home/claude/renders/flattrike` (hero, exploded, detail)
+- `README.md` (not a controlled document)
+
+### Appearance model deviations (each Proposed, awaiting Amish)
+
+- The plates are drawn as cut (no extra corner radii), and the wheels, drivetrain, seat, bars, box hardware and cable runs keep their 2026-09-26 appearance detail. Recommendation: accept as appearance only.
+
+### Cross-repo actions
+
+None.
+
+### Safety concerns
+
+- A knuckle fork fitted as sold, offset forward, gives negative trail on the vertical knuckle head tubes; the steering would pull into turns. Settle fork orientation or caster in the FEA-session study before the first ride (S6).
+- The lock stop takes the whole bar torque on one side (about 0.84 kN); its fin and bolt are within limits on paper.
+
+### Recommended next step
+
+Renders on Amish's Mac from the exported scenes; then the FEA session (plate-and-joint FEA, lightening windows for the 0.3 kg R8 margin, and the steering geometry study with the chosen fork). **TRL 4 remains on hold by Amish's instruction.**
+
+## 2026-10-02: photoreal renders redone on the constructable design
+
+Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.

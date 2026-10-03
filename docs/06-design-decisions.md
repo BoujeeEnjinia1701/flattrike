@@ -3,7 +3,7 @@ doc_id: FTK-DEC-001
 title: FlatTrike design decisions register
 project: FlatTrike
 doc_type: Design decisions register
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -21,6 +21,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: "Amish approved the recommendations for all open decisions 1 to 10 on 2026-10-02 (FTK-DDR-003 accepted; rating 148 and 138 kg, R8 72 kg, R14 60 min for knuckle post plates; steering stops at the knuckle posts); moved to decisions made"
+- version: "0.4"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Value engineering restated after the 2026-10-02 decisions were carried into the design (lock stops in BOM line 3; FTK-CAL-001 v0.6)"
 ---
 
 # FlatTrike design decisions register
@@ -51,11 +55,11 @@ None. All open decisions were decided on 2026-10-02.
 
 ## Value engineering
 
-Value-engineering target: USD 800 (a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 724 (USD 76 under the target). Main cost drivers and savings worth trying:
+Value-engineering target: USD 800 (a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 728 (USD 72 under the target). Main cost drivers and savings worth trying:
 
-- The largest prototype lines are the two front wheels with drum brakes (USD 110), the rear wheel with 3-speed drum hub (USD 95), the steering column, knuckles and linkage (USD 92) and the front bed and knuckle post plates (USD 85). The construction changes (FTK-DDR-003) added USD 15 (USD 709 to USD 724).
+- The largest prototype lines are the two front wheels with drum brakes (USD 110), the rear wheel with 3-speed drum hub (USD 95), the steering column, knuckles and linkage (USD 92) and the front bed and knuckle post plates with the steering lock stops (USD 89). The construction changes (FTK-DDR-003) added USD 15 (USD 709 to USD 724), and the two lock stops and their bolts USD 4 (USD 724 to USD 728).
 - The optional route C assist kit (USD 300, without the SwapCell pack) is outside the prototype target.
-- Production target: USD 300 per trike at 100 units (R18) against an estimate of about USD 465, USD 165 over the target. Bought bicycle parts are USD 324 of it at 65 % of retail, with USD 74 of steel (one full sheet), USD 17 of cutting, the plywood box at 60 % and USD 15 of assembly labour.
+- Production target: USD 300 per trike at 100 units (R18) against an estimate of about USD 466, USD 166 over the target. Bought bicycle parts are USD 324 of it at 65 % of retail, with USD 74 of steel (one full sheet), USD 17 of cutting, the plywood box at 60 % and USD 15 of assembly labour.
 - Savings worth trying: wholesale prices for wheels, hubs and forks once the first partner supplies them (FTK-DDR-002, item 18), and the one-sheet nest that already keeps the steel and cutting low.
 
 ## Decisions made

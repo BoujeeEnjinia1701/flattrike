@@ -1,4 +1,6 @@
-"""FlatTrike sizing calculations, FTK-CAL-001 v0.3 (TRL 3, constructable design, FTK-DDR-003).
+"""FlatTrike sizing calculations, FTK-CAL-001 v0.6 (TRL 3, constructable design, FTK-DDR-003, with the
+decisions of 2026-10-02: cargo rated at 148 kg with an 80 kg rider and 138 kg with a 90 kg rider, R8 72 kg,
+R14 60 min for a knuckle post plate, steering lock stops at the knuckle posts).
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Prints every number quoted in docs/04-calcs/01-sizing.md and writes docs/04-calcs/results.csv.
@@ -35,7 +37,10 @@ def head(t):
 
 # ---------------------------------------------------------------- assumptions
 P = M.PARAMS
-RIDER, RIDER_MAX, CARGO = 80.0, 90.0, 150.0
+RIDER, RIDER_MAX, CARGO, CARGO_MAX = 80.0, 90.0, 148.0, 138.0    # rating restated 2026-10-02 (FTK-DDR-003 A1)
+R8_KG = 72.0                   # R8 empty mass target, relaxed 2026-10-02
+R14_KN_MIN = 60.0              # R14 target for a knuckle post plate, 2026-10-02
+FORK_RAKES = (0.0, 30.0, 45.0)  # mm, fork offset of a bought 20 in fork (input to the steering geometry study)
 RHO_STEEL, RHO_PLY = 7850.0, 700.0
 CRR, CDA, RHO_AIR, ETA = 0.015, 0.9, 1.2, 0.89
 P_RIDER, P_ASSIST = 110.0, 250.0
@@ -219,14 +224,14 @@ def main():
         print(f"    {i[0]:52s} {i[1]:6.1f} kg")
     rec("Bolt sets (count)", n_bolts)
     rec("Bolts and spacer washers", bolts_kg + washer_kg, "kg")
-    rec("Empty mass", empty, "kg", "R8 target 70 kg (55 kg before FTK-DDR-002)")
+    rec("Empty mass", empty, "kg", f"R8 target {R8_KG:.0f} kg (relaxed 2026-10-02; 70 kg before)")
+    rec("Margin under R8", R8_KG - empty, "kg")
     rec("Plate share of empty mass", plate_kg / empty * 100, "%")
     rec("Box share of empty mass", box_kg / empty * 100, "%")
-    gross = rec("Gross mass, 80 kg rider and 150 kg cargo", empty + RIDER + CARGO, "kg")
-    rec("Gross mass, 90 kg rider and 150 kg cargo", empty + RIDER_MAX + CARGO, "kg")
-    rec("Cargo allowed with an 80 kg rider inside 300 kg", 300 - empty - RIDER, "kg", "R1 rated cargo 150 kg")
-    rec("Cargo allowed with a 90 kg rider inside 300 kg", 300 - empty - RIDER_MAX, "kg", "R1 rated cargo 140 kg")
-    rec("Gross mass, 90 kg rider and 140 kg cargo", empty + RIDER_MAX + 140, "kg")
+    gross = rec(f"Gross mass, 80 kg rider and {CARGO:.0f} kg cargo", empty + RIDER + CARGO, "kg", "R1 limit 300 kg")
+    rec(f"Gross mass, 90 kg rider and {CARGO_MAX:.0f} kg cargo", empty + RIDER_MAX + CARGO_MAX, "kg", "R1 limit 300 kg")
+    rec("Cargo allowed with an 80 kg rider inside 300 kg", 300 - empty - RIDER, "kg", f"R1 rated cargo {CARGO:.0f} kg")
+    rec("Cargo allowed with a 90 kg rider inside 300 kg", 300 - empty - RIDER_MAX, "kg", f"R1 rated cargo {CARGO_MAX:.0f} kg")
 
     saddle_x = M.seat_xy(P["SADDLE_TOP"] - 25)
     rider = ("Rider", RIDER, saddle_x + 20, 0.0, P["SADDLE_TOP"] + 160, False)
@@ -325,32 +330,64 @@ def main():
     r_outer = math.hypot(wb, y_ic + tr) + P["TYRE_W"] / 2
     r_box = math.hypot(x0 + P["BOX_L"], y_ic + P["BOX_W"] / 2)
     rec("Inner wheel lock (box clearance limit)", P["STEER_LOCK"], "deg")
-    rec("Outer wheel lock (Ackermann)", d_outer, "deg")
-    rec("Outer wheel lock through the model's tie rod at 40 deg inner lock", math.degrees(M._right_angle(lock)), "deg",
-        "the trapezoid only approximates Ackermann; the turning circle below uses the ideal")
+    rec("Outer wheel lock (ideal Ackermann, for comparison)", d_outer, "deg")
+    d_built = abs(math.degrees(M._right_angle(lock)))
+    rec("Outer wheel lock through the built linkage at 40 deg inner lock", d_built, "deg",
+        "the trapezoid only approximates Ackermann; the turning circle below uses the built linkage")
     rec("Column (handlebar) turn at full inner lock, left wheel through the drag link", math.degrees(M._column_angle(lock)), "deg",
         "drop arm parallel to the left steering arm (FTK-DDR-003); was about 1.7 times the wheel angle")
-    rec("Turn centre from the centre line, on the rear axle line", y_ic / 1000, "m")
-    rec("Turning circle, outer tyre (Ackermann)", 2 * r_outer / 1000, "m", "R9 target 6 m")
-    rec("Swept circle, box front corner", 2 * r_box / 1000, "m")
-    # clearance of the steered inner tyre under the box floor and inside the knuckle posts
-    zf = P["BOX_Z0"]; Rw = P["WHEEL_R"]
-    chord = math.sqrt(max(Rw ** 2 - (zf - Rw) ** 2, 0))
-    y_in = tr - chord * math.sin(lock) - P["TYRE_W"] / 2 * math.cos(lock)
-    rec("Steered tyre inner edge at the box floor height, full lock", y_in, "mm",
-        f"box side at {P['BOX_W'] / 2:.0f} mm")
-    s_post = P["POST_X"] / math.cos(lock)
-    y_post = tr - s_post * math.sin(lock) - P["TYRE_W"] / 2 / math.cos(lock)
-    rec("Steered tyre inner edge at the knuckle post plates, full lock", y_post, "mm",
-        f"post outer face at {P['POST_Y0'] + P['POST_W']:.0f} mm")
-    rec("Ackermann arm length and angle to the centre line", P["ARM_L"], "mm",
-        f"{math.degrees(math.atan(tr / wb)):.1f} deg, arms aimed at the rear axle centre")
+    # built linkage: the outer wheel's axle line meets the rear axle line closer in than the inner wheel's; the tyres
+    # scrub between the two. The outer wheel's own centre sets the outer tyre's path (the smaller, built figure);
+    # the inner wheel's centre gives the larger figure, which is the ideal Ackermann value.
+    y_ic_out = -tr + wb / math.tan(math.radians(d_built))
+    rec("Turn centre from the centre line, outer wheel's axle line (built linkage)", y_ic_out / 1000, "m")
+    rec("Turn centre from the centre line, inner wheel's axle line", y_ic / 1000, "m")
+    rec("Turn centre mismatch between the front wheels (tyre scrub at full lock)", y_ic - y_ic_out, "mm")
+    r_out_b = math.hypot(wb, y_ic_out + tr) + P["TYRE_W"] / 2
+    rec("Turning circle, outer tyre, built linkage", 2 * r_out_b / 1000, "m", "R9 target 6 m")
+    rec("Turning circle, outer tyre, if the turn centre stayed on the inner wheel's axle line (upper bound)",
+        2 * r_outer / 1000, "m", "equals the ideal Ackermann figure")
+    rec("Swept circle, box front corner (inner wheel's turn centre, upper bound)", 2 * r_box / 1000, "m")
+    # steering lock stops (2026-10-02): the clamp plate's front inboard corner meets a stop fin at the inner lock
+    xc_s, yc_s = M.stop_corner(1)
+    arm_y = abs(yc_s - tr)                     # lever of a fore-and-aft contact force about the kingpin axis
+    rec("Steering lock stop: met by each clamp plate at (inner wheel)", P["STEER_LOCK"], "deg",
+        "constructability check in model.py --check")
+    rec("Steering lock stop: lever of the contact force about the kingpin axis", arm_y, "mm")
+    m_stop = 300.0 * 0.30          # N m: 300 N at one bar grip on a 300 mm half-bar, rider forcing the lock
+    f_stop = m_stop / (arm_y / 1000)
+    rec("Stop force, rider forcing the bar into the lock (300 N at one grip, 300 mm)", f_stop, "N",
+        "one stop takes the whole bar torque; the force lies in the fin's plane")
+    z0s, z1s, z2s = P["STOP_Z"]
+    z_c = sum(P["CLAMP_Z"]) / 2
+    rec("Stop fin lower leg, in-plane bending stress", f_stop * (z1s - z_c) / (P["T"] * P["STOP_LEG"] ** 2 / 6), "MPa",
+        f"{P['STOP_LEG']:.0f} mm wide leg; yield 235 MPa")
+    rec("Stop fin lower leg, out-of-plane stress from contact friction (mu 0.2)",
+        0.2 * f_stop * (z1s - z_c) / (P["STOP_LEG"] * P["T"] ** 2 / 6), "MPa")
+    t_bolt = f_stop * (z2s - z_c) / (z2s - (P["AB_Z0"] + 14))
+    rec("Stop fin T-slot bolt tension (fin pivots on its top corner)", t_bolt, "N", "M8 8.8 preload 15.6 kN")
+    # steering geometry study (decided 2026-10-02; repeated with the measured fork in the FEA session)
+    head("4a. Steering geometry study, first pass (decision 7)")
+    rec("Caster angle (knuckle head tubes vertical in the model)", 0.0, "deg")
+    rec("Kingpin inclination (head tubes vertical)", 0.0, "deg")
+    rec("Scrub radius (steering axis in the wheel's centre plane)", 0.0, "mm")
+    front_w = front * G / 2
+    for rake in FORK_RAKES:
+        for orient, sgn in (("crown forward (as sold)", -1), ("fork turned to trail", 1)):
+            if rake == 0 and sgn > 0:
+                continue
+            trail = sgn * rake
+            rec(f"Trail, {rake:.0f} mm fork offset, {orient if rake else 'straight fork'}", trail, "mm",
+                "negative = contact patch ahead of the steering axis")
+            rec(f"  aligning moment per wheel at 0.2 g, loaded", front_w * 0.2 * trail / 1000, "N m",
+                "positive centres the steering; negative pulls it into the turn")
+    rec("Gravity self-centring (needs caster or kingpin inclination)", 0.0, "N m")
 
     cases = {}
     for label, lst in (("loaded", items + [rider, cargo]), ("rider only", items + [rider]),
                        ("rider only, 90 kg", items + [rider[:1] + (RIDER_MAX,) + rider[2:]]),
-                       ("90 kg rider and 140 kg cargo", items + [rider[:1] + (RIDER_MAX,) + rider[2:],
-                                                              cargo[:1] + (140.0,) + cargo[2:]])):
+                       (f"90 kg rider and {CARGO_MAX:.0f} kg cargo", items + [rider[:1] + (RIDER_MAX,) + rider[2:],
+                                                                         cargo[:1] + (CARGO_MAX,) + cargo[2:]])):
         a0, cx, cz = threshold(lst)
         cases[label] = (a0, cx)
         rec(f"Tipping threshold, {label}, any lock", a0, "g", f"CoM {cx/1000:.2f} m ahead, {cz/1000:.2f} m high")
@@ -500,7 +537,7 @@ def main():
     rec("Cycles in 5 years (300 days, 20 km, 1 per 10 m)", 5 * 300 * 20 * 100.0, "")
     # proof load
     proof = (2 * CARGO) * G
-    rec("Proof load, twice rated cargo (R2)", proof, "N")
+    rec(f"Proof load, twice rated cargo ({CARGO:.0f} kg) (R2)", proof, "N")
     rec("Axle beam stress under proof load", proof / 2 * (span / 1000) / 8 * 2 * 1e6 / Z_ab / 1000, "MPa")
 
     # ------------------------------------------------------------ 6 braking and parking
@@ -556,7 +593,8 @@ def main():
         + jb(lambda j: j["group"] == "Knuckle post corners" and kp_plate in (j["face"], j["edge"]))
     rec("Bolts disturbed to replace one knuckle post plate (both collar plates come off)", kn_bolts, "")
     rec("Time to replace one knuckle post plate (0.75 min per bolt each way, 15 min, 20 min for wheel, fork and cups)",
-        kn_bolts * 0.75 * 2 + 35, "min", "R14 target 30 min")
+        kn_bolts * 0.75 * 2 + 35, "min", f"R14 target {R14_KN_MIN:.0f} min for a knuckle post plate (2026-10-02)")
+    rec("Margin under R14 for a knuckle post plate", R14_KN_MIN - (kn_bolts * 0.75 * 2 + 35), "min")
     for cat, rate in (("C3", 50.0), ("C4", 80.0)):
         rec(f"Unprotected loss, 5 years at the {cat} first-year upper rate (both faces)",
             rate * 5 ** 0.6 * 2 / 1000, "mm", "bilogarithmic law, exponent 0.6 assumed")

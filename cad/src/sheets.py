@@ -1,4 +1,4 @@
-"""FlatTrike general arrangement drawing FTK-DWG-001 (Rev P3).
+"""FlatTrike general arrangement drawing FTK-DWG-001 (Rev P4).
 
 Run from the repo root:  python cad/src/sheets.py
 Builds cad/drawings/FTK-DWG-001.svg, .pdf and .png from the parametric model.
@@ -26,13 +26,14 @@ work = ROOT / "cad/drawings/_views"
 views = project_views(asm, work)
 
 s = Sheet(project="FlatTrike", title="General arrangement, TRL 3 model", dwg_no="FTK-DWG-001",
-          rev="P3", author="Amish Chadha", date="2026-10-01", concept=True,
+          rev="P4", author="Amish Chadha", date="2026-10-02", concept=True,
           material="3 mm S235JR or A36 plate, painted; M8 8.8 bolts, all-metal locknuts. See bom/bom.csv",
           revisions=[("P1", "Preliminary GA from the TRL 3 model (FTK-CAL-001)", "2026-09-25", "AC"),
                      ("P2", "Ackermann steering, fixed bed, 200 mm head tube, box raised (FTK-DDR-002)", "2026-09-25", "AC"),
-                     ("P3", "Design for construction, buildable as drawn (FTK-DDR-003)", "2026-10-01", "AC")])
+                     ("P3", "Design for construction, buildable as drawn (FTK-DDR-003)", "2026-10-01", "AC"),
+                     ("P4", "Steering lock stop at each knuckle post; rating 148 and 138 kg (FTK-DEC-001)", "2026-10-02", "AC")])
 s.add_ortho(views, ["front", "top", "right"])
-s.add_svg(views["iso"], 276, 30, 140, 80, label="Isometric view", sublabel="Not to scale")
+s.add_svg(views["iso"], 276, 38, 140, 74, label="Isometric view", sublabel="Not to scale")
 s.add_notes("Key dimensions (mm) and data", [
     f"Overall {bb.size.X:.0f} L x {bb.size.Y:.0f} W x {bb.size.Z:.0f} H (saddle top)",
     f"Wheelbase {P['WB']:.0f}; front track {P['TRACK']:.0f}; wheels 20 in (ISO 406)",
@@ -43,10 +44,11 @@ s.add_notes("Key dimensions (mm) and data", [
     f"Chain line {abs(P['CHAINLINE']):.0f} right; {P['RING_T']}T / {P['SPROCKET_T']}T; cranks {P['CRANK']:.0f}",
     f"Box {P['BOX_L']:.0f} x {P['BOX_W']:.0f} x {P['BOX_H']:.0f}; lid {P['BOX_Z0'] + P['BOX_H'] + P['PLY_WALL']:.0f} high",
     f"{n_pl} plates, {area:.2f} m2 net, t = 3; one 1250 x 2500 sheet",
-    f"Ackermann steering, fixed box; inner lock {P['STEER_LOCK']:.0f} deg; turning circle 5.95 m",
+    f"Ackermann steering, fixed box; turning circle 5.64 m",
+    f"Inner lock {P['STEER_LOCK']:.0f} deg at a lock stop under each knuckle post (FTK-DWG-124)",
     "Joints: tabs in slots, M8 8.8 bolts into T-slots with all-metal locknuts",
     f"Knuckle head tubes {P['KN_LEN']:.0f} long on the wheel centre lines; 20 in forks",
-    "Empty 71.2 kg; gross 301.2 kg (FTK-CAL-001 v0.3)",
+    "Empty 71.7 kg; gross 299.7 kg with 80 kg rider, 148 kg cargo (FTK-CAL-001 v0.6)",
     "Frame not verified: R2 at risk; see FTK-CAL-001",
     "PRELIMINARY, NOT FOR FABRICATION",
 ], x=276, y=124, width=140)

@@ -1,7 +1,7 @@
 """FlatTrike product appearance model (build123d), TRL 3.
 
-Finished-product look for photoreal renders: powder-coated flat 3 mm plates with laser-cut corner
-radii, visible tab-and-slot rib tabs, zinc M8 bolt heads, washers and locknuts at every node, cut
+Finished-product look for photoreal renders: powder-coated flat 3 mm plates with their tabs, slots
+and T-slots as cut, zinc M8 bolt heads, washers and locknuts at every node, cut
 spacer-washer stacks, a filleted spine box with a white part-number decal, tyres with tread, 36-spoke
 wheels with drum brake hubs, a 3-speed rear hub, toothed chainring and sprocket with a roller chain
 and a flat-cut chain guard ring, platform pedals, a sprung saddle, rubber grips, brake levers with a
@@ -12,8 +12,10 @@ Context: a produce crate strapped to the counter lid, and the shared clay manneq
 meet the grips).
 APPEARANCE MODEL ONLY: no tolerances, no fabrication detail. CONCEPT, NOT FOR FABRICATION.
 
-Every main dimension and interface comes from PARAMS, the plate profiles (SPINE, STAY and the bed
-profiles), plate() and the helpers in model.py. Axes as model.py: X forward, Y to the left, Z up,
+Every plate, tube, bought steering part and bolt set of the frame is the constructable part from
+model.build_components() (FTK-DDR-003 and the decisions of 2026-10-02, steering lock stops included),
+so the renders show the design for construction. Wheels, drivetrain detail, seat, bars, box hardware
+and accessories are drawn here in appearance detail from PARAMS. Axes as model.py: X forward, Y to the left, Z up,
 ground at Z = 0, rear axle at X = 0. Group "internal" holds the core module that the detail view
 frames: spine box, rear stays, ribs and spacers, drivetrain and rear wheel.
 
@@ -256,6 +258,86 @@ def _fit_rider(height, seat_w, grips_w, pedals_w):
     return joints, (tx, ty, tz)
 
 
+# ---------------------------------------------------------------- constructable parts from model.py
+_SKIP = ("Rear wheel", "Front wheel", "Drivetrain", "Cargo box", "Seatpost and saddle", "Handlebar", "Brake levers",
+         "Seat tube")      # drawn here in appearance detail instead (or added with the seat)
+_REAR_X = 960.0           # parts centred behind this belong to the core module (group "internal")
+
+
+def _model_components():
+    import model as M
+    return dict(M.build_components())
+
+
+def _style(name, c):
+    """(colour, material, group, explode) for a model.py component, or None to skip it."""
+    if name.startswith(_SKIP):
+        return None
+    cx = c.shape.center().X
+    grp = "internal" if cx < _REAR_X and not name.startswith(("Upper yoke", "Lower yoke", "Central head", "Central headset",
+                                                              "Steering column", "Drop arm", "Bolt: drop arm",
+                                                              "Bolt: lower yoke", "Bolt: upper yoke", "Drag link")) else "shell"
+    if name.startswith("Spine side plate, left"):
+        return C_TEAL, "painted", grp, (0, 260, 0)
+    if name.startswith("Spine side plate, right"):
+        return C_TEAL, "painted", grp, (0, -260, 0)
+    if name.startswith("Spine top cover"):
+        return C_GRAPH, "painted", grp, (0, 0, 220)
+    if name.startswith("Spine bottom cover"):
+        return C_GRAPH, "painted", grp, (0, 0, -220)
+    if name.startswith("Rear stay plate"):
+        s = 1 if "left" in name else -1
+        return C_TEAL, "painted", grp, (-120, s * 520, 0)
+    if name.startswith(("Spine rib", "Stay bridge", "Seat tube saddle")):
+        return C_GRAPH, "painted", grp, (0, 0, 0)
+    if name.startswith(("Spacer washer stacks", "Spacer tube")):
+        s = 1 if c.shape.center().Y >= 0 else -1
+        return C_GRAPH, "painted", grp, (0, 0, 0)
+    if name.startswith("Bottom bracket shell"):
+        return C_STEEL, "metal", grp, (0, 0, 0)
+    if name.startswith(("Bed rail",)):
+        s = 1 if "left" in name else -1
+        return C_TEAL, "painted", grp, (620, s * 170, 0)
+    if name.startswith(("Knuckle post plate", "Knuckle post inner", "Knuckle post outer")):
+        s = 1 if "left" in name else -1
+        return C_TEAL, "painted", grp, (620, s * 330, 0)
+    if name.startswith(("Knuckle collar plate", "Steering lock stop")):
+        s = 1 if "left" in name else -1
+        return C_GRAPH, "painted", grp, (620, s * 330, 0)
+    if name.startswith(("Knuckle head tube",)):
+        s = 1 if "left" in name else -1
+        return C_GRAPH, "painted", grp, (620, s * 330, 0)
+    if name.startswith(("Knuckle headset",)):
+        s = 1 if "left" in name else -1
+        return C_STEEL, "metal", grp, (620, s * 700, 0)
+    if name.startswith(("Front fork", "U-bolts", "Steering arm")):
+        s = 1 if "left" in name else -1
+        col = C_FORK if name.startswith("Front fork") else (C_ZINC if name.startswith("U-bolts") else C_GRAPH)
+        return col, "metal" if name.startswith("U-bolts") else "painted", grp, (620, s * 700, 0)
+    if name.startswith(("Lower yoke",)):
+        return C_GRAPH, "painted", grp, (620, 0, -60)
+    if name.startswith(("Upper yoke",)):
+        return C_GRAPH, "painted", grp, (620, 0, 80)
+    if name.startswith(("Bulkhead", "Axle beam plate")):
+        return C_GRAPH, "painted", grp, (620, 0, 0)
+    if name.startswith("Central head tube"):
+        return C_GRAPH, "painted", grp, (260, 0, 160)
+    if name.startswith("Central headset"):
+        return C_STEEL, "metal", grp, (260, 0, 160)
+    if name.startswith("Steering column"):
+        return C_STEEL, "metal", grp, (260, 0, 320)
+    if name.startswith("Drop arm"):
+        return C_GRAPH, "painted", grp, (620, 0, -300)
+    if name.startswith(("Tie rod", "Drag link", "Rod end bolts")):
+        return C_ZINC, "metal", grp, (620, 0, -300)
+    if name.startswith("Spacer washers, box"):
+        return C_GRAPH, "painted", grp, (620, 0, 0)
+    if name.startswith("Bolt:"):
+        e = (0, 0, 0) if grp == "internal" else (620, 0, 0)
+        return C_ZINC, "metal", grp, e
+    return C_GRAPH, "painted", grp, (0, 0, 0)
+
+
 # ---------------------------------------------------------------- parts
 def product_parts(P=PARAMS, with_rider=True):
     si = P["SPINE_IN"]; st = P["STAY_IN"]; kp = P["KP_X"]; WB = P["WB"]; tr = P["TRACK"] / 2
@@ -266,18 +348,15 @@ def product_parts(P=PARAMS, with_rider=True):
         out.append({"name": name, "shape": shape, "color": color, "material": material,
                     "bom": bom, "group": group, "explode": tuple(float(v) for v in explode)})
 
-    # ============================================================ 1 spine box (core module)
-    bb_hole = circle_pts(P["BB_X"], P["BB_Z"], 19.5)
-    holes = [SPINE_WIN, bb_hole] + SPINE_HOLES
-    f, n = xz(si)
-    add("Spine side plate, left", _rplate(SPINE, f, n, holes), C_TEAL, "painted", 1, "internal", (0, 260, 0))
-    f, n = xz(-si - T)
-    add("Spine side plate, right", _rplate(SPINE, f, n, holes), C_TEAL, "painted", 1, "internal", (0, -260, 0))
-    top = edge_strip("Spine top cover", 1, SPINE[0], SPINE[1], si + T, "left")
-    bot = edge_strip("Spine bottom cover", 1, SPINE[3], SPINE[2], si + T, "right")
-    add("Spine top cover", top, C_GRAPH, "painted", 1, "internal", (0, 0, 220))
-    add("Spine bottom cover", bot, C_GRAPH, "painted", 1, "internal", (0, 0, -220))
-    # part-number decal and accent line on each side plate (thin raised parts)
+    # ============================================================ 1, 2, 4 rear frame (core module)
+    # Every plate, spacer, tube and bolt set is the constructable part from model.build_components()
+    # (FTK-DDR-003), so the renders show the design as it will be cut and bolted.
+    MC = _model_components()
+    for name, c in MC.items():
+        sty = _style(name, c)
+        if sty is not None and sty[2] == "internal":
+            add(name, c.shape, sty[0], sty[1], c.bom, "internal", sty[3])
+    # part-number decal on each side plate (thin raised parts)
     dec = []
     ink = []
     for s in (1, -1):
@@ -287,60 +366,6 @@ def product_parts(P=PARAMS, with_rider=True):
                 _box(887, yo + s * 0.25, 497, 76, 0.3, 3)]
     add("Spine decal", _comp(dec), C_LABEL, "paper", 1, "internal", (0, 0, 0))
     add("Spine decal print", _comp(ink), C_INK, "paper", 1, "internal", (0, 0, 0))
-
-    # ============================================================ 4 ribs, tabs, spacers, bolts (core)
-    ribs = []
-    tabs = []
-    rib_bolts = []
-    for xr in (380.0, 800.0, 930.0):
-        ztop = SPINE[0][1] + (SPINE[1][1] - SPINE[0][1]) * (xr - SPINE[0][0]) / (SPINE[1][0] - SPINE[0][0])
-        if xr < 520:
-            zbot = SPINE[7][1] + (SPINE[6][1] - SPINE[7][1]) * (xr - SPINE[7][0]) / (SPINE[6][0] - SPINE[7][0])
-        else:
-            zbot = SPINE[3][1] + (SPINE[2][1] - SPINE[3][1]) * (xr - SPINE[3][0]) / (SPINE[2][0] - SPINE[3][0])
-        f, n = yz(xr)
-        ribs.append(plate("Spine rib", 4, [(-si, zbot + 4), (si, zbot + 4), (si, ztop - 4), (-si, ztop - 4)], f, n,
-                          record=False))
-        h = ztop - zbot
-        for zt in (zbot + 0.28 * h, zbot + 0.72 * h):
-            for s in (1, -1):
-                tabs.append(_box(xr + T / 2, s * (si + T / 2 + 1.5), zt, T, T + 3, 22))
-            rib_bolts += _bolt((xr + 22, si + T, zt), (0, 1, 0), 2 * (si + T))
-    f, n = yz(200)
-    ribs.append(plate("Stay bridge", 4, [(-st, 480), (st, 480), (st, 560), (-st, 560)], f, n, record=False))
-    for zt in (495, 545):
-        for s in (1, -1):
-            tabs.append(_box(200 + T / 2, s * (st + T / 2 + 1.5), zt, T, T + 3, 16))
-    add("Spine ribs and stay bridge", _comp(ribs), C_GRAPH, "painted", 4, "internal", (0, 0, 0))
-    add("Rib tabs through slots", _comp(tabs), C_GRAPH, "painted", 4, "internal", (0, 0, 0))
-    add("Spine cross-bolts and locknuts", _comp(rib_bolts), C_ZINC, "metal", 4, "internal", (0, 0, 0))
-
-    nodes = ((400, 700), (470, 660), (620, 560), (680, 540))
-    for s, side in ((1, "left"), (-1, "right")):
-        stacks = []
-        for (bx, bz) in nodes:
-            L = st - si - T
-            stk = _ycyl(bx, s * (si + T + L / 2), bz, 8.0, L)
-            for k in range(1, 9):
-                stk -= Pos(bx, s * (si + T + k * L / 9), bz) * Rot(90, 0, 0) * (Cylinder(9, 0.5) - Cylinder(7.4, 1))
-            stacks.append(stk)
-        add(f"Cut spacer-washer stacks, {side}", _comp(stacks), C_GRAPH, "painted", 4, "internal",
-            (0, s * 390, 0))
-    stay_bolts = []
-    for (bx, bz) in nodes:
-        stay_bolts += _bolt((bx, st + T, bz), (0, 1, 0), 2 * (st + T))
-    for (bx, bz) in ((215, 500), (215, 540)):
-        stay_bolts += _bolt((bx, st + T, bz), (0, 1, 0), 2 * (st + T))
-    add("Stay node bolts and locknuts", _comp(stay_bolts), C_ZINC, "metal", 4, "internal", (0, 0, 0))
-
-    # ============================================================ 2 rear stays (core)
-    slot = [(-8, 248), (8, 248), (8, 260), (-8, 260)]
-    f, n = xz(st)
-    add("Rear stay plate, left", _rplate(STAY, f, n, [STAY_WIN, slot]), C_TEAL, "painted", 2, "internal",
-        (-120, 520, 0))
-    f, n = xz(-st - T)
-    add("Rear stay plate, right", _rplate(STAY, f, n, [STAY_WIN, slot]), C_TEAL, "painted", 2, "internal",
-        (-120, -520, 0))
 
     # ============================================================ 7 rear wheel (core)
     rw = _wheel(0, 0, R, 50, 2 * st, rear=True)
@@ -359,28 +384,19 @@ def product_parts(P=PARAMS, with_rider=True):
     bx, bz = P["BB_X"], P["BB_Z"]; cy = P["CHAINLINE"]
     r_ring = P["RING_T"] * 12.7 / (2 * math.pi); r_spr = P["SPROCKET_T"] * 12.7 / (2 * math.pi)
     ED = (0, 0, -520)
-    shell = _ycyl(bx, 0, bz, 19.0, 68)
-    for s in (1, -1):
-        shell += _ycyl(bx, s * 36, bz, 26.0, 5.0)
-    shell_b = []
-    for s in (1, -1):
-        for k in range(4):
-            a = math.radians(45 + 90 * k)
-            shell_b += _hex_head((bx + 22 * math.cos(a), s * 38.5, bz + 22 * math.sin(a)), (0, s, 0), af=10, h=4)
-    add("Bottom bracket shell and collars", shell, C_GRAPH, "painted", 8, "internal", (0, 0, 0))
-    add("Bottom bracket collar bolts", _comp(shell_b), C_ZINC, "metal", 8, "internal", (0, 0, 0))
     add("Bottom bracket spindle", _ycyl(bx, 0, bz, 8.0, 124), C_STEEL, "metal", 8, "internal", ED)
     ring = Pos(bx, 0, bz) * _teeth(r_ring, P["RING_T"], y=cy)
     ring -= _ycyl(bx, cy, bz, r_ring - 14, 6)
-    spider = _ycyl(bx, cy + 3, bz, 20, 6)
+    so_ = math.copysign(1.0, cy)          # outboard of the chain line
+    spider = _ycyl(bx, cy + so_ * 3, bz, 20, 6)
     for k in range(5):
         a = math.radians(90 + 72 * k)
-        spider += _rod((bx, cy + 3, bz), (bx + (r_ring - 10) * math.cos(a), cy + 3, bz + (r_ring - 10) * math.sin(a)), 6.0)
-        spider += _ycyl(bx + (r_ring - 10) * math.cos(a), cy + 2, bz + (r_ring - 10) * math.sin(a), 5.0, 6)
+        spider += _rod((bx, cy + so_ * 3, bz), (bx + (r_ring - 10) * math.cos(a), cy + so_ * 3, bz + (r_ring - 10) * math.sin(a)), 6.0)
+        spider += _ycyl(bx + (r_ring - 10) * math.cos(a), cy + so_ * 2, bz + (r_ring - 10) * math.sin(a), 5.0, 6)
     add("Chainring, 32T", ring, C_STEEL, "metal", 8, "internal", ED)
     add("Crank spider", spider, "#2A2E34", "metal", 8, "internal", ED)
-    guard = _ycyl(bx, cy + 9, bz, r_ring + 16, 2.5) - _ycyl(bx, cy + 9, bz, r_ring + 7, 4)
-    add("Chain guard ring, flat-cut", guard, C_TEAL, "painted", 8, "internal", (0, 60, -520))
+    guard = _ycyl(bx, cy + so_ * 9, bz, r_ring + 16, 2.5) - _ycyl(bx, cy + so_ * 9, bz, r_ring + 7, 4)
+    add("Chain guard ring, flat-cut", guard, C_TEAL, "painted", 8, "internal", (0, so_ * 60, -520))
     spr = Pos(0, 0, R) * _teeth(r_spr, P["SPROCKET_T"], depth=3.8, y=cy)
     spr -= _ycyl(0, cy, R, 16, 6)
     add("Rear sprocket, 24T", spr, C_STEEL, "metal", 8, "internal", ER)
@@ -436,137 +452,18 @@ def product_parts(P=PARAMS, with_rider=True):
     add("Platform pedals", _comp(pedals), C_FORK, "plastic", 8, "internal", (0, 0, -560))
     add("Pedal pins", _comp(pins), C_ZINC, "metal", 8, "internal", (0, 0, -560))
 
-    # ============================================================ 3 front bed (shell)
-    ly_z = P["HT_Z0"] - 18; uy_z = P["HT_Z0"] + P["HT_LEN"] + 25
-    steer_hole = circle_pts(kp, 0, 14)
-    ry = P["RAIL_Y"]
-    EB = (620, 0, 0)
-    f, n = xy(ly_z)
-    lyk = _rplate([(kp - 45, -45), (kp - 45, 45), (1060, ry), (1060, -ry)], f, n, [steer_hole])
-    f, n = xy(uy_z)
-    uyk = _rplate([(kp - 45, -45), (kp - 45, 45), (1060, 200), (1060, -200)], f, n, [steer_hole])
-    add("Lower yoke plate", lyk, C_GRAPH, "painted", 3, "shell", (620, 0, -60))
-    add("Upper yoke plate", uyk, C_GRAPH, "painted", 3, "shell", (620, 0, 80))
-    f, n = yz(1060)
-    bulk = _rplate([(-ry, ly_z), (ry, ly_z), (ry, 600), (-ry, 600)], f, n,
-                   [[(-ry + 40, ly_z + 40), (ry - 40, ly_z + 40), (ry - 40, 560), (-ry + 40, 560)]])
-    add("Bulkhead plate", bulk, C_GRAPH, "painted", 3, "shell", EB)
-    x_end = P["BOX_X0"] + P["BOX_L"]
-    rz0 = P["BOX_Z0"] - 110
-    rail = [(1060, ly_z), (1180, ly_z), (1240, rz0), (x_end, rz0), (x_end, P["BOX_Z0"]), (1060, P["BOX_Z0"])]
-    rail_holes = [[(1100, ly_z + 22), (1175, ly_z + 22), (1215, rz0 + 15), (1215, P["BOX_Z0"] - 18),
-                   (1100, P["BOX_Z0"] - 18)]]
-    rail_holes += [[(xh, rz0 + 18), (xh + w, rz0 + 18), (xh + w, P["BOX_Z0"] - 18), (xh, P["BOX_Z0"] - 18)]
-                   for xh, w in ((1265, 115), (1520, 150), (1690, 165))]
-    f, n = xz(ry - T)
-    add("Bed rail, left", _rplate(rail, f, n, rail_holes), C_TEAL, "painted", 3, "shell", (620, 170, 0))
-    f, n = xz(-ry)
-    add("Bed rail, right", _rplate(rail, f, n, rail_holes), C_TEAL, "painted", 3, "shell", (620, -170, 0))
-    py0 = P["POST_Y0"]; py1 = py0 + P["POST_W"]; ab_top = P["BOX_Z0"]
-    beams = []
-    for xb in (WB - 33, WB + 30):
-        f, n = yz(xb)
-        ab_holes = [[(yh, 318), (yh + 115, 318), (yh + 115, 442), (yh, 442)] for yh in (-250, -122, 7, 135)]
-        beams.append(_rplate([(-py0, 290), (py0, 290), (py0, ab_top), (-py0, ab_top)], f, n, ab_holes))
-    add("Axle beam plates", _comp(beams), C_GRAPH, "painted", 3, "shell", EB)
-    kz0, kz1 = P["KN_Z0"], P["KN_Z0"] + P["KN_LEN"]
-    ktop = kz1 + 35; ymax = tr + 45
-    post = [(py0, 290), (py1, 290), (py1, 530), (ymax, 530), (ymax, ktop), (py0, ktop)]
-    post_win = [(py1 + 20, 548), (ymax - 30, 548), (ymax - 30, ktop - 18), (py1 + 20, ktop - 18)]
-    bed_bolts = []
-    for s, side in ((1, "left"), (-1, "right")):
-        pp = []
-        for xc in (WB - P["POST_X"] - T, WB + P["POST_X"]):
-            pr = [(s * u, v) for u, v in post] if s > 0 else [(-u, v) for u, v in reversed(post)]
-            pw = [(s * u, v) for u, v in post_win] if s > 0 else [(-u, v) for u, v in reversed(post_win)]
-            f, n = yz(xc)
-            pp.append(_rplate(pr, f, n, [pw]))
-        for yc, zt in ((py0, ktop), (py1 - T, 530)):
-            y0 = yc if s > 0 else -yc - T
-            f, n = xz(y0)
-            pp.append(_rplate([(WB - P["POST_X"], 290), (WB + P["POST_X"], 290), (WB + P["POST_X"], zt),
-                               (WB - P["POST_X"], zt)], f, n,
-                              [[(WB - 25, 320), (WB + 25, 320), (WB + 25, zt - 40), (WB - 25, zt - 40)]]))
-        add(f"Knuckle post, {side}", _comp(pp), C_TEAL, "painted", 3, "shell", (620, s * 330, 0))
-        cps = []
-        for zc in (kz0 + 12, kz1 - 12 - T):
-            f, n = xy(zc)
-            cp = [(WB - P["POST_X"], s * py1), (WB + P["POST_X"], s * py1), (WB + P["POST_X"], s * ymax),
-                  (WB - P["POST_X"], s * ymax)]
-            if s < 0:
-                cp = list(reversed(cp))
-            cps.append(_rplate(cp, f, n, [circle_pts(WB, s * tr, P["HT_OD"] / 2 + 0.5)]))
-        add(f"Knuckle collar plates, {side}", _comp(cps), C_GRAPH, "painted", 3, "shell", (620, s * 330, 0))
-        # bolt heads on the transverse post plates and the rail to beam joints
-        for zb in (330, 450):
-            for yb in (py0 + 12, py1 - 12):
-                bed_bolts += _hex_head((WB + P["POST_X"] + T, s * yb, zb), (1, 0, 0))
-        for (xb, zb) in ((WB - 33, rz0 + 30), (WB - 33, P["BOX_Z0"] - 30), (WB + 33, rz0 + 30),
-                         (WB + 33, P["BOX_Z0"] - 30), (1080, ly_z + 25), (1080, 440)):
-            bed_bolts += _hex_head((xb, s * ry, zb), (0, s, 0))
-    add("Front bed bolts", _comp(bed_bolts), C_ZINC, "metal", 4, "shell", EB)
-
-    # ============================================================ 5 steering (shell)
-    hz = P["HT_Z0"]; hl = P["HT_LEN"]
-    ES = (260, 0, 160)
-    ht = Pos(kp, 0, hz + hl / 2) * (Cylinder(P["HT_OD"] / 2, hl) - Cylinder(17, hl + 2))
-    add("Central head tube, 200 mm", ht, C_GRAPH, "painted", 5, "shell", ES)
-    cups = [_zcyl(kp, 0, hz - 4, 23, 8), _zcyl(kp, 0, hz + hl + 4, 23, 8), _zcyl(kp, 0, hz + hl + 12, 18, 8)]
-    add("Headset cups and locknut", _comp(cups), C_STEEL, "metal", 5, "shell", ES)
-    add("Steering column", _rod((kp, 0, P["DROP_Z"] - 5), (kp, 0, 830), 12), C_STEEL, "metal", 5, "shell",
-        (260, 0, 320))
-    cols = []
-    for zc in (hz + 20, hz + hl - 23):
-        f, n = xy(zc)
-        cols.append(_rplate([(kp - 75, -si - T - 6), (kp + 30, -si - T - 6), (kp + 30, si + T + 6),
-                             (kp - 75, si + T + 6)], f, n, [circle_pts(kp, 0, P["HT_OD"] / 2 + 0.5)],
-                            radii=(6.0, 3.0, 1.5)))
-    add("Head tube collar plates", _comp(cols), C_GRAPH, "painted", 5, "shell", ES)
-    yb = []
-    for (bxx, byy) in ((kp + 22, 15), (kp + 22, -15), (kp + 22, 32), (kp + 22, -32)):
-        yb.append(_zcyl(bxx, byy, (ly_z + uy_z + T) / 2, 4.0, uy_z - ly_z + 20))
-        yb += _hex_head((bxx, byy, uy_z + T), (0, 0, 1))
-        yb += _hex_head((bxx, byy, ly_z), (0, 0, -1), h=6.5)
-    add("Yoke-to-collar bolts", _comp(yb), C_ZINC, "metal", 4, "shell", (620, 0, 0))
-    f, n = xy(P["DROP_Z"])
-    drop = _rplate([(kp - 22, -22), (kp + 22, -22), (kp + 15, 85), (kp - 15, 85)], f, n,
-                   [circle_pts(kp, 0, 12.5)], radii=(5.0, 3.0))
-    add("Drop arm", drop, C_GRAPH, "painted", 5, "shell", (620, 0, -300))
-    d = math.hypot(WB, tr)
-    tip = lambda s: (WB - P["ARM_L"] * WB / d, s * (tr - P["ARM_L"] * tr / d))
-    link = []
-    a0 = (kp, 70, P["DROP_Z"] + 1.5); a1 = (*tip(1), P["ARM_Z"])
-    link.append(_rod(a0, a1, 5))
-    link.append(_rod((tip(1)[0], tip(1)[1], P["ARM_Z"]), (tip(-1)[0], tip(-1)[1], P["ARM_Z"]), 6))
-    ends = []
-    for q in (a0, a1, (tip(1)[0], tip(1)[1], P["ARM_Z"]), (tip(-1)[0], tip(-1)[1], P["ARM_Z"])):
-        ends.append(Pos(*q) * Sphere(10.0))
-    add("Drag link and tie rod", _comp(link), C_ZINC, "metal", 5, "shell", (620, 0, -300))
-    add("Rod ends", _comp(ends), C_STEEL, "metal", 5, "shell", (620, 0, -300))
-    ho = P["FORK_OLD"] / 2
+    # ============================================================ 3, 5 front bed, knuckle posts and steering (shell)
+    # From model.build_components(): yokes clamping the head tube, bulkhead, rails, axle beams, knuckle posts
+    # with their collar plates and steering lock stops, head tubes and headsets, steering column, drop arm,
+    # drag link, tie rod, forks, U-bolts, clamp plates and steering arms, and every bolt set.
+    for name, c in MC.items():
+        sty = _style(name, c)
+        if sty is not None and sty[2] == "shell":
+            add(name, c.shape, sty[0], sty[1], c.bom, "shell", sty[3])
     for s, side in ((1, "left"), (-1, "right")):
         cyw = s * tr
         EW = (620, s * 700, 0)
-        kh = Pos(WB, cyw, (kz0 + kz1) / 2) * (Cylinder(P["HT_OD"] / 2, P["KN_LEN"]) - Cylinder(17, P["KN_LEN"] + 2))
-        add(f"Knuckle head tube, {side}", kh, C_GRAPH, "painted", 5, "shell", (620, s * 330, 0))
-        kc = [_zcyl(WB, cyw, kz0 - 4, 23, 8), _zcyl(WB, cyw, kz1 + 4, 23, 8), _zcyl(WB, cyw, kz1 + 14, 18, 10)]
-        add(f"Knuckle headset, {side}", _comp(kc), C_STEEL, "metal", 5, "shell", EW)
-        fork = _rod((WB, cyw, 520), (WB, cyw, kz1 + 30), 12)
-        crown = _box(WB, cyw, 530, 40, P["FORK_OLD"] + 30, 26)
-        crown = _fillet_try(crown, crown.edges().filter_by(Axis.X), [10.0, 6.0])
-        fork += crown
-        for sy in (1, -1):
-            fork += _rod((WB, cyw + sy * (ho + 5), 520), (WB + 18, cyw + sy * (ho + 5), R + 12), 10)
-            fork += _rod((WB + 18, cyw + sy * (ho + 5), R + 12), (WB, cyw + sy * (ho + 5), R - 6), 8)
-            fork += _box(WB, cyw + sy * (ho + 5), R - 4, 30, 5, 26)
-        add(f"20 in fork, {side}", fork, C_FORK, "painted", 5, "shell", EW)
-        tx_, ty_ = tip(s)
-        leg_y = cyw - s * (ho + 5)
-        f, n = xy(P["ARM_Z"] - T / 2)
-        arm = [(WB + 10, leg_y - 11), (WB + 10, leg_y + 11), (tx_ - 10, ty_ + 11), (tx_ - 10, ty_ - 11)]
-        arm = arm if s > 0 else list(reversed(arm))
-        add(f"Steering arm, {side}", _rplate(arm, f, n, radii=(6.0, 3.0)), C_GRAPH, "painted", 5, "shell", EW)
-        fw = _wheel(WB, cyw, R, 45, 106)
+        fw = _wheel(WB, cyw, R, 45, P["FORK_OLD"])
         # drums on the outboard side of each front wheel
         add(f"Front tyre, {side}", fw["tyre"], C_TYRE, "rubber", 6, "shell", EW)
         add(f"Front tyre tread, {side}", fw["tread"], C_TYRE, "rubber", 6, "shell", EW)
@@ -630,6 +527,9 @@ def product_parts(P=PARAMS, with_rider=True):
     ESt = (0, 0, 460)
     post = _rod((seat_xy(700), 0, 700), (seat_xy(zs - 60), 0, zs - 60), 13.6)
     add("Seatpost, 27.2 mm", post, C_STEEL, "metal", 10, "shell", ESt)
+    for name in ("Seat tube", "Seat tube shaft collars"):
+        add(name, MC[name].shape, C_GRAPH if name == "Seat tube" else C_ZINC, "painted" if name == "Seat tube" else "metal",
+            10, "shell", ESt)
     clamp = _box(seat_xy(zs - 60), 0, zs - 60, 40, 30, 22)
     clamp = _fillet_try(clamp, clamp.edges().filter_by(Axis.Y), [4.0, 2.0])
     rails = [_rod((xs - 90, sy * 35, zs - 48), (xs + 70, sy * 22, zs - 42), 3.5) for sy in (-1, 1)]

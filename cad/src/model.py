@@ -95,6 +95,11 @@ PARAMS = {
     "BULK_Z0": 298.0,         # bulkhead bottom edge
     "AB_X": (1436.0, 1461.0), # axle beam plates (rear faces)
     "STEER_LOCK": 40.0,       # Ackermann inner-wheel lock, degrees (box clearance limit)
+    # steering lock stops (decided by Amish 2026-10-02, FTK-DEC-001): a stop under each knuckle post that the
+    # steering arm clamp plate meets at the inner-wheel lock
+    "CLAMP_IN": 130.0,        # clamp plate inboard end from the kingpin axis (was 85 mm); its front corner meets the stop
+    "STOP_Z": (300.0, 348.0, 430.0),   # stop fin: bottom, underside of its upper part, top
+    "STOP_LEG": 30.0,         # width of the stop fin's lower leg, ahead of the contact face
 }
 P = PARAMS
 T = P["T"]
@@ -251,6 +256,15 @@ def drop_pin():
     """Drag link joint on the drop arm: the left steering arm's vector placed on the column axis."""
     tx, ty = ackermann_tip(1)
     return (P["KP_X"] + tx - P["WB"], ty - P["TRACK"] / 2)
+
+
+def stop_corner(s):
+    """Where the clamp plate's front inboard corner is (x, y) when wheel s (+1 left, -1 right) is at the
+    inner-wheel lock (left +STEER_LOCK, right -STEER_LOCK). The stop fin's rear face is placed there."""
+    wb, tr = P["WB"], P["TRACK"] / 2
+    a = s * math.radians(P["STEER_LOCK"])
+    qx, qy = -P["LEG_R"], -s * P["CLAMP_IN"]          # clamp plate front face is LEG_R behind the kingpin axis
+    return (wb + qx * math.cos(a) - qy * math.sin(a), s * tr + qx * math.sin(a) + qy * math.cos(a))
 
 
 def ackermann_tip(s):
@@ -519,7 +533,8 @@ def build_components():
         leg_y = s * (tr - ly_)
         xc = wb - lr - T          # clamp plate rear face; its front face touches the leg
         cz0, cz1 = P["CLAMP_Z"]
-        cpl = [(leg_y - 24, cz0), (leg_y + 24, cz0), (leg_y + 24, cz1), (leg_y - 24, cz1)]
+        y_in, y_out = s * (tr - P["CLAMP_IN"]), leg_y + s * 24      # inboard end reaches the lock stop
+        cpl = [(min(y_in, y_out), cz0), (max(y_in, y_out), cz0), (max(y_in, y_out), cz1), (min(y_in, y_out), cz1)]
         f, n = yz(xc)
         add(f"Steering arm clamp plate, {nm}", plate("Steering arm clamp plate", 5, cpl, f, n), 5, "plate",
             group=f"wheel-{nm}", moving=nm[0].upper())
@@ -627,6 +642,19 @@ def build_components():
                 tee("Knuckle collar plates", f"Knuckle collar plate, {nm} {clab}", tpl,
                     (xf - sx * T / 2, s * step_y, zc), (0, s, 0), (0, 0, nz), (1, 0, 0),
                     [("tab", 18), ("bolt", 44), ("tab", 74), ("bolt", 117)], bom=3)
+    # steering lock stops: a vertical fin plate tabbed and bolted to the front knuckle post plate's front face.
+    # Its lower leg hangs beside the clamp plates; at the inner-wheel lock the clamp plate's front inboard corner
+    # meets the fin's rear face, so the stop load is along the fin, in its own plane.
+    z0s, z1s, z2s = P["STOP_Z"]
+    for nm, s in sides:
+        xc_, yc_ = stop_corner(s)
+        y0 = abs(yc_) - T / 2 if s > 0 else -abs(yc_) - T / 2
+        f, n = xz(y0)
+        x_r = wb + px + T
+        fin = [(x_r, z1s), (xc_, z1s), (xc_, z0s), (xc_ + P["STOP_LEG"], z0s), (xc_ + P["STOP_LEG"], z2s), (x_r, z2s)]
+        add(f"Steering lock stop, {nm}", plate("Steering lock stop", 3, fin, f, n), 3, "plate")
+        tee("Steering lock stops", f"Knuckle post plate, {nm} front", f"Steering lock stop, {nm}", (x_r, s * abs(yc_), az0),
+            (0, 0, 1), (1, 0, 0), (0, 1, 0), [("bolt", 14), ("tab", 34), ("tab", 52)], tab_len=12.0, bom=3)
     # steering arm to clamp plate
     for nm, s in sides:
         leg_y = s * (tr - ly_)
@@ -889,10 +917,13 @@ def check(verbose=True):
     # 3. steering sweep: wheels, forks, arms, linkage and column against the fixed structure
     sweep = steering_sweep(comps)
     fails += sweep
+    # 4. lock stops: each clamp plate meets its stop fin at the inner-wheel lock, and not before
+    stops = lock_stop_check(comps)
+    fails += stops
     if verbose:
         print(f"components {len(comps)}, plates {len(PLATES)}, joints {len(JOINTS)}, bolt sets {sum(BOLT_GROUPS.values())}")
         print(f"overlap pairs tested {n_pairs}; overlaps {len(overlaps)}; floating {len(names) - len(seen)}; "
-              f"joint issues {len(ISSUES)}; steering sweep issues {len(sweep)}")
+              f"joint issues {len(ISSUES)}; steering sweep issues {len(sweep)}; lock stop issues {len(stops)}")
         for f_ in fails:
             print("  FAIL", f_)
         print("PASS" if not fails else f"{len(fails)} failures")
@@ -985,6 +1016,36 @@ def _column_angle(dL):
     return (lo + hi) / 2
 
 
+LOCK_STOP = {}      # side -> (gap at the lock, gap 1 deg before it, overlap at the lock); filled by lock_stop_check
+
+
+def lock_stop_check(comps, verbose=False):
+    """Each steering arm clamp plate meets its knuckle post's stop fin at the inner-wheel lock (left wheel at
+    +STEER_LOCK, right wheel at -STEER_LOCK): gap under 0.2 mm and no overlap at the lock, clear 1 deg before it."""
+    wb, tr = P["WB"], P["TRACK"] / 2
+    fails = []
+    for nm, s in (("left", 1), ("right", -1)):
+        plate_ = comps[f"Steering arm clamp plate, {nm}"].shape
+        pin = comps[f"Steering lock stop, {nm}"].shape
+        res = []
+        for d in (P["STEER_LOCK"], P["STEER_LOCK"] - 1.0):
+            rot = Pos(wb, s * tr, 0) * Rot(0, 0, s * d) * Pos(-wb, -s * tr, 0)
+            moved = rot * plate_
+            gap = moved.distance_to(pin)
+            try:
+                ov = (moved & pin).volume
+            except Exception:
+                ov = 0.0
+            res.append((gap, ov))
+        LOCK_STOP[nm] = (res[0][0], res[1][0], res[0][1])
+        if res[0][0] > 0.2 or res[0][1] > 0.5:
+            fails.append(f"lock stop, {nm}: clamp plate is {res[0][0]:.2f} mm from its stop at {P['STEER_LOCK']:.0f} deg "
+                         f"(overlap {res[0][1]:.1f} mm3)")
+        if res[1][0] < 0.3:
+            fails.append(f"lock stop, {nm}: clamp plate already meets its stop 1 deg before the lock")
+    return fails
+
+
 def steering_sweep(comps, angles=(-40, -30, -20, -10, 0, 10, 20, 30, 40), report=None):
     wb, tr, kp = P["WB"], P["TRACK"] / 2, P["KP_X"]
     fixed = [n for n, c in comps.items() if not c.moving and c.group not in ("linkage", "cables")]
@@ -1020,6 +1081,8 @@ def steering_sweep(comps, angles=(-40, -30, -20, -10, 0, 10, 20, 30, 40), report
                     continue
                 if fn.startswith("Bolt: Steering arm") or (n.startswith("Rod end") and fn.startswith("Steering arm")):
                     continue
+                if n.startswith("Steering arm clamp plate") and fn.startswith("Steering lock stop"):
+                    continue          # the stop contact itself; checked by lock_stop_check()
                 try:
                     dist = s.distance_to(comps[fn].shape)
                 except Exception:

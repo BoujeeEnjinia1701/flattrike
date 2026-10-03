@@ -2,7 +2,7 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![DOI](https://zenodo.org/badge/1386426098.svg)](https://zenodo.org/badge/latestdoi/1386426098) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/flattrike/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/flattrike/actions/workflows/reuse.yml) [![Archived in Software Heritage](https://archive.softwareheritage.org/badge/origin/https://github.com/BoujeeEnjinia1701/flattrike/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/BoujeeEnjinia1701/flattrike)
 
-**Area:** Mobility and Logistics · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** about $800 USD (estimated parts cost $724) · **Difficulty:** 3 of 5
+**Area:** Mobility and Logistics · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** about $800 USD (estimated parts cost $728) · **Difficulty:** 3 of 5
 
 Bolt-together cargo tricycle whose frame is cut from flat sheet steel by any laser or waterjet shop, uses standard bicycle parts, and ships flat.
 
@@ -55,14 +55,14 @@ Street vendors and micro-logistics operators in emerging markets need durable ca
 
 ## Concept
 
-Bolt-together cargo tricycle whose frame is cut from flat sheet steel by any laser or waterjet shop, uses standard bicycle parts, and ships flat. The concept is a front loader: two 20 in front wheels, each steering in a standard bicycle fork linked by a tie rod (Ackermann steering), carry a fixed, lockable plywood box, and the rider sits over a standard 20 in rear wheel with a 3-speed drum brake hub. It is rated for 148 kg of cargo with a rider up to 80 kg, or 138 kg with a rider up to 90 kg, weighs 71.2 kg empty, and the pedal-only prototype costs $724 in parts. The TRL 3 calculations (FTK-CAL-001) show that unassisted hill climbing is not yet met, the production cost estimate (about $465) is over its $300 value-engineering target, and that making the design buildable added 1.4 kg, so the cargo rating was trimmed by 2 kg to stay inside the 300 kg class (decided 2026-10-02); see the [design decisions register](docs/06-design-decisions.md) and the [review note](docs/REVIEW.md).
+Bolt-together cargo tricycle whose frame is cut from flat sheet steel by any laser or waterjet shop, uses standard bicycle parts, and ships flat. The concept is a front loader: two 20 in front wheels, each steering in a standard bicycle fork linked by a tie rod (Ackermann steering), carry a fixed, lockable plywood box, and the rider sits over a standard 20 in rear wheel with a 3-speed drum brake hub. It is rated for 148 kg of cargo with a rider up to 80 kg, or 138 kg with a rider up to 90 kg, weighs 71.7 kg empty, turns in 5.64 m with a lock stop at each front wheel, and the pedal-only prototype costs $728 in parts. The TRL 3 calculations (FTK-CAL-001) show that unassisted hill climbing is not yet met, the production cost estimate (about $466) is over its $300 value-engineering target, and that making the design buildable added mass, so the cargo rating was trimmed by 2 kg to stay inside the 300 kg class (decided 2026-10-02); see the [design decisions register](docs/06-design-decisions.md) and the [review note](docs/REVIEW.md).
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
 ## Key components
 
-- 35 laser-cut 3 mm steel plates: closed-box spine, rear stays, front bed and two knuckle posts, nested on one standard sheet
-- Tab-and-slot joints and cut spacer washers with 95 M8 class 8.8 bolts and all-metal locknuts held in windows in the plates (no welding)
+- 37 laser-cut 3 mm steel plates: closed-box spine, rear stays, front bed, two knuckle posts and their steering lock stops, nested on one standard sheet
+- Tab-and-slot joints and cut spacer washers with 97 M8 class 8.8 bolts and all-metal locknuts held in windows in the plates (no welding)
 - Ackermann steering: central steering column in a 200 mm head tube, two 20 in forks on their own 1 1/8 in headsets, tie rod and drag link
 - 20 in wheels (3) with drum brakes; 3-speed hub at the rear
 - Standard bicycle drivetrain, seat and handlebar
@@ -75,7 +75,7 @@ The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 
 ![FlatTrike prototype: every component pulled apart and numbered in build order](docs/05-build-plan/overview.png)
 
-The [prototype build plan](docs/05-build-plan.md) (FTK-BLD-001) shows, in pictures, how to make each of the 25 groups of parts and put them together in 21 steps; nothing has been built yet. Every frame part is a 3 mm plate cut by a laser or waterjet shop, joined by tabs in slots and M8 bolts whose locknuts sit in windows in the plates; the rest is bought bicycle parts, a cut-down fork for the steering column, three tube lengths and a plywood box. Writing the plan made the design buildable: the joints, stay bolts, dropouts, head tube clamping, steering linkage, steering arms and knuckle posts were redesigned (FTK-DDR-003, open for Amish's review), and the open decisions this raised are in the [design decisions register](docs/06-design-decisions.md). Every picture is drawn from the model, which checks that no two parts overlap, every part is fixed, and the steering turns lock to lock without touching the frame.
+The [prototype build plan](docs/05-build-plan.md) (FTK-BLD-001) shows, in pictures, how to make each of the 26 groups of parts and put them together in 21 steps; nothing has been built yet. Every frame part is a 3 mm plate cut by a laser or waterjet shop, joined by tabs in slots and M8 bolts whose locknuts sit in windows in the plates; the rest is bought bicycle parts, a cut-down fork for the steering column, three tube lengths and a plywood box. Writing the plan made the design buildable: the joints, stay bolts, dropouts, head tube clamping, steering linkage, steering arms and knuckle posts were redesigned (FTK-DDR-003, open for Amish's review), and the open decisions this raised are in the [design decisions register](docs/06-design-decisions.md). Every picture is drawn from the model, which checks that no two parts overlap, every part is fixed, and the steering turns lock to lock without touching the frame.
 
 ## Safety
 
