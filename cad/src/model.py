@@ -2,7 +2,8 @@
 
 Run from the repo root:
     python cad/src/model.py            exports STEP and STL into cad/step and cad/stl and prints the plate schedule
-    python cad/src/model.py --check    runs the constructability checks (joints, overlaps, contacts, steering sweep)
+    python cad/src/model.py --check    runs the constructability checks (joints, overlaps, contacts, steering sweep,
+                                       running clearances, lock stops, trail and scrub measured on the model)
 
 Every physical piece is its own solid in build_components(): each cut plate (left and right
 separately), each bought part and each bolt set. build_parts() fuses them by BOM line for the
@@ -25,6 +26,8 @@ How the pieces join (FTK-DDR-003, design for construction):
   * Head tubes and the bottom bracket shell are clamped between two plates by their own pressed or
     threaded cups: each cup's spigot passes through a hole in the plate and its flange holds the plate
     against the end of the tube or shell.
+  * Each knuckle fork is fitted turned round, so its legs and axle trail the vertical knuckle head tube by
+    the fork offset: 35 mm of mechanical trail, no caster (decided by Amish, 2026-10-03).
   * Steering arms clamp to the inboard fork leg with two U-bolts through a clamp plate; the drop arm
     is a plate slid over the two leg stubs of a cut-down steering fork, held by shaft collars.
 PRELIMINARY, NOT FOR FABRICATION.
@@ -44,7 +47,8 @@ PARAMS = {
     "T": 3.0,                 # plate thickness, S235JR or A36 class
     "WHEEL_R": 254.0,         # 20 x 2.125 in tyre (ISO 406), outer radius
     "TYRE_W": 54.0,           # tyre section width
-    "WB": 1450.0,             # wheelbase, rear axle to front axle
+    "WB": 1450.0,             # front steering (kingpin) axes ahead of the rear axle; the front axles trail them
+                              # by FORK_OFFSET, so the wheelbase is WB - FORK_OFFSET (see axle_x())
     "TRACK": 840.0,           # front wheel centre to centre
     "KP_X": 1000.0,           # central steering axis, ahead of the rear axle
     "HT_Z0": 310.0,           # central head tube bottom (top face of the lower yoke)
@@ -65,11 +69,17 @@ PARAMS = {
     "SPROCKET_T": 24,         # rear sprocket teeth
     "CRANK": 170.0,
     "FORK_OLD": 100.0,        # bought 20 in fork, front hub over locknuts
+    # fork direction (decided by Amish 2026-10-03, FTK-DEC-001): each knuckle fork is a 20 in fork whose legs run
+    # parallel to its steerer, set FORK_OFFSET off it (BMX-type crown offset), fitted turned round so the legs and
+    # axle trail the vertical knuckle head tube. Caster stays 0; mechanical trail = FORK_OFFSET.
+    "FORK_OFFSET": 35.0,      # leg and axle offset behind the steering axis (buy 30 to 40 mm)
+    "TRAIL_RANGE": (30.0, 70.0),  # mechanical trail allowed by the constructability check, mm
     "LEG_R": 11.0,            # fork leg radius
     "LEG_Y": 61.0,            # fork leg centre from the wheel centre plane
     "POST_Y0": 283.0,         # knuckle post inner face from the centre plane
     "POST_W": 45.0,           # knuckle post box width (inner to outer cheek)
     "POST_X": 25.0,           # knuckle post transverse plates' inner faces at WB +/- this
+    "POST_LIP": 8.0,          # knuckle post plates' lower part past the outer cheek (10 mm before the trailing fork crown)
     "KN_Z0": 555.0,           # knuckle head tube bottom (top face of the lower collar plate)
     "KN_LEN": 120.0,          # knuckle head tube length = gap between the collar plates
     "ARM_L": 120.0,           # Ackermann steering arm, kingpin axis to tie rod joint
@@ -91,13 +101,15 @@ PARAMS = {
     "PLY_WALL": 9.0,
     "RAIL_Y": 240.0,          # bed rail outer face offset
     "RAIL_X0": 1040.0,        # bed rail rear end
+    "RAIL_NOTCH": (1200.0, 1305.0, 415.0),  # tyre notch in each rail's lower edge: x start, x end, height
     "BULK_X": 1060.0,         # bulkhead rear face
     "BULK_Z0": 298.0,         # bulkhead bottom edge
     "AB_X": (1436.0, 1461.0), # axle beam plates (rear faces)
     "STEER_LOCK": 40.0,       # Ackermann inner-wheel lock, degrees (box clearance limit)
     # steering lock stops (decided by Amish 2026-10-02, FTK-DEC-001): a stop under each knuckle post that the
     # steering arm clamp plate meets at the inner-wheel lock
-    "CLAMP_IN": 130.0,        # clamp plate inboard end from the kingpin axis (was 85 mm); its front corner meets the stop
+    "CLAMP_IN": 104.0,        # clamp plate inboard end from the kingpin axis (130 mm before the fork was turned to
+                              # trail, 2026-10-03); its front corner meets the stop
     "STOP_Z": (300.0, 348.0, 430.0),   # stop fin: bottom, underside of its upper part, top
     "STOP_LEG": 30.0,         # width of the stop fin's lower leg, ahead of the contact face
 }
@@ -252,6 +264,11 @@ def seat_axes():
     return t, w
 
 
+def axle_x():
+    """Front axle X with the wheels straight ahead: behind the kingpin axes by the fork offset (fork turned to trail)."""
+    return P["WB"] - P["FORK_OFFSET"]
+
+
 def drop_pin():
     """Drag link joint on the drop arm: the left steering arm's vector placed on the column axis."""
     tx, ty = ackermann_tip(1)
@@ -263,7 +280,7 @@ def stop_corner(s):
     inner-wheel lock (left +STEER_LOCK, right -STEER_LOCK). The stop fin's rear face is placed there."""
     wb, tr = P["WB"], P["TRACK"] / 2
     a = s * math.radians(P["STEER_LOCK"])
-    qx, qy = -P["LEG_R"], -s * P["CLAMP_IN"]          # clamp plate front face is LEG_R behind the kingpin axis
+    qx, qy = -P["FORK_OFFSET"] - P["LEG_R"], -s * P["CLAMP_IN"]   # clamp plate front face is LEG_R behind the trailing leg
     return (wb + qx * math.cos(a) - qy * math.sin(a), s * tr + qx * math.sin(a) + qy * math.cos(a))
 
 
@@ -449,10 +466,14 @@ def build_components():
                            [(-200, 533), (200, 533), (200, 575), (-200, 575)]]), 3, "plate")
     x_end = P["BOX_X0"] + P["BOX_L"]
     rz0 = P["BOX_Z0"] - 110; bz = P["BOX_Z0"]; rx0 = P["RAIL_X0"]
-    rail = [(rx0, 310), (1110, 310), (1150, rz0), (x_end, rz0), (x_end, bz), (rx0, bz)]
-    rail_holes = [[(1125, rz0 + 18), (1215, rz0 + 18), (1215, bz - 18), (1125, bz - 18)]]
+    # tyre notch (2026-10-03): with the forks turned to trail, the inner tyre's rear swings under the rail at full
+    # lock, so the rail's lower edge is cut up to RAIL_NOTCH between the bulkhead and the axle beams
+    nx0, nx1, nz = P["RAIL_NOTCH"]
+    rail = [(rx0, 310), (1110, 310), (1150, rz0), (nx0 - 20, rz0), (nx0, nz), (nx1, nz), (nx1 + 20, rz0),
+            (x_end, rz0), (x_end, bz), (rx0, bz)]
+    rail_holes = [[(1125, rz0 + 18), (nx0 - 38, rz0 + 18), (nx0 - 38, bz - 18), (1125, bz - 18)]]
     rail_holes += [[(xh, rz0 + 18), (xh + w, rz0 + 18), (xh + w, bz - 18), (xh, bz - 18)]
-                   for xh, w in ((1265, 115), (1520, 150), (1690, 145))]
+                   for xh, w in ((nx1 + 38, 1380 - nx1 - 38), (1520, 150), (1690, 145))]
     for nm, s in sides:
         y0 = ri if s > 0 else -ry
         f, n = xz(y0)
@@ -473,7 +494,7 @@ def build_components():
     # knuckle posts: two transverse plates between an inner cheek (which they tab into) and an outer
     # cheek (which tabs into them), and two collar plates that clamp the knuckle head tube
     px = P["POST_X"]; kz0, kz1 = P["KN_Z0"], P["KN_Z0"] + P["KN_LEN"]
-    step_y = py1 + 10; ymax = 470.0
+    step_y = py1 + P["POST_LIP"]; ymax = 470.0
     tprof = [(py0 + T, az0), (step_y, az0), (step_y, kz0), (ymax, kz0), (ymax, kz1), (py0 + T, kz1)]
     for nm, s in sides:
         pr = tprof if s > 0 else mirror_poly(tprof)
@@ -531,7 +552,7 @@ def build_components():
     lr, ly_ = P["LEG_R"], P["LEG_Y"]
     for nm, s in sides:
         leg_y = s * (tr - ly_)
-        xc = wb - lr - T          # clamp plate rear face; its front face touches the leg
+        xc = axle_x() - lr - T    # clamp plate rear face; its front face touches the (trailing) leg
         cz0, cz1 = P["CLAMP_Z"]
         y_in, y_out = s * (tr - P["CLAMP_IN"]), leg_y + s * 24      # inboard end reaches the lock stop
         cpl = [(min(y_in, y_out), cz0), (max(y_in, y_out), cz0), (max(y_in, y_out), cz1), (min(y_in, y_out), cz1)]
@@ -659,7 +680,7 @@ def build_components():
     for nm, s in sides:
         leg_y = s * (tr - ly_)
         tee("Steering arm clamps", f"Steering arm clamp plate, {nm}", f"Steering arm, {nm}",
-            (wb - lr - T, leg_y - s * 22, P["ARM_Z"] + T / 2), (0, s, 0), (-1, 0, 0), (0, 0, 1),
+            (axle_x() - lr - T, leg_y - s * 22, P["ARM_Z"] + T / 2), (0, s, 0), (-1, 0, 0), (0, 0, 1),
             [("tab", 14), ("bolt", 34)], bom=5, head_group=f"wheel-{nm}")
     for k in list(C):
         if k.startswith("Bolt: Steering arm clamps"):
@@ -691,26 +712,30 @@ def build_components():
         bx_, by_ = loc(sgn * cb, 0)
         add(f"Bolt: drop arm to crown {lab}", bolt_set("Drop arm to crown", (bx_, by_, crown_t), (0, 0, -1), 27 + T,
                                                         length=27 + T + 12, bom=5), 5, "hardware", group="column", moving="C")
-    # knuckle forks with wheels; U-bolts around the inboard leg
+    # knuckle forks with wheels, turned round so the legs and axle trail the steerer; U-bolts around the inboard leg
+    ax = axle_x()
     for nm, s in sides:
         cy = s * tr
         fk = rod((wb, cy, kz0 - T - 9), (wb, cy, kz1 + T + 22), 14.3)
-        fk = fk + box(wb - 20, wb + 20, cy - ly_ - lr, cy + ly_ + lr, kz0 - T - 9 - 26 - 8, kz0 - T - 9 - 8)
+        zc0, zc1 = kz0 - T - 9 - 26 - 8, kz0 - T - 9 - 8      # crown: rounded ends round the legs
+        fk = fk + box(ax, wb, cy - ly_, cy + ly_, zc0, zc1) + box(ax - 12, wb + 12, cy - 14, cy + 14, zc0, zc1)
         for sy in (1, -1):
-            fk = fk + rod((wb, cy + sy * ly_, kz0 - T - 43), (wb, cy + sy * ly_, P["WHEEL_R"]), lr)
+            fk = fk + rod((ax, cy + sy * ly_, zc0), (ax, cy + sy * ly_, zc1), 12.0)
+        for sy in (1, -1):
+            fk = fk + rod((ax, cy + sy * ly_, kz0 - T - 43), (ax, cy + sy * ly_, P["WHEEL_R"]), lr)
         add(f"Front fork, {nm}", fk, 5, "bought", group=f"wheel-{nm}", moving=nm[0].upper())
-        add(f"Front wheel, {nm}", wheel(wb, cy, P["WHEEL_R"], 45, P["FORK_OLD"]), 6, "bought", group=f"wheel-{nm}",
+        add(f"Front wheel, {nm}", wheel(ax, cy, P["WHEEL_R"], 45, P["FORK_OLD"]), 6, "bought", group=f"wheel-{nm}",
             moving=nm[0].upper())
         leg_y = s * (tr - ly_)
         ub_ = None
         for zc in P["UBOLT_Z"]:
-            ring = Pos(wb, leg_y, zc) * (Cylinder(lr + 6.5, 6) - Cylinder(lr + 0.5, 8))
-            ring = ring & box(wb, wb + 30, leg_y - 30, leg_y + 30, zc - 5, zc + 5)
+            ring = Pos(ax, leg_y, zc) * (Cylinder(lr + 6.5, 6) - Cylinder(lr + 0.5, 8))
+            ring = ring & box(ax, ax + 30, leg_y - 30, leg_y + 30, zc - 5, zc + 5)
             for sy in (-1, 1):
                 yl = leg_y + sy * (lr + 3.5)
-                ring = ring + rod((wb, yl, zc), (wb - lr - T - 14, yl, zc), 3.0)
-                ring = ring + rod((wb - lr - T - 0.5, yl, zc), (wb - lr - T - 5.5, yl, zc), 5.5)
-                _cut(f"Steering arm clamp plate, {nm}", rod((wb - lr - T - 1, yl, zc), (wb - lr + 1, yl, zc), 3.5))
+                ring = ring + rod((ax, yl, zc), (ax - lr - T - 14, yl, zc), 3.0)
+                ring = ring + rod((ax - lr - T - 0.5, yl, zc), (ax - lr - T - 5.5, yl, zc), 5.5)
+                _cut(f"Steering arm clamp plate, {nm}", rod((ax - lr - T - 1, yl, zc), (ax - lr + 1, yl, zc), 3.5))
             ub_ = ring if ub_ is None else ub_ + ring
         add(f"U-bolts, {nm}", ub_, 5, "bought", group=f"wheel-{nm}", moving=nm[0].upper())
     # bottom bracket: shell between the side plates, cups through them
@@ -915,15 +940,30 @@ def check(verbose=True):
         if n not in seen:
             fails.append(f"floating: {n} does not touch the rest of the assembly")
     # 3. steering sweep: wheels, forks, arms, linkage and column against the fixed structure
-    sweep = steering_sweep(comps)
+    rep = {}
+    sweep = steering_sweep(comps, report=rep)
     fails += sweep
+    # 3a. running clearance of the front tyres and forks (fork turned to trail, 2026-10-03)
+    clear = clearance_check(rep)
+    fails += clear
+    # 3b. steering geometry measured on the model: trail in range, no scrub
+    geo = trail_check(comps)
+    fails += geo
     # 4. lock stops: each clamp plate meets its stop fin at the inner-wheel lock, and not before
     stops = lock_stop_check(comps)
     fails += stops
     if verbose:
         print(f"components {len(comps)}, plates {len(PLATES)}, joints {len(JOINTS)}, bolt sets {sum(BOLT_GROUPS.values())}")
         print(f"overlap pairs tested {n_pairs}; overlaps {len(overlaps)}; floating {len(names) - len(seen)}; "
-              f"joint issues {len(ISSUES)}; steering sweep issues {len(sweep)}; lock stop issues {len(stops)}")
+              f"joint issues {len(ISSUES)}; steering sweep issues {len(sweep)}; lock stop issues {len(stops)}; "
+              f"clearance issues {len(clear)}; steering geometry issues {len(geo)}")
+        for nm, g in STEER_GEOM.items():
+            print(f"steering geometry, {nm}: caster {round(g['caster'], 1) + 0.0:.1f} deg, kingpin inclination "
+                  f"{round(g['kpi'], 1) + 0.0:.1f} deg, trail {g['trail']:.1f} mm, scrub {round(g['scrub'], 1) + 0.0:.1f} mm")
+        for kind in ("tyre", "fork"):
+            worst = sorted(((k, v) for k, v in CLEARANCE.items() if k[0].startswith(kind)), key=lambda kv: kv[1][0])[:2]
+            for (k, fn), (dist, d) in worst:
+                print(f"least clearance: front {k} to {fn}: {dist:.1f} mm at {d:+d} deg")
         for f_ in fails:
             print("  FAIL", f_)
         print("PASS" if not fails else f"{len(fails)} failures")
@@ -1016,6 +1056,72 @@ def _column_angle(dL):
     return (lo + hi) / 2
 
 
+STEER_GEOM = {}     # caster (deg), trail (mm), scrub (mm), per side; filled by steering_geometry()
+CLEARANCE = {}      # (moving part kind, fixed part) -> (least gap mm, at inner-wheel angle); filled by check()
+
+
+def _slab_centre(shape, z0, z1):
+    """Centre of the part of shape between heights z0 and z1."""
+    bb = shape.bounding_box()
+    piece = shape & box(bb.min.X - 1, bb.max.X + 1, bb.min.Y - 1, bb.max.Y + 1, z0, z1)
+    c = piece.center()
+    return (c.X, c.Y, c.Z)
+
+
+def steering_geometry(comps):
+    """Caster, mechanical trail and scrub radius of each front wheel, measured on the model: the steering axis
+    through the centres of the knuckle head tube near its two ends, the tyre contact as the centre of the tyre's
+    lowest 2 mm. Trail is positive when the contact is behind the axis's ground point."""
+    out = {}
+    for nm, s in (("left", 1), ("right", -1)):
+        ht = comps[f"Knuckle head tube, {nm}"].shape
+        hb = ht.bounding_box()
+        a = _slab_centre(ht, hb.min.Z, hb.min.Z + 10)
+        b = _slab_centre(ht, hb.max.Z - 10, hb.max.Z)
+        dz = b[2] - a[2]
+        gx = a[0] - (b[0] - a[0]) * a[2] / dz          # axis meets the ground (z = 0)
+        gy = a[1] - (b[1] - a[1]) * a[2] / dz
+        tyre = wheel(axle_x(), s * P["TRACK"] / 2, P["WHEEL_R"], 45, P["FORK_OLD"], tyre_only=True)
+        cp = _slab_centre(tyre, -1.0, 2.0)
+        caster = math.degrees(math.atan2(a[0] - b[0], dz))      # + when the axis top leans back
+        kpi = math.degrees(math.atan2(s * (a[1] - b[1]), dz))
+        out[nm] = {"caster": caster, "kpi": kpi, "trail": gx - cp[0], "scrub": s * (cp[1] - gy)}
+    STEER_GEOM.update(out)
+    return out
+
+
+def trail_check(comps):
+    lo, hi = P["TRAIL_RANGE"]
+    fails = []
+    for nm, g in steering_geometry(comps).items():
+        if not lo <= g["trail"] <= hi:
+            fails.append(f"steering geometry, {nm}: mechanical trail {g['trail']:.1f} mm outside {lo:.0f} to {hi:.0f} mm")
+        if abs(g["scrub"]) > 1.0:
+            fails.append(f"steering geometry, {nm}: scrub radius {g['scrub']:.1f} mm (expected 0)")
+    if abs(STEER_GEOM["left"]["trail"] - STEER_GEOM["right"]["trail"]) > 0.5:
+        fails.append("steering geometry: left and right trail differ")
+    return fails
+
+
+CLEAR_MIN = 5.0     # mm: least running clearance of a front tyre or fork to any fixed part over the steering sweep
+
+
+def clearance_check(report):
+    """Front tyres and forks against the fixed structure (box, bed, knuckle posts, stops) over the whole sweep."""
+    fails = []
+    CLEARANCE.clear()
+    for (n, fn), (dist, d) in report.items():
+        kind = "tyre" if n.startswith("Front tyre") else ("fork" if n.startswith("Front fork") else None)
+        if kind is None or fn.startswith(("Knuckle head tube", "Knuckle headset cups", "Knuckle collar plate")):
+            continue          # the steerer turns in its own headset: a bearing fit, not a running clearance
+        side = "left" if n.endswith("left") else "right"
+        key = (f"{kind}, {side}", fn)
+        CLEARANCE[key] = (dist, d)
+        if dist < CLEAR_MIN:
+            fails.append(f"clearance: front {kind}, {side} comes within {dist:.1f} mm of {fn} at {d:+d} deg")
+    return fails
+
+
 LOCK_STOP = {}      # side -> (gap at the lock, gap 1 deg before it, overlap at the lock); filled by lock_stop_check
 
 
@@ -1053,8 +1159,8 @@ def steering_sweep(comps, angles=(-40, -30, -20, -10, 0, 10, 20, 30, 40), report
     mov = {"L": [n for n, c in comps.items() if c.moving == "L" and not n.startswith("Front wheel")],
            "R": [n for n, c in comps.items() if c.moving == "R" and not n.startswith("Front wheel")],
            "C": [n for n, c in comps.items() if c.moving == "C" and not n.startswith("Handlebar")]}
-    tyres = {"L": wheel(wb, tr, P["WHEEL_R"], 45, P["FORK_OLD"], tyre_only=True),
-             "R": wheel(wb, -tr, P["WHEEL_R"], 45, P["FORK_OLD"], tyre_only=True)}
+    tyres = {"L": wheel(axle_x(), tr, P["WHEEL_R"], 45, P["FORK_OLD"], tyre_only=True),
+             "R": wheel(axle_x(), -tr, P["WHEEL_R"], 45, P["FORK_OLD"], tyre_only=True)}
     fb = {n: comps[n].shape.bounding_box() for n in fixed}
     min_gap = {}; straight = {}
     for d in sorted(angles, key=abs):

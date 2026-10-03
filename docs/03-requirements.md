@@ -3,9 +3,9 @@ doc_id: FTK-REQ-001
 title: FlatTrike requirements
 project: FlatTrike
 doc_type: Requirements
-version: "0.8"
+version: "0.9"
 status: Draft
-date: '2026-10-02'
+date: '2026-10-03'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -41,36 +41,40 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: "Status from FTK-CAL-001 v0.6 with the 2026-10-02 decisions carried into the model and calculations (steering lock stops, rating 148 and 138 kg, turning circle through the built linkage); no status change"
+- version: "0.9"
+  date: '2026-10-03'
+  author: Amish Chadha
+  change: "Status from FTK-CAL-001 v0.7 with the knuckle forks turned to trail (35 mm mechanical trail, decided by Amish 2026-10-03): wheelbase 1.415 m, turning circle 5.52 m, 71.6 kg empty, prototype $736, production about $471; no status change"
 ---
 
 # FlatTrike requirements
 
-These requirements are checked by calculation in FTK-CAL-001 v0.6 against the constructable TRL 3 model (FTK-DDR-003). Targets are still proposals until co-design sessions with users (see FTK-PRB-001). Amish's decisions of 2026-09-25 redefine what the prototype budget covers (R15) and add a production cost target (R18) (FTK-DDR-001), and then restate R1, R8, R10 and R14 and keep R18 as it is (FTK-DDR-002). On 2026-10-02 Amish accepted the design for construction and restated R1 (148 kg of cargo with a rider up to 80 kg, 138 kg with a rider up to 90 kg), R8 (72 kg) and R14 (60 min for a knuckle post plate) (FTK-DDR-003, A1 and A2; FTK-DEC-001), so these three are met on paper. One requirement is **not met** at TRL 3: R13 without assist. R18 (production cost) is **over its value-engineering target** by USD 166. The final load label is set from the weighed trike.
+These requirements are checked by calculation in FTK-CAL-001 v0.7 against the constructable TRL 3 model (FTK-DDR-003). Targets are still proposals until co-design sessions with users (see FTK-PRB-001). Amish's decisions of 2026-09-25 redefine what the prototype budget covers (R15) and add a production cost target (R18) (FTK-DDR-001), and then restate R1, R8, R10 and R14 and keep R18 as it is (FTK-DDR-002). On 2026-10-02 Amish accepted the design for construction and restated R1 (148 kg of cargo with a rider up to 80 kg, 138 kg with a rider up to 90 kg), R8 (72 kg) and R14 (60 min for a knuckle post plate) (FTK-DDR-003, A1 and A2; FTK-DEC-001), so these three are met on paper. One requirement is **not met** at TRL 3: R13 without assist. R18 (production cost) is **over its value-engineering target** by USD 171. The final load label is set from the weighed trike.
 
-The **design load case** is an 80 kg rider and 148 kg of cargo in the box on a trike of 71.7 kg: 299.7 kg gross, on a flat dry road unless stated. The upper case is a 90 kg rider with 138 kg of cargo, also 299.7 kg. FTK-CAL-001 v0.6 computes every figure at this rating.
+The **design load case** is an 80 kg rider and 148 kg of cargo in the box on a trike of 71.6 kg: 299.6 kg gross, on a flat dry road unless stated. The upper case is a 90 kg rider with 138 kg of cargo, also 299.6 kg. FTK-CAL-001 v0.7 computes every figure at this rating.
 
-Table 1. FlatTrike requirements and TRL 3 status (FTK-CAL-001 v0.6).
+Table 1. FlatTrike requirements and TRL 3 status (FTK-CAL-001 v0.7).
 
 | ID | Requirement | Target | Verification | TRL 3 status |
 | --- | --- | --- | --- | --- |
-| R1 | Carry the rated load | 148 kg of cargo in the box with a rider up to 80 kg, or 138 kg with a rider up to 90 kg; gross mass 300 kg or less, within the EN 17860 cargo cycle class (restated, FTK-DDR-002; rating restated 2026-10-02, FTK-DDR-003 A1; final label set from the weighed trike) | Mass budget (FTK-CAL-001 section 3) | Met on paper: 299.7 kg in both cases at the 2026-10-02 rating (FTK-DEC-001) |
-| R2 | Frame strength | Frame survives a static proof load of twice the rated payload with no permanent set, and a fatigue load case representative of commercial use under EN 17860 | Hand calculation (section 6); FEA next; proof test later | At risk: stresses 40 MPa or less and fatigue ranges below the limit, but stay buckling has a safety factor of only 2.01, the knuckle post columns reach 40 MPa and the tab-and-slot joints need FEA |
+| R1 | Carry the rated load | 148 kg of cargo in the box with a rider up to 80 kg, or 138 kg with a rider up to 90 kg; gross mass 300 kg or less, within the EN 17860 cargo cycle class (restated, FTK-DDR-002; rating restated 2026-10-02, FTK-DDR-003 A1; final label set from the weighed trike) | Mass budget (FTK-CAL-001 section 3) | Met on paper: 299.6 kg in both cases at the 2026-10-02 rating (FTK-DEC-001) |
+| R2 | Frame strength | Frame survives a static proof load of twice the rated payload with no permanent set, and a fatigue load case representative of commercial use under EN 17860 | Hand calculation (section 6); FEA next; proof test later | At risk: stresses 41 MPa or less and fatigue ranges below the limit, but stay buckling has a safety factor of only 2.16, the knuckle post columns reach 41 MPa and the tab-and-slot joints need FEA |
 | R3 | No welding | Every steel part is flat 3 mm plate cut from a DXF file by laser or waterjet; no bending, welding or brazing; joints bolted with locknuts | Model review | Met: 37 plates and 78 spacer washers, all flat, joined by tabs, slots and bolts; head tubes, seat tube and spacer tubes are bought sections cut to length |
-| R4 | One standard sheet | All steel frame parts nest on one 1,250 x 2,500 x 3 mm sheet (4 x 8 ft class) | Nesting check (section 2) | Met: 1,940 mm of sheet used by a true-shape nest; bounding rectangles alone would need 2,669 mm |
+| R4 | One standard sheet | All steel frame parts nest on one 1,250 x 2,500 x 3 mm sheet (4 x 8 ft class) | Nesting check (section 2) | Met: 1,985 mm of sheet used by a true-shape nest; bounding rectangles alone would need 2,669 mm |
 | R5 | Standard bicycle parts | Wheels (20 in, ISO 406), hubs, brakes, forks (20 in), headsets (1 1/8 in), bottom bracket, cranks, chain (1/8 in), seatpost (27.2 mm) and saddle are standard sizes sold in regional markets | Parts availability survey with the partner | Met by design, with the head tubes and bottom bracket shell as bought steel sections (decided); survey pending |
 | R6 | Ships flat | Complete kit, wheels included, packs into 0.4 m³ or less with no piece longer than 1.0 m | Packing estimate | Met: about 0.31 m³; longest piece 0.85 m |
 | R7 | Assembled with hand tools | Two people assemble the kit in 4 h or less with spanners to 17 mm, hex keys, cone spanners and a screwdriver; no jig, because the plates locate each other with tabs and slots | Work-content estimate; later timed build | At risk: about 4.07 h for 97 bolt sets, the headsets and the steering linkage, about 4 minutes over; accepted 2026-10-02, to be timed at TRL 4 |
-| R8 | Light enough to ride and push | Empty mass 72 kg or less including the box (relaxed from 55 kg, FTK-DDR-002, and from 70 kg on 2026-10-02, FTK-DDR-003 A1); still lighter than the 80 kg traditional rickshaw documented by ITDP | Mass budget | Met on paper: 71.7 kg with the steering lock stops, 0.3 kg under (FTK-DEC-001) |
-| R9 | Fits market lanes | Overall width 1.0 m or less; length 2.2 m or less; turning circle 6 m or less | Model and steering geometry | Met: 0.984 m wide, 2.15 m long, 5.64 m turning circle through the built linkage at the 40° inner lock set by the lock stops (5.95 m upper bound) |
-| R10 | Resist tipping in turns | Lateral acceleration at the tipping point 0.30 g or more loaded, and 0.22 g or more with the rider only together with a cornering-speed label (rider-only case relaxed, FTK-DDR-002) | Stability calculation (section 5); later tilt-table test | Met: 0.41 g loaded and 0.24 g rider only at any lock; label reads 6 km/h for full-lock turns when empty |
+| R8 | Light enough to ride and push | Empty mass 72 kg or less including the box (relaxed from 55 kg, FTK-DDR-002, and from 70 kg on 2026-10-02, FTK-DDR-003 A1); still lighter than the 80 kg traditional rickshaw documented by ITDP | Mass budget | Met on paper: 71.6 kg with the steering lock stops and the forks turned to trail, 0.4 kg under (FTK-DEC-001) |
+| R9 | Fits market lanes | Overall width 1.0 m or less; length 2.2 m or less; turning circle 6 m or less | Model and steering geometry | Met: 0.986 m wide, 2.15 m long, 5.52 m turning circle through the built linkage at the 40° inner lock set by the lock stops (5.86 m upper bound); the trailing contact patches shorten the wheelbase to 1.415 m |
+| R10 | Resist tipping in turns | Lateral acceleration at the tipping point 0.30 g or more loaded, and 0.22 g or more with the rider only together with a cornering-speed label (rider-only case relaxed, FTK-DDR-002) | Stability calculation (section 5); later tilt-table test | Met: 0.42 g loaded and 0.24 g rider only at any lock (lowest straight ahead; the trailing outer contact moves out as the wheels turn); label reads 6 km/h for full-lock turns when empty |
 | R11 | Stop and park safely | Stop from 15 km/h in 6 m or less at gross mass on a dry road; drum brakes on all three wheels; a parking brake that holds the loaded trike on a 10 % grade | Braking calculation (section 7); later field test | At risk: each drum needs about 37 N·m (rating not yet confirmed); fade after about 1.9 km of loaded 5 % descent |
 | R12 | Pedal on the flat | Cruise at 7 km/h or more at gross mass on a flat dirt road with 110 W at the pedals | Power calculation | Met: 7.6 km/h |
 | R13 | Climb local hills | Climb a 5 % grade for 100 m at 4 km/h or more at gross mass without the rider dismounting | Power and gearing calculation | **Not met without assist:** 239 W needed at the pedals. Met with assist route C (6.0 km/h), which is not in the prototype |
 | R14 | Repairable locally | Any single plate or standard part replaced in 30 min or less with hand tools, except a spine side plate in 90 min or less (FTK-DDR-002) and a knuckle post plate in 60 min or less (FTK-DDR-003 A2, 2026-10-02); open DXF files let any laser shop re-cut one plate | Bolt-count estimate; later repair trial | Met on paper: knuckle post plate about 53 min (both collar plates and the headset cups come off), within 60 min; spine side plate about 80 min, within 90 min |
-| R15 | Affordable prototype | Parts for the pedal-only prototype cost at or below the value-engineering target of $800 (`project.yaml` `budget_usd`, a hypothetical control target). The optional assist kit and any SwapCell pack are outside this budget; a SwapCell pack is priced once in the SwapCell repo | Priced BOM (`bom/bom.csv`) | **Within the value-engineering target:** $728 against $800 (USD 72 under) |
+| R15 | Affordable prototype | Parts for the pedal-only prototype cost at or below the value-engineering target of $800 (`project.yaml` `budget_usd`, a hypothetical control target). The optional assist kit and any SwapCell pack are outside this budget; a SwapCell pack is priced once in the SwapCell repo | Priced BOM (`bom/bom.csv`) | **Within the value-engineering target:** $736 against $800 (USD 64 under) |
 | R16 | Last in commercial service | Frame life of 5 years or more in daily outdoor commercial use, against 2 to 3 years for traditional wooden rickshaw frames (ITDP) | Corrosion and fatigue review; later field trial | Not verifiable at TRL 3: unprotected steel could lose up to 0.42 mm in 5 years; depends on coating and sealed joints |
 | R17 | Work as a stall | Lockable box of 150 L or more; box lid usable as a counter at 0.75 to 0.95 m height | Model check | Met: 151 L inside; lid at 0.84 m |
-| R18 | Competitive in production | Production cost at or below the value-engineering target of $300 per trike at 100 units (decided by Amish, 2026-09-25; kept, FTK-DDR-002) | Cost estimate (section 9); later partner quotes | **Over the value-engineering target by USD 166:** about $466, over two thirds of it bought bicycle parts; wholesale prices wait on a partner |
+| R18 | Competitive in production | Production cost at or below the value-engineering target of $300 per trike at 100 units (decided by Amish, 2026-09-25; kept, FTK-DDR-002) | Cost estimate (section 9); later partner quotes | **Over the value-engineering target by USD 171:** about $471, over two thirds of it bought bicycle parts; wholesale prices wait on a partner |
 
 ## Assumptions
 

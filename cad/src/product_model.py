@@ -463,7 +463,8 @@ def product_parts(P=PARAMS, with_rider=True):
     for s, side in ((1, "left"), (-1, "right")):
         cyw = s * tr
         EW = (620, s * 700, 0)
-        fw = _wheel(WB, cyw, R, 45, P["FORK_OLD"])
+        AX = WB - P["FORK_OFFSET"]      # front axle trails the knuckle steering axis (forks turned to trail, 2026-10-03)
+        fw = _wheel(AX, cyw, R, 45, P["FORK_OLD"])
         # drums on the outboard side of each front wheel
         add(f"Front tyre, {side}", fw["tyre"], C_TYRE, "rubber", 6, "shell", EW)
         add(f"Front tyre tread, {side}", fw["tread"], C_TYRE, "rubber", 6, "shell", EW)
@@ -473,7 +474,7 @@ def product_parts(P=PARAMS, with_rider=True):
         add(f"Front drum brake, {side}", fw["drum"], C_STEEL, "metal", 6, "shell", EW)
         add(f"Front brake plate and arm, {side}", fw["brake"], C_FORK, "painted", 6, "shell", EW)
         add(f"Front axle nuts, {side}", fw["axle"], C_ZINC, "metal", 6, "shell", EW)
-        mg = _arc_band(WB, cyw, R, R + 8, R + 10.5, 62, 20, 160)
+        mg = _arc_band(AX, cyw, R, R + 8, R + 10.5, 62, 20, 160)
         add(f"Front mudguard, {side}", mg, C_FORK, "plastic", 14, "accessory", (620, s * 700, 120))
 
     # ============================================================ 9 cargo box (shell)

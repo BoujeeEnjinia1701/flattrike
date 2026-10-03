@@ -3,9 +3,9 @@ doc_id: FTK-DEC-001
 title: FlatTrike design decisions register
 project: FlatTrike
 doc_type: Design decisions register
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-10-02'
+date: '2026-10-03'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: "Value engineering restated after the 2026-10-02 decisions were carried into the design (lock stops in BOM line 3; FTK-CAL-001 v0.6)"
+- version: "0.5"
+  date: '2026-10-03'
+  author: Amish Chadha
+  change: "Fork direction decided by Amish 2026-10-03 (knuckle forks turned to trail, 35 mm mechanical trail); knuckle fork added to the items to confirm; value engineering restated (BOM line 5 $100; FTK-CAL-001 v0.7)"
 ---
 
 # FlatTrike design decisions register
@@ -41,6 +45,7 @@ None. All open decisions were decided on 2026-10-02.
 
 | # | What to confirm | Why it matters | Source |
 | --- | --- | --- | --- |
+| 1a | The two knuckle forks: 20 in steel, 100 mm dropouts, threaded 1 1/8 in steerer, straight legs parallel to the steerer with 30 to 40 mm offset (measure it); 22 mm legs | Fitted turned round, the offset is the trail (30 to 40 mm); a bent-leg fork would put the steering arm clamp on the bend | FTK-CAL-001 section 5a; decided 2026-10-03 |
 | 1 | The steering column fork: threaded 1 1/8 in steel fork with a separate forged crown (roadster type) solid enough to drill two 9 mm holes 32 mm either side of the steerer; steerer at least 250 mm | The drop arm bolts under the crown | FTK-DDR-003, P8 |
 | 2 | A quill stem with about 350 mm of quill for a 1 1/8 in threaded steerer, 70 mm or more inside the steerer | It sets the handlebar height of 850 mm | FTK-DDR-003, P8 |
 | 3 | Front fork leg diameter (22 mm assumed) and M6 U-bolts that fit it; the U-bolts' grip holds the steering arm under a firm push on the bar | The steering arms are held by friction on the leg | FTK-DDR-003, P10 |
@@ -55,11 +60,11 @@ None. All open decisions were decided on 2026-10-02.
 
 ## Value engineering
 
-Value-engineering target: USD 800 (a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 728 (USD 72 under the target). Main cost drivers and savings worth trying:
+Value-engineering target: USD 800 (a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 736 (USD 64 under the target). Main cost drivers and savings worth trying:
 
-- The largest prototype lines are the two front wheels with drum brakes (USD 110), the rear wheel with 3-speed drum hub (USD 95), the steering column, knuckles and linkage (USD 92) and the front bed and knuckle post plates with the steering lock stops (USD 89). The construction changes (FTK-DDR-003) added USD 15 (USD 709 to USD 724), and the two lock stops and their bolts USD 4 (USD 724 to USD 728).
+- The largest prototype lines are the two front wheels with drum brakes (USD 110), the rear wheel with 3-speed drum hub (USD 95), the steering column, knuckles and linkage (USD 100) and the front bed and knuckle post plates with the steering lock stops (USD 89). The construction changes (FTK-DDR-003) added USD 15 (USD 709 to USD 724), the two lock stops and their bolts USD 4 (USD 724 to USD 728), and the straight-leg knuckle forks fitted turned to trail USD 8 (USD 728 to USD 736).
 - The optional route C assist kit (USD 300, without the SwapCell pack) is outside the prototype target.
-- Production target: USD 300 per trike at 100 units (R18) against an estimate of about USD 466, USD 166 over the target. Bought bicycle parts are USD 324 of it at 65 % of retail, with USD 74 of steel (one full sheet), USD 17 of cutting, the plywood box at 60 % and USD 15 of assembly labour.
+- Production target: USD 300 per trike at 100 units (R18) against an estimate of about USD 471, USD 171 over the target. Bought bicycle parts are USD 329 of it at 65 % of retail, with USD 74 of steel (one full sheet), USD 17 of cutting, the plywood box at 60 % and USD 15 of assembly labour.
 - Savings worth trying: wholesale prices for wheels, hubs and forks once the first partner supplies them (FTK-DDR-002, item 18), and the one-sheet nest that already keeps the steel and cutting low.
 
 ## Decisions made
@@ -84,3 +89,4 @@ Value-engineering target: USD 800 (a hypothetical control target, not a limit). 
 | 2026-10-02 | First partner and city: kept open under the portfolio rule, chosen as a city with dense goods delivery on narrow streets, a laser-cutting shop and a bicycle parts market. First candidate type to approach: a cycle-rickshaw or cargo-bike programme such as those the Institute for Transportation and Development Policy (ITDP) has documented in South Asia | Amish: "i approve your recommendations for all 555 open decisions." | FTK-DDR-002, item 10 |
 | 2026-10-02 | Render frame colour: teal and graphite for the renders only; the coating is chosen with the partner | Amish: "i approve your recommendations for all 555 open decisions." | Review note 2026-09-26, item 1 |
 | 2026-10-02 | Appearance model details (bent fork legs, round tyre section, box hardware positions, flat-cut chain guard, brake cable runs) accepted as appearance only | Amish: "i approve your recommendations for all 555 open decisions." | Review note 2026-09-26, items 4 to 8 |
+| 2026-10-03 | Fork direction (steering geometry before the first ride): each knuckle fork is a straight-leg fork with 30 to 40 mm offset, fitted turned round so the wheel trails its vertical steering axis; 35 mm of mechanical trail, no caster; bed rails notched and knuckle post lip trimmed for the swinging tyre and crown; wheelbase 1.415 m, turning circle 5.52 m | Amish: "FlatTrike - i accept your design recommendation, proceed and execute the solution for fork direction or caster" | FTK-CAL-001 section 5a; review note 2026-10-03 |

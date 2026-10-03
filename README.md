@@ -2,7 +2,7 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![DOI](https://zenodo.org/badge/1386426098.svg)](https://zenodo.org/badge/latestdoi/1386426098) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/flattrike/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/flattrike/actions/workflows/reuse.yml) [![Archived in Software Heritage](https://archive.softwareheritage.org/badge/origin/https://github.com/BoujeeEnjinia1701/flattrike/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/BoujeeEnjinia1701/flattrike)
 
-**Area:** Mobility and Logistics · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** about $800 USD (estimated parts cost $728) · **Difficulty:** 3 of 5
+**Area:** Mobility and Logistics · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** about $800 USD (estimated parts cost $736) · **Difficulty:** 3 of 5
 
 Bolt-together cargo tricycle whose frame is cut from flat sheet steel by any laser or waterjet shop, uses standard bicycle parts, and ships flat.
 
@@ -63,7 +63,7 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
 - 37 laser-cut 3 mm steel plates: closed-box spine, rear stays, front bed, two knuckle posts and their steering lock stops, nested on one standard sheet
 - Tab-and-slot joints and cut spacer washers with 97 M8 class 8.8 bolts and all-metal locknuts held in windows in the plates (no welding)
-- Ackermann steering: central steering column in a 200 mm head tube, two 20 in forks on their own 1 1/8 in headsets, tie rod and drag link
+- Ackermann steering: central steering column in a 200 mm head tube, two 20 in straight-leg forks on their own 1 1/8 in headsets, each fitted turned round so the wheel trails its steering axis by 35 mm (decided 2026-10-03), tie rod and drag link
 - 20 in wheels (3) with drum brakes; 3-speed hub at the rear
 - Standard bicycle drivetrain, seat and handlebar
 - Lockable plywood cargo box with a counter lid

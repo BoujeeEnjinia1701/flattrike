@@ -94,6 +94,8 @@ COL = {"spine": "#64748B", "cover": "#475569", "rib": "#D4A017", "saddle": "#B45
        "wheel": "#3F3F46", "arm": "#EA580C", "clamp": "#9A3412", "link": "#DC2626", "drive": "#6D28D9",
        "box": "#C08A4A", "bars": "#2563EB", "bolt": "#111827", "ghost": "#D1D5DB", "stop": "#B91C1C"}
 REV2 = ("P2", "Steering lock stop added (decided 2026-10-02, FTK-DEC-001)", "2026-10-02", "AC")
+REV_TRAIL = "forks turned to trail (FTK-DEC-001)"
+P1 = ("P1", "Making sketch for the prototype build plan", "2026-10-01", "AC")
 
 
 def S(*names):
@@ -393,10 +395,15 @@ def sheets(only=None):
     rl = C["Bed rail, left"].shape
     sheet(112, Part("Bed rail", rl, COL["rail"]), ghost("bulk", "beams", "posts"),
           title="FlatTrike bed rail (make 2, left and right): making sketch", material=MAT,
-          inset_view=(25, -60),
+          inset_view=(25, -60), rev="P2", date="2026-10-03",
+          revisions=[P1, ("P2", "Tyre notch in the lower edge; " + REV_TRAIL, "2026-10-03", "AC")],
           notes=["Make 2; the right rail is the left rail turned over.",
                  "Strip 852 mm long, 160 mm deep at the back, 110 mm deep from 1150 mm",
                  "  ahead of the rear axle; four lightening windows.",
+                 f"Tyre notch {P['RAIL_NOTCH'][2] - P['BOX_Z0'] + 110:.0f} mm up into the lower edge, {P['RAIL_NOTCH'][0]:.0f} to"
+                 f" {P['RAIL_NOTCH'][1]:.0f} mm ahead",
+                 f"  of the rear axle ({P['BOX_Z0'] - P['RAIL_NOTCH'][2]:.0f} mm of plate left): the trailing tyre passes"
+                 " under it.",
                  "Two halving slots 3.4 mm wide from the bottom edge up to 55 mm deep,",
                  "  25 mm apart, for the axle beam plates.",
                  "Three T-slots in the top edge for the box bolts; a pair of slots and",
@@ -421,17 +428,18 @@ def sheets(only=None):
           others("Knuckle post plate, left front", "Knuckle post", "Knuckle collar", "Axle beam", "Bed rail")
           + [Part("Lock stop", C["Steering lock stop, left"].shape, COL["stop"])],
           title="FlatTrike knuckle post plate (make 4): making sketch", material=MAT,
-          view_shape=turn(kp), inset_view=(20, -150), rev="P2", date="2026-10-02",
-          revisions=[("P1", "Making sketch for the prototype build plan", "2026-10-01", "AC"), REV2],
+          view_shape=turn(kp), inset_view=(20, -150), rev="P3", date="2026-10-03",
+          revisions=[P1, REV2, ("P3", "Lower lip trimmed to 8 mm; " + REV_TRAIL, "2026-10-03", "AC")],
           notes=["Make 4 from one file; turn two over for the right-hand post.",
                  "Front plates (one per post): also cut the lock stop's two slots and",
                  "  9 mm hole low on the column (shown); harmless on the rear plates.",
-                 "L-shaped plate: a 52 mm wide column 325 mm tall, and an arm 132 mm",
+                 f"L-shaped plate: a {P['POST_W'] - P['T'] + P['POST_LIP']:.0f} mm wide column 325 mm tall, and an arm "
+                 f"{470 - P['POST_Y0'] - P['POST_W'] - P['POST_LIP']:.0f} mm",
                  "  wide and 120 mm deep at the top that reaches out over the wheel.",
                  "Inner edge: 4 tabs and 2 T-slots into the inner cheek.",
                  "Arm: 2 tabs and 2 T-slots on its bottom edge and on its top edge,",
                  "  into the knuckle collar plates.",
-                 "Three slots and two 9 mm holes 11.5 mm in from the column's outer",
+                 f"Three slots and two 9 mm holes {P['POST_LIP'] + P['T'] / 2:.1f} mm in from the column's outer",
                  "  edge: the outer cheek's tabs and bolts.",
                  TSLOT,
                  "Fit: two plates stand 50 mm apart either side of the knuckle head tube;",
@@ -451,12 +459,13 @@ def sheets(only=None):
     oc = C["Knuckle post outer cheek, left"].shape
     sheet(116, Part("Knuckle post outer cheek", oc, COL["cheek"]), others("Knuckle post outer cheek, left", "Knuckle post", "Axle beam"),
           title="FlatTrike knuckle post outer cheek (make 2): making sketch", material=MAT,
-          inset_view=(15, 60),
+          inset_view=(15, 60), rev="P2", date="2026-10-03",
+          revisions=[P1, ("P2", "Note on the 8 mm lip; " + REV_TRAIL, "2026-10-03", "AC")],
           notes=["Make 2, identical. Plate 50 x 195 mm.",
                  "Each 195 mm edge: three tabs and two T-slots into the knuckle post plates.",
                  TSLOT,
                  "Fit: it closes the post's column on the wheel side, between the two",
-                 "  plates, 10 mm in from their outer edges.",
+                 f"  plates, {P['POST_LIP']:.0f} mm in from their outer edges.",
                  "Check: the cheek fits between two plates held 50 mm apart."])
     cl = C["Knuckle collar plate, left upper"].shape
     sheet(117, Part("Knuckle collar plate", cl, COL["collar"]), others("Knuckle collar plate, left upper", "Knuckle post", "Knuckle collar", "Knuckle head", "Axle beam"),
@@ -471,11 +480,14 @@ def sheets(only=None):
                  "  the post plates, so the wheel load goes straight into them.",
                  "Check: the hole is square to the plate and burr free."])
     sa = C["Steering arm, left"].shape
+    tx_, ty_ = M.ackermann_tip(1)
+    arm_len = math.hypot(M.axle_x() - P["LEG_R"] - P["T"] - (tx_ - 10), (P["TRACK"] / 2 - P["LEG_Y"]) - ty_) + 12
     sheet(118, Part("Steering arm", sa, COL["arm"]), ghost("forks", "posts", "link"),
           title="FlatTrike steering arm (make 2, left and right): making sketch", material=MAT,
-          inset_view=(30, -150),
+          inset_view=(30, -150), rev="P2", date="2026-10-03",
+          revisions=[P1, ("P2", "Shorter arm; " + REV_TRAIL, "2026-10-03", "AC")],
           notes=["Make 2; the right arm is the left arm turned over.",
-                 "Tapered plate 114 mm long, 44 mm wide at the clamp end.",
+                 f"Tapered plate about {arm_len:.0f} mm long, 44 mm wide at the clamp end.",
                  "Clamp end: one tab and one T-slot into the clamp plate.",
                  "Tip: 8.2 mm hole for the rod end bolt, 120 mm from the kingpin axis,",
                  "  on the line from the kingpin to the middle of the rear axle",
@@ -490,17 +502,17 @@ def sheets(only=None):
                                                                    Part("Arm", C["Steering arm, left"].shape, COL["ghost"]),
                                                                    Part("U-bolts", C["U-bolts, left"].shape, COL["ghost"])],
           title="FlatTrike steering arm clamp plate (make 2): making sketch", material=MAT,
-          view_shape=turn(cp), inset_view=(15, -160), rev="P2", date="2026-10-02",
-          revisions=[("P1", "Making sketch for the prototype build plan", "2026-10-01", "AC"),
-                     ("P2", "Lengthened inboard to meet the steering lock stop (2026-10-02)", "2026-10-02", "AC")],
+          view_shape=turn(cp), inset_view=(15, -160), rev="P3", date="2026-10-03",
+          revisions=[P1, ("P2", "Lengthened inboard to meet the steering lock stop (2026-10-02)", "2026-10-02", "AC"),
+                     ("P3", "Shortened inboard to 104 mm; " + REV_TRAIL, "2026-10-03", "AC")],
           notes=[f"Make 2; turn one over for the right. Plate {P['CLAMP_IN'] - P['LEG_Y'] + 24:.0f} x 40 mm.",
                  "Four 7 mm holes for two M6 U-bolts, 29 mm apart across and 26 mm",
                  "  apart up and down; one slot and one 9 mm hole for the arm.",
                  f"The plate runs {P['CLAMP_IN'] - P['LEG_Y']:.0f} mm in from the leg's centre: at full lock",
                  "  its front inboard corner meets the lock stop (FTK-DWG-124).",
-                 "Fit: the plate sits behind the inboard fork leg; the U-bolts go round",
-                 "  the leg from the front and pull the plate against it; the long end",
-                 "  points in, toward the box.",
+                 "Fit: the plate sits behind the inboard fork leg, which trails the",
+                 f"  steering axis by {P['FORK_OFFSET']:.0f} mm; the U-bolts go round the leg from the",
+                 "  front and pull the plate against it; the long end points in.",
                  "Check: the U-bolts' legs pass through without forcing."])
     stp = C["Steering lock stop, left"].shape
     rot40 = lambda sh: M.Pos(P["WB"], P["TRACK"] / 2, 0) * M.Rot(0, 0, P["STEER_LOCK"]) * M.Pos(-P["WB"], -P["TRACK"] / 2, 0) * sh  # noqa: E731
@@ -511,8 +523,9 @@ def sheets(only=None):
            Part("Clamp plate (at full lock)", rot40(C["Steering arm clamp plate, left"].shape), COL["ghost"]),
            Part("Steering arm (at full lock)", rot40(C["Steering arm, left"].shape), COL["ghost"])],
           title="FlatTrike steering lock stop (make 2): making sketch", material=MAT, inset_view=(20, -125),
-          rev="P1", date="2026-10-02",
-          revisions=[("P1", "Making sketch for the steering lock stop (decided 2026-10-02)", "2026-10-02", "AC")],
+          rev="P2", date="2026-10-03",
+          revisions=[("P1", "Making sketch for the steering lock stop (decided 2026-10-02)", "2026-10-02", "AC"),
+                     ("P2", "Smaller fin; " + REV_TRAIL, "2026-10-03", "AC")],
           notes=[f"Make 2, identical; turn one over for the right. Plate {xc_ + P['STOP_LEG'] - P['WB'] - P['POST_X'] - P['T']:.0f}"
                  f" x {z2s - z0s:.0f} mm, 80 mm over the tabs.",
                  f"An upper part and a {P['STOP_LEG']:.0f} mm wide leg that hangs {z1s - z0s:.0f} mm below it at the front.",
@@ -818,7 +831,7 @@ def steps(only=None):
        elev=-12, azim=-55, label_done=False)
     frame6 = frame5 + [G["column"]]
     st(16, frame6, [mv(part("Front forks and wheels", S("Front fork, left", "Front fork, right", "Front wheel, left", "Front wheel, right"), COL["fork"]), (0, 0, -260))],
-       "front forks and wheels", "Each steerer up through its knuckle head tube; adjust each headset; wheels in the dropouts",
+       "front forks and wheels", "Each fork turned round so its legs trail the steerer; steerer up through its knuckle head tube; adjust the headset; wheel in",
        elev=15, azim=-55, label_done=False)
     frame7 = frame6 + [G["forks"]]
     stops17 = part("Lock stop, right (fitted in step 14)", C["Steering lock stop, right"].shape, COL["stop"])

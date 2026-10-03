@@ -3,9 +3,9 @@ doc_id: FTK-BLD-001
 title: FlatTrike prototype build plan
 project: FlatTrike
 doc_type: Build plan
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-10-02'
+date: '2026-10-03'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
     date: '2026-10-02'
     author: Amish Chadha
     change: "Steering lock stops carried into the design: new making sketch FTK-DWG-124 and section 3.24; knuckle post plate, clamp plate, joint and step pictures 13 to 21 redrawn; figures from 37 renumbered; masses, bolt counts and turning circle from FTK-CAL-001 v0.6"
+  - version: "0.5"
+    date: '2026-10-03'
+    author: Amish Chadha
+    change: "Knuckle forks turned round to trail (decided by Amish 2026-10-03): fork specification, bed rail tyre notch, knuckle post plate lip, shorter steering arms, clamp plates and lock stops; making sketches FTK-DWG-112, 114, 116, 118, 119 and 124, joints 8, 9 and 11, steps 11 to 21 and the overview redrawn; S6 and the steering check updated; figures from FTK-CAL-001 v0.7"
 ---
 
 # FlatTrike prototype build plan
@@ -37,7 +41,7 @@ revisions:
 
 *Figure 1. Every component pulled apart and numbered in build order. The bolts that join the plates are left out of this picture.*
 
-The prototype is a front-loading cargo tricycle: a steel frame of 37 flat plates, cut from one 1,250 x 2,500 x 3 mm sheet of mild steel by a laser or waterjet shop, carrying a plywood box over two steered 20 in front wheels, with the rider over a 20 in rear wheel with a 3-speed hub. Figure 1 shows the 26 groups of parts in the order you make or fit them. The plates join by tabs that sit in slots, held closed by M8 bolts whose locknuts sit in windows cut in the plates; nothing is welded or bent. The other made parts are 78 spacer washers cut from the same sheet, four spacer tubes and three tube lengths sawn from bought steel tube, a bought fork cut down for the steering column, and a plywood box made by a carpenter. Everything else is bought bicycle parts: wheels, forks, headsets, bottom bracket, drivetrain, brakes, seatpost, saddle and bars. The work is deburring cut plate, sawing and facing tube, drilling a fork crown and the box, pressing headset cups, and ordinary bicycle mechanics. The parts cost about $728, from the bill of materials, against a value-engineering target of $800.
+The prototype is a front-loading cargo tricycle: a steel frame of 37 flat plates, cut from one 1,250 x 2,500 x 3 mm sheet of mild steel by a laser or waterjet shop, carrying a plywood box over two steered 20 in front wheels, with the rider over a 20 in rear wheel with a 3-speed hub. Figure 1 shows the 26 groups of parts in the order you make or fit them. The plates join by tabs that sit in slots, held closed by M8 bolts whose locknuts sit in windows cut in the plates; nothing is welded or bent. The other made parts are 78 spacer washers cut from the same sheet, four spacer tubes and three tube lengths sawn from bought steel tube, a bought fork cut down for the steering column, and a plywood box made by a carpenter. Everything else is bought bicycle parts: wheels, forks, headsets, bottom bracket, drivetrain, brakes, seatpost, saddle and bars. The work is deburring cut plate, sawing and facing tube, drilling a fork crown and the box, pressing headset cups, and ordinary bicycle mechanics. The parts cost about $736, from the bill of materials, against a value-engineering target of $800.
 
 > **Safety:** The finished trike is a vehicle of about 300 kg loaded with exposed moving parts. Laser-cut edges are sharp: deburr every plate and wear cut-resistant gloves when handling them. Keep fingers clear of the steering linkage, wheels and chain whenever the trike is moved. Do not ride it, load it or let anyone else use it until the safety stops of section 6 are passed, and never on a public road before the frame's strength is verified.
 
@@ -61,9 +65,10 @@ The concept showed what the trike does, but its plates were drawn as loose shape
 | Knuckle posts | Collar plates bent by the wheel load; flush corners with no room for bolts | Post plates 25 mm either side of the head tube, so the load goes straight into them (Figure 30); proper slots at every corner (Figure 26) | Strong enough and buildable |
 | Bulkhead, rails, axle beams | Yoke met a window; rails and beams passed through each other | Bulkhead window split; rails extended; halving joints (Figure 23) | Every joint has plate round it |
 | Steering lock | Set only by the tyres' clearance under the box | A lock stop under each knuckle post that the steering arm clamp plate meets at 40° (Figure 37; decided on 2026-10-02) | The wheels cannot be turned into the box or the posts |
+| Front forks | A fork fitted as sold, offset forward on a vertical head tube: negative trail, so the steering would pull into turns | Straight-leg forks with 30 to 40 mm offset, each fitted turned round so the wheel trails its steering axis by 35 mm; a tyre notch in each bed rail and a trimmed knuckle post lip for the swinging tyre and crown (decided on 2026-10-03) | The steering returns to straight ahead by itself |
 | Box | No fixing | Eight bolts to the bed, standing 9 mm off the bulkhead on spacer washers (Figure 39) | Clears the bolt heads behind it |
 
-The changes add 1.4 kg, and the lock stops with their longer clamp plates about 0.5 kg more: the empty trike is about 71.7 kg. The cargo is therefore rated at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, keeping the 300 kg class, and the empty-mass limit is 72 kg; the final load label is set from the weighed trike.
+The changes add 1.4 kg, the lock stops with their longer clamp plates about 0.5 kg more, and turning the forks to trail takes 0.2 kg off: the empty trike is about 71.6 kg. The cargo is therefore rated at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, keeping the 300 kg class, and the empty-mass limit is 72 kg; the final load label is set from the weighed trike.
 
 ## 3. Making the components
 
@@ -307,7 +312,7 @@ Stacks of three go behind the box (Figure 39).
 
 *Figure 22. Bed rail making sketch (FTK-DWG-112).*
 
-**What it is and what it is made from.** The two side members of the bed, under the box. 3 mm steel, 852 mm long, 160 mm deep at the back and 110 mm deep from 1,150 mm ahead of the rear axle, with four windows.
+**What it is and what it is made from.** The two side members of the bed, under the box. 3 mm steel, 852 mm long, 160 mm deep at the back and 110 mm deep from 1,150 mm ahead of the rear axle, with four windows. A notch 55 mm up into the lower edge, 1,200 to 1,305 mm ahead of the rear axle, lets the trailing inner tyre pass under the rail at full lock.
 
 **How to make it.** Deburr; the right rail is the left turned over.
 
@@ -339,7 +344,7 @@ Stacks of three go behind the box (Figure 39).
 
 *Figure 25. Knuckle post plate making sketch (FTK-DWG-114).*
 
-**What it is and what it is made from.** Each knuckle post, which holds a front wheel's fork, is a box of two L-shaped plates and two cheeks, with a collar plate under and over the knuckle head tube. 3 mm steel; the post plate is a column 52 mm wide and 325 mm tall with an arm 132 mm wide and 120 mm deep at the top.
+**What it is and what it is made from.** Each knuckle post, which holds a front wheel's fork, is a box of two L-shaped plates and two cheeks, with a collar plate under and over the knuckle head tube. 3 mm steel; the post plate is a column 50 mm wide and 325 mm tall with an arm 134 mm wide and 120 mm deep at the top.
 
 **How to make it.** Deburr. All four are the same; turn two over for the right-hand post. The two slots and the hole low on the column take the lock stop (section 3.24); they are cut in all four plates but used only on the front one of each post.
 
@@ -443,7 +448,7 @@ The drop arm points back and to the right, parallel to the left steering arm and
 
 *Figure 34. Steering arm making sketch (FTK-DWG-118).*
 
-**What it is and what it is made from.** One arm on each front fork, joined by the tie rod. 3 mm steel, 114 mm long, 44 mm wide at the clamp end.
+**What it is and what it is made from.** One arm on each front fork, joined by the tie rod. 3 mm steel, about 93 mm long, 44 mm wide at the clamp end (shorter than before, because the fork leg it clamps to now trails the steering axis by 35 mm).
 
 **How to make it.** Deburr; the right arm is the left turned over.
 
@@ -457,7 +462,7 @@ The drop arm points back and to the right, parallel to the left steering arm and
 
 *Figure 35. Steering arm clamp plate making sketch (FTK-DWG-119).*
 
-**What it is and what it is made from.** A small plate that clamps each steering arm to its fork leg. 3 mm steel, 93 x 40 mm. Its long end reaches inboard so that, at full lock, its front inner corner meets the lock stop (section 3.24).
+**What it is and what it is made from.** A small plate that clamps each steering arm to its fork leg. 3 mm steel, 67 x 40 mm. Its long end reaches inboard so that, at full lock, its front inner corner meets the lock stop (section 3.24).
 
 **How to make it.** Deburr.
 
@@ -477,7 +482,7 @@ The arm sits 321 mm up, under the knuckle post, and turns with the wheel. The re
 
 *Figure 37. Steering lock stop making sketch (FTK-DWG-124). The grey clamp plate and steering arm are drawn at full lock, where the clamp plate meets the stop.*
 
-**What it is and what it is made from.** An upright fin under the front of each knuckle post that stops the steering at full lock, so the tyres cannot be turned into the box or the posts. 3 mm steel, 77 x 130 mm: an upper part and a 30 mm wide leg that hangs down at the front.
+**What it is and what it is made from.** An upright fin under the front of each knuckle post that stops the steering at full lock, so the tyres cannot be turned into the box or the posts. 3 mm steel, 34 x 130 mm: a short upper part and a 30 mm wide leg that hangs down at the front.
 
 **How to make it.** Deburr. Both are the same; turn one over for the right-hand post.
 
@@ -515,7 +520,7 @@ Buy to specification, not brand. Line numbers are those of the bill of materials
 
 - **Plate (lines 1 to 4).** One 1,250 x 2,500 x 3 mm sheet of S235JR or A36 steel, cut by a laser or waterjet shop from the model's outlines with the washers in the windows.
 - **Fasteners (lines 3, 4 and 5).** 97 sets of M8 class 8.8 zinc-plated bolts with washers and all-metal prevailing-torque locknuts: 80 at 25 mm for the tab joints and the two lock stops, eight at 35 mm for the box, four at 140 mm for the stay bolts, two at 45 mm for the drop arm and three at 40 mm for the rod ends; four M6 U-bolts for a 22 mm fork leg.
-- **Steering (line 5).** Three 1 1/8 in threaded headsets; two 20 in steel forks for 100 mm hubs; one 1 1/8 in threaded fork with a forged crown for the column; a tall quill stem (about 350 mm quill); three M8 rod ends with at least ±10° misalignment, on a drag link and a tie rod.
+- **Steering (line 5).** Three 1 1/8 in threaded headsets; two 20 in steel forks for 100 mm hubs with a threaded 1 1/8 in steerer and straight BMX-type legs that run parallel to the steerer, 30 to 40 mm offset (a bent-leg fork will not do: the steering arm clamps to a straight leg); one 1 1/8 in threaded fork with a forged crown for the column; a tall quill stem (about 350 mm quill); three M8 rod ends with at least ±10° misalignment, on a drag link and a tie rod.
 - **Front wheels (line 6).** Two 20 x 2.125 in (ISO 406) wheels with drum brake hubs 100 mm over locknuts, hub bodies 90 mm across or less.
 - **Rear wheel (line 7).** 20 x 2.125 in with a 3-speed drum brake hub, 120 mm over locknuts, 24T sprocket and shifter.
 - **Drivetrain (line 8).** Square-taper cartridge bottom bracket for a 68 mm shell, 170 mm cranks, 32T chainring, 1/8 in chain, pedals, chain guard.
@@ -621,7 +626,7 @@ Crown race onto the crown; steerer up through the head tube; adjust the headset 
 
 ![Step 16](05-build-plan/step-16.png)
 
-Each fork's steerer up through its knuckle head tube; adjust the headsets; fit the wheels in the dropouts with the drum brake reaction arms clipped to the legs.
+Turn each fork round so its legs are **behind** the steerer, not in front of it as on a bicycle; then its steerer goes up through its knuckle head tube. Adjust the headsets; fit the wheels in the dropouts with the drum brake reaction arms clipped to the legs. **Hold point:** each axle is 30 to 40 mm behind its knuckle head tube's centre line (a plumb line from the head tube centre lands ahead of the axle).
 
 ### Step 17: steering arms onto the fork legs
 
@@ -663,8 +668,8 @@ These are the checks a TRL 4 test report would record; this plan only lists them
 | --- | --- | --- | --- |
 | Joints closed | R3, R7 | Look at every tab and bolt; record the time the build took | Every tab seated; every bolt at 25 N·m with a locknut; build time recorded against 4 h |
 | Frame square | R2 | Diagonals of the spine and bed; wheel alignment with a string line | Diagonals within 3 mm; front wheels parallel to the rear within 2 mm over their diameter |
-| Steering | R9, R10 | Turn lock to lock; measure each wheel's angle; mark the turning circle on the ground | Nothing touches; each steering arm clamp plate meets its knuckle post stop at 40°; outer tyre circle 6 m or less |
-| Empty mass | R8 | Weigh the trike with its box | Recorded against 72 kg (71.7 kg estimated); sets the final load label |
+| Steering | R9, R10 | Turn lock to lock; measure each wheel's angle; mark the turning circle on the ground | Nothing touches; each steering arm clamp plate meets its knuckle post stop at 40°; each axle trails its head tube by 30 to 40 mm; let go of the bar while rolling slowly and it returns toward straight ahead; outer tyre circle 6 m or less |
+| Empty mass | R8 | Weigh the trike with its box | Recorded against 72 kg (71.6 kg estimated); sets the final load label |
 | Proof load | R2 | At least twice the rated cargo (300 kg of sandbags, the R2 proof load of FTK-CAL-001) in the box, rider seat loaded with 80 kg, for 10 minutes | No permanent set: box floor and frame heights back within 1 mm after unloading; no tab moved in its slot |
 | Parking brake | R11 | Loaded, on a 10 % slope, front pair latched | Does not move |
 | Tipping | R10 | Tilt table, rider-only ballast | Tips at 0.22 g or more |
@@ -679,7 +684,7 @@ Stop at each point. Carry on only when everything listed is true.
 - **S3. Before the trike stands on its wheels.** Every M8 bolt tightened to 25 N·m with a locknut; every rod end bolt has its locknut; the U-bolts are tight; the headsets have no play.
 - **S4. Before anyone sits on it.** The steering turns lock to lock without touching anything; all three brakes stop the wheel by hand; the parking latch holds; the chain guard is on.
 - **S5. Before any load goes in the box.** S3 and S4 passed; the proof load is applied with the trike on a level floor, chocked, with nobody on it or beside the box.
-- **S6. Before the first ride (outside this plan).** A steering lock stop is fitted at each knuckle post, met by its steering arm clamp plate at 40°; the steering geometry study (caster, trail, kingpin inclination, scrub, self-centring) is done on paper; the proof load is passed with no permanent set; the rider rides slowly on closed private ground, empty first, keeping to 6 km/h in full-lock turns; never on a public road until R2 is verified.
+- **S6. Before the first ride (outside this plan).** A steering lock stop is fitted at each knuckle post, met by its steering arm clamp plate at 40°; both knuckle forks are fitted turned round, so each axle trails its steering axis by 30 to 40 mm (a fork fitted as sold makes the steering pull into turns); the steering geometry is repeated on paper with the chosen fork's measured offset; the proof load is passed with no permanent set; the rider rides slowly on closed private ground, empty first, keeping to 6 km/h in full-lock turns; never on a public road until R2 is verified.
 
 ## 7. Tools, skills and workspace
 
@@ -695,8 +700,8 @@ Stop at each point. Carry on only when everything listed is true.
 
 - Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`); STEP and STL exports in `cad/step/` and `cad/stl/`.
 - Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/FTK-DWG-101` to `FTK-DWG-124`.
-- General arrangement: `cad/drawings/FTK-DWG-001.pdf`, Rev P4.
-- Calculations: `docs/04-calcs/01-sizing.md` (FTK-CAL-001 v0.6), `docs/04-calcs/sizing.py` and `docs/04-calcs/results.csv`.
+- General arrangement: `cad/drawings/FTK-DWG-001.pdf`, Rev P5.
+- Calculations: `docs/04-calcs/01-sizing.md` (FTK-CAL-001 v0.7), `docs/04-calcs/sizing.py` and `docs/04-calcs/results.csv`.
 - Bill of materials: `bom/bom.csv` and `bom/bom-notes.md`.
 - Decisions: `docs/decisions/0003-design-for-construction.md` (FTK-DDR-003), with FTK-DDR-001 and FTK-DDR-002; decisions of 2026-10-02 in `docs/06-design-decisions.md` (FTK-DEC-001).
 - Requirements: `docs/03-requirements.md` (FTK-REQ-001).

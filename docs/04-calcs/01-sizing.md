@@ -3,9 +3,9 @@ doc_id: FTK-CAL-001
 title: FlatTrike sizing and first-principles checks
 project: FlatTrike
 doc_type: Calculation note
-version: "0.6"
+version: "0.7"
 status: Draft
-date: '2026-10-02'
+date: '2026-10-03'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -33,11 +33,15 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: "Re-run with the 2026-10-02 decisions carried into the script and model: rated cargo 148 and 138 kg, R8 72 kg, R14 60 min for a knuckle post plate, steering lock stops added, turning circle from the built linkage, first-pass steering geometry study (section 5a)"
+- version: "0.7"
+  date: '2026-10-03'
+  author: Amish Chadha
+  change: "Fork direction decided by Amish on 2026-10-03: knuckle forks turned round to give 35 mm of mechanical trail (no caster). Section 5a rewritten from the model's measured geometry; wheelbase 1.415 m; turning circle 5.52 m; tyre notch in the bed rails checked; lock stops, mass, axle loads, structure and cost re-run"
 ---
 
 # FlatTrike sizing and first-principles checks
 
-This version checks the constructable design of FTK-DDR-003: every plate joint drawn (tabs, slots and bolts into T-slots), the yokes clamping the head tube, a parallelogram steering linkage, steering arms below the knuckle posts and the knuckle posts rebuilt. It includes the decisions of 2026-10-02 (FTK-DEC-001): the cargo is rated at 148 kg with a rider up to 80 kg or 138 kg with a rider up to 90 kg, R8 is 72 kg, R14 allows 60 min for a knuckle post plate, and a steering lock stop is fitted at each knuckle post. On paper, twelve of the eighteen requirements are met, three are at risk and one cannot be verified at TRL 3. One is **not met**: R13 without assist (239 W needed at the pedals on a 5 % grade). R18 is over its value-engineering target (about $466 per trike at 100 units against $300, USD 166 over). Assembly (R7) sits about 4 minutes over its 4 h limit, accepted on 2026-10-02 and timed at TRL 4. The empty mass leaves only 0.3 kg under R8.
+This version checks the constructable design of FTK-DDR-003: every plate joint drawn (tabs, slots and bolts into T-slots), the yokes clamping the head tube, a parallelogram steering linkage, steering arms below the knuckle posts and the knuckle posts rebuilt. It includes the decisions of 2026-10-02 (FTK-DEC-001): the cargo is rated at 148 kg with a rider up to 80 kg or 138 kg with a rider up to 90 kg, R8 is 72 kg, R14 allows 60 min for a knuckle post plate, and a steering lock stop is fitted at each knuckle post. It also includes the fork direction decided on 2026-10-03: each knuckle fork is fitted turned round, so its offset trails the vertical steering axis by 35 mm (section 5a). On paper, twelve of the eighteen requirements are met, three are at risk and one cannot be verified at TRL 3. One is **not met**: R13 without assist (239 W needed at the pedals on a 5 % grade). R18 is over its value-engineering target (about $471 per trike at 100 units against $300, USD 171 over). Assembly (R7) sits about 4 minutes over its 4 h limit, accepted on 2026-10-02 and timed at TRL 4. The empty mass leaves only 0.4 kg under R8.
 
 Every number in this note is printed by `docs/04-calcs/sizing.py` (run from the repo root: `python docs/04-calcs/sizing.py`), which also writes `docs/04-calcs/results.csv`. The script reads plate outlines, areas, part centroids and key dimensions from the parametric model `cad/src/model.py`, and prices from `bom/bom.csv`, so the model, the drawing FTK-DWG-001 and this note agree. All values are first-principles estimates; nothing here is measured.
 
@@ -47,7 +51,7 @@ Every number in this note is printed by `docs/04-calcs/sizing.py` (run from the 
 
 | Input | Value | Basis |
 | --- | --- | --- |
-| Layout and steering | Tadpole front loader; Ackermann steering with a fixed box; kingpins on the front wheel centre lines; 40° inner lock, set by a lock stop at each knuckle post | Decided, FTK-DDR-001 item 1 and FTK-DDR-002 item 13; lock set by tyre clearance under the box |
+| Layout and steering | Tadpole front loader; Ackermann steering with a fixed box; vertical kingpins in the front wheel centre planes, 1.45 m ahead of the rear axle; each fork turned round so the axle trails its kingpin by the 35 mm fork offset; 40° inner lock, set by a lock stop at each knuckle post | Decided, FTK-DDR-001 item 1, FTK-DDR-002 item 13 and FTK-DEC-001 (fork direction, 2026-10-03); lock set by tyre clearance under the box |
 | Rated load | 148 kg cargo with an 80 kg rider; 138 kg cargo with a 90 kg rider | FTK-REQ-001 R1, restated on 2026-10-02 (FTK-DDR-003, A1); the final label is set from the weighed trike |
 | Plate | 3 mm S235JR or A36, 7,850 kg/m³ (23.6 kg/m²), yield 235 MPa, E = 210 GPa | Decided, FTK-DDR-001 item 4 |
 | Plywood | 700 kg/m³; 12 mm floor, 9 mm walls and lid | Exterior grade |
@@ -66,34 +70,34 @@ Every number in this note is printed by `docs/04-calcs/sizing.py` (run from the 
 
 ## 2. Geometry, plates and nesting
 
-The parametric model is 2.15 m long, 0.984 m wide and 0.93 m high to the saddle, on a 1.45 m wheelbase and 0.84 m track. It has 37 cut plates with a net area of 1.31 m² (31.0 kg), plus 78 spacer washers cut from the offcuts, so every frame part is still flat 3 mm plate (R3). The head tubes, seat tube, bottom bracket shell and spacer tubes are bought steel sections, and the forks are bought bicycle forks (one cut down as the steering column).
+The parametric model is 2.15 m long, 0.986 m wide and 0.93 m high to the saddle, on a 1.415 m wheelbase (the kingpins stay 1.45 m ahead of the rear axle; the front axles trail them by 35 mm) and 0.84 m track. It has 37 cut plates with a net area of 1.31 m² (30.8 kg), plus 78 spacer washers cut from the offcuts, so every frame part is still flat 3 mm plate (R3). The head tubes, seat tube, bottom bracket shell and spacer tubes are bought steel sections, and the forks are bought bicycle forks (one cut down as the steering column).
 
-Ackermann steering replaced the four fork plates and four crown plates with two closed knuckle posts and added a drop arm and two steering arms (27 to 34 plates); making the design constructable added two seat tube saddles and two steering arm clamp plates and removed a rib and the two head tube collar plates (35 plates); the two steering lock stops of 2026-10-02 make 37. A shelf nest of bounding rectangles would need 2,669 mm of a 2,500 mm sheet. The script therefore also runs a true-shape nest: each plate outline, less its windows, is rasterized at 5 mm, grown by one cell for raster error and by two more for a 10 mm gap, and placed largest first, bottom-left, in four orientations, with small parts allowed inside the windows of large ones. That nest uses **1,940 mm** of the sheet (R4 met, 560 mm spare). The plates use 42.1 % of the sheet by net area. A DXF nest by the cutting shop is still needed.
+Ackermann steering replaced the four fork plates and four crown plates with two closed knuckle posts and added a drop arm and two steering arms (27 to 34 plates); making the design constructable added two seat tube saddles and two steering arm clamp plates and removed a rib and the two head tube collar plates (35 plates); the two steering lock stops of 2026-10-02 make 37. A shelf nest of bounding rectangles would need 2,669 mm of a 2,500 mm sheet. The script therefore also runs a true-shape nest: each plate outline, less its windows, is rasterized at 5 mm, grown by one cell for raster error and by two more for a 10 mm gap, and placed largest first, bottom-left, in four orientations, with small parts allowed inside the windows of large ones. That nest uses **1,985 mm** of the sheet (R4 met, 515 mm spare). The plates use 41.8 % of the sheet by net area. A DXF nest by the cutting shop is still needed.
 
 The box, now 820 x 560 x 360 mm with its floor at 0.47 m, holds 151 L with the lid (counter) at 0.84 m (R17). Plates and box panels stack about 205 mm deep on a 0.86 x 0.62 m footprint; with the three wheels and forks stacked beside them the crate is about 1.38 x 0.62 x 0.36 m, or 0.31 m³ (R6). The longest cut plate is the 852 mm bed rail.
 
 ## 3. Mass and centre of mass
 
-The empty trike is **71.7 kg** against the 72 kg target of 2026-10-02 (R8 met on paper, 0.3 kg under). Plates are 43 % of it (31.0 kg) and the box 18 % (12.7 kg); bolts and washers add 3.6 kg. The two steering lock stops, their bolts and the longer steering arm clamp plates add about 0.5 kg to the 71.2 kg of v0.5. Against v0.2 (69.8 kg), the plates gain 1.1 kg (covers 12 mm wider each side, solid plate round every joint, smaller windows where joints cross them), the seat tube, collars, spacer tubes and U-bolts add 0.75 kg, and 21 fewer bolt sets save 0.5 kg.
+The empty trike is **71.6 kg** against the 72 kg target of 2026-10-02 (R8 met on paper, 0.4 kg under). Plates are 43 % of it (30.8 kg) and the box 18 % (12.7 kg); bolts and washers add 3.6 kg. The two steering lock stops, their bolts and the longer steering arm clamp plates added about 0.5 kg to the 71.2 kg of v0.5; turning the forks to trail (v0.7) took 0.2 kg off again (smaller stop fins, shorter clamp plates and steering arms, less the rail windows given up round the tyre notch). Against v0.2 (69.8 kg), the plates gain 1.1 kg (covers 12 mm wider each side, solid plate round every joint, smaller windows where joints cross them), the seat tube, collars, spacer tubes and U-bolts add 0.75 kg, and 21 fewer bolt sets save 0.5 kg.
 
 *Table 2. Mass and axle loads.*
 
 | Quantity | Value |
 | --- | --- |
-| Empty mass | 71.7 kg (R8 met on paper, 0.3 kg under 72 kg) |
-| Gross, 80 kg rider and 148 kg cargo | 299.7 kg (R1 met on paper) |
-| Gross, 90 kg rider and 138 kg cargo | 299.7 kg (R1 met on paper) |
-| Cargo inside 300 kg | 148.3 kg with an 80 kg rider; 138.3 kg with a 90 kg rider |
-| Empty trike centre of mass | 0.99 m ahead of the rear axle, 0.50 m high |
-| Axle loads, loaded | front 2.19 kN, rear 0.75 kN |
+| Empty mass | 71.6 kg (R8 met on paper, 0.4 kg under 72 kg) |
+| Gross, 80 kg rider and 148 kg cargo | 299.6 kg (R1 met on paper) |
+| Gross, 90 kg rider and 138 kg cargo | 299.6 kg (R1 met on paper) |
+| Cargo inside 300 kg | 148.4 kg with an 80 kg rider; 138.4 kg with a 90 kg rider |
+| Empty trike centre of mass | 0.98 m ahead of the rear axle, 0.50 m high |
+| Axle loads, loaded | front 2.25 kN, rear 0.69 kN |
 
-On 2026-10-02 Amish accepted rating the cargo at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, and R8 at 72 kg (FTK-DDR-003, A1), and every figure in this note and `results.csv` is computed at that rating. Any growth in mass comes straight off the rated cargo: only 0.3 kg is left before the 148 kg and 138 kg ratings must fall again. Lightening windows in the knuckle post arms and yokes (about 0.5 kg) and a lighter box are to be tried in the FEA session, and the final load label is set from the weighed trike.
+On 2026-10-02 Amish accepted rating the cargo at 148 kg with a rider up to 80 kg and 138 kg with a rider up to 90 kg, and R8 at 72 kg (FTK-DDR-003, A1), and every figure in this note and `results.csv` is computed at that rating. Any growth in mass comes straight off the rated cargo: only 0.4 kg is left before the 148 kg and 138 kg ratings must fall again. Lightening windows in the knuckle post arms and yokes (about 0.5 kg) and a lighter box are to be tried in the FEA session, and the final load label is set from the weighed trike.
 
 ## 4. Riding power, gearing and assist
 
-At 299.7 kg gross, rolling resistance is 44.1 N and 110 W at the pedals gives 97.9 W at the wheel, for a flat cruise of **7.6 km/h** (R12 met): 92.9 W goes to rolling and 5.0 W to drag (`media/flow.png`).
+At 299.6 kg gross, rolling resistance is 44.1 N and 110 W at the pedals gives 97.9 W at the wheel, for a flat cruise of **7.6 km/h** (R12 met): 92.9 W goes to rolling and 5.0 W to drag (`media/flow.png`).
 
-A 5 % grade needs 191.1 N, which is 213.1 W at the wheel and **239 W at the pedals** at 4 km/h, more than twice sustained rider output (R13 **not met** unassisted). On 110 W the trike climbs at only 1.8 km/h. The rear tyre needs a grip coefficient of 0.26 to drive up the grade.
+A 5 % grade needs 191.0 N, which is 213.0 W at the wheel and **239 W at the pedals** at 4 km/h, more than twice sustained rider output (R13 **not met** unassisted). On 110 W the trike climbs at only 1.8 km/h. The rear tyre needs a grip coefficient of 0.28 to drive up the grade (0.26 before the front axles moved 35 mm back).
 
 With a 32/24 drive and the hub's 0.75 low ratio, the development is 1.60 m per crank turn in low gear (2.13 and 2.84 m in middle and high). At 4 km/h in low gear the cadence is 42 rpm, the mean crank torque 55 N·m and the mean pedal force 321 N; in high gear at 70 rpm the trike does 11.9 km/h.
 
@@ -101,42 +105,49 @@ With assist route C (a 250 W mid-drive on a SwapCell pack), the loaded trike cli
 
 ## 5. Steering, turning and stability
 
-Each front wheel turns in a standard 20 in fork on its own headset, with the kingpin on the wheel centre line, and the steering arms point at the rear axle centre, so the wheels follow Ackermann geometry about a turn centre on the rear axle line. At the 40° inner lock ideal Ackermann geometry would put the outer wheel at 29.5°. The built linkage (the model's tie rod and arms, a trapezoid that only approximates Ackermann) puts it at 31.3°, so the outer wheel's axle line meets the rear axle line 1.97 m from the centre line against 2.15 m for the inner wheel's, and the tyres scrub by about 0.18 m at full lock. Taking the turn centre on the outer wheel's axle line, the outer tyre sweeps a **5.64 m** turning circle; even if the turn centre stayed on the inner wheel's line the circle would be 5.95 m (R9 met either way). The box front corner sweeps at most 6.16 m. The drag link, drop arm and left steering arm form a parallelogram, so the handlebar turns as far as the left wheel (40° at full lock). The model sweeps every moving part from full left to full right lock against the fixed structure (`python cad/src/model.py --check`) and nothing touches.
+Each front wheel turns in a 20 in fork on its own headset, with the vertical kingpin in the wheel's centre plane. The fork is fitted turned round, so its axle and contact patch trail the kingpin by the 35 mm fork offset (section 5a). The steering arms point at the rear axle centre, so the wheels follow Ackermann geometry about a turn centre on the rear axle line. With trail, each wheel's axle line passes through its own contact patch, which swings with the wheel; the figures below use those contact patches. At the 40° inner lock ideal Ackermann geometry would put the outer wheel at 29.3°. The built linkage (the model's tie rod and arms, a trapezoid that only approximates Ackermann) puts it at 31.3°, so the outer wheel's axle line meets the rear axle line 1.90 m from the centre line against 2.09 m for the inner wheel's, and the tyres scrub by about 0.20 m at full lock. Taking the turn centre on the outer wheel's axle line, the outer tyre sweeps a **5.52 m** turning circle (5.64 m before the forks were turned, since the contact patches now sit 35 mm further back); even if the turn centre stayed on the inner wheel's line the circle would be 5.86 m (R9 met either way). The box front corner sweeps at most 6.07 m. The drag link, drop arm and left steering arm form a parallelogram, so the handlebar turns as far as the left wheel (40° at full lock). The model sweeps every moving part from full left to full right lock against the fixed structure (`python cad/src/model.py --check`) and nothing touches; the check also requires 5 mm or more of running clearance for each front tyre and fork.
 
-A steering lock stop at each knuckle post (decided 2026-10-02) sets the 40° inner lock: a 77 x 130 mm fin, tabbed and bolted to the front knuckle post plate, which the steering arm clamp plate's front inboard corner meets at 40° and not before (checked on both sides by the model). If the rider forces the bar into the lock with 300 N at one grip, one stop takes about 0.84 kN at 107 mm from the kingpin axis. The fin's 30 mm leg carries it at 47 MPa in its own plane and 94 MPa out of plane from contact friction, against 235 MPa yield, and the fin bolt sees 1.4 kN against a 15.6 kN preload.
+A steering lock stop at each knuckle post (decided 2026-10-02) sets the 40° inner lock: a fin, now 34 x 130 mm, tabbed and bolted to the front knuckle post plate, which the steering arm clamp plate's front inboard corner meets at 40° and not before (checked on both sides by the model). With the fork turned to trail the clamp plate sits 35 mm further back on the trailing leg, so its inboard end was shortened to 104 mm from the kingpin axis (130 mm before) to bring the contact back between the post's cheeks. If the rider forces the bar into the lock with 300 N at one grip, one stop takes about 0.82 kN at 109 mm from the kingpin axis. The fin's 30 mm leg carries it at 46 MPa in its own plane and 92 MPa out of plane from contact friction, against 235 MPa yield, and the fin bolt sees 1.3 kN against a 15.6 kN preload.
 
-The inner lock is set by clearance. At full lock the steered inner tyre reaches 313 mm from the centre line at the height of the box floor, against the box side at 280 mm, and 364 mm at the knuckle post plates, against the post's outer edge at 338 mm. The gaps are 26 to 33 mm, before mudguards.
+The inner lock is set by clearance. With the contact patch trailing, the rear of the inner tyre swings further in as the wheel turns: at full lock it reaches 216 mm from the centre line below the bed rail (the rail's outer face is at 240 mm). Each rail's lower edge is therefore cut up to 415 mm above the ground between 1,200 and 1,305 mm from the rear axle (a tyre notch, between the bulkhead and the axle beams), and the rail windows either side were shortened to keep plate round the notch. The rail keeps 55 mm of plate above the notch, where the bed's bending moment is about 59 N·m per rail (dynamic, with the cargo behind the notch added unfavourably): **39 MPa** against 235 MPa yield. The fork crown now swings on a larger radius about the kingpin, so the knuckle post plates' lower edge stops 8 mm past the outer cheek (10 mm before). Least running clearances over the full sweep, from the model: each inner tyre to the box side **7.7 mm** at full lock (about 33 mm before the forks were turned), and fork crown to knuckle post plate 5.9 mm. Both are above the check's 5 mm limit, but 7.7 mm leaves no room for a full front mudguard on the inner rear quarter of the tyre; the front mudguards must be short at the rear or the lock reduced (review note).
 
-Because the kingpins pass through the wheel centres and the box no longer turns, the contact triangle and every mass stay where they are at any lock, so the tipping threshold is the same straight or at full lock.
+Because the box no longer turns, the masses stay where they are at any lock. With trail, the outer front contact patch moves out and forward as the wheels turn, which widens the tipping base, so straight ahead is the lowest case and the thresholds below hold at any lock. The 35 mm shorter wheelbase raises them slightly, because the line from the rear contact to each front contact passes further from the centre of mass.
 
 *Table 3. Tipping thresholds (R10: 0.30 g loaded; 0.22 g rider only, with a cornering-speed label).*
 
 | Case | Threshold, any lock | Speed at the threshold |
 | --- | --- | --- |
-| Loaded, 80 kg rider, 148 kg cargo | 0.41 g | 16.2 km/h on a 5 m radius; 11.2 km/h at full lock |
-| 90 kg rider, 138 kg cargo | 0.39 g | 15.7 km/h on a 5 m radius |
-| Rider only, 80 kg | 0.24 g | 12.3 km/h on a 5 m radius; 8.2 km/h at full lock |
-| Rider only, 90 kg | 0.23 g | 12.0 km/h on a 5 m radius |
+| Loaded, 80 kg rider, 148 kg cargo | 0.42 g | 16.3 km/h on a 5 m radius; 11.2 km/h at full lock |
+| 90 kg rider, 138 kg cargo | 0.40 g | 15.9 km/h on a 5 m radius |
+| Rider only, 80 kg | 0.24 g | 12.4 km/h on a 5 m radius; 8.2 km/h at full lock |
+| Rider only, 90 kg | 0.23 g | 12.1 km/h on a 5 m radius |
 
-R10 as restated is **met**. Under box steering (v0.1) the empty trike tipped at 0.11 g and 5.8 km/h at full lock; that case is gone. The rider-only margin is small, so the cornering-speed label (BOM item 14) is set at 70 % of the tip-up lateral acceleration, rounded down: **6 km/h in full-lock turns when empty**, and 14 km/h on a 10 m radius. Raising the rider-only case to 0.30 g would still need about 30 kg of low ballast. The raised box floor costs the loaded case 0.02 g (0.43 to 0.41 g).
+R10 as restated is **met**. Under box steering (v0.1) the empty trike tipped at 0.11 g and 5.8 km/h at full lock; that case is gone. The rider-only margin is small, so the cornering-speed label (BOM item 14) is set at 70 % of the tip-up lateral acceleration, rounded down: **6 km/h in full-lock turns when empty**, and 14 km/h on a 10 m radius. Raising the rider-only case to 0.30 g would still need about 30 kg of low ballast. The raised box floor cost the loaded case 0.02 g (0.43 to 0.41 g); the trailing contact patches give back 0.01 g (0.42 g).
 
-## 5a. Steering geometry, first pass
+## 5a. Steering geometry: forks turned to trail
 
-Decided on 2026-10-02: caster, trail, kingpin inclination, scrub radius and self-centring are studied on paper before the first ride, with the bought fork's rake as input. This first pass uses the model as drawn; the FEA session repeats it with the rake measured on the chosen fork.
+Decided on 2026-10-02: caster, trail, kingpin inclination, scrub radius and self-centring are studied on paper before the first ride. The first pass (v0.6) found that a fork fitted as sold, offset forward on the vertical knuckle head tube, gives negative trail, so the steering would pull into turns. On 2026-10-03 Amish accepted the recommendation to settle it before the first ride ("FlatTrike - i accept your design recommendation, proceed and execute the solution for fork direction or caster"). The solution carried out is the simplest buildable one: **each knuckle fork is fitted turned round**, so its offset trails. The head tubes stay vertical, so nothing in the knuckle posts, collar plates, headsets or ride height changes.
 
-*Table 3a. Steering geometry of the model as drawn.*
+The fork to buy is a 20 in steel fork with a threaded 1 1/8 in steerer and BMX-type legs that run parallel to the steerer, set 30 to 40 mm off it. Turned round, its legs stay vertical, so the U-bolts and clamp plate grip a straight leg as before, only 35 mm further back. A bent-leg (roadster) fork turned round would put the clamp on the bend, so it is not used for the knuckles. The values below are measured on the model by `model.py --check` (the steering axis through the knuckle head tube, the contact at the tyre's lowest point), not assumed.
+
+*Table 3a. Steering geometry of the model.*
 
 | Quantity | Value | Effect |
 | --- | --- | --- |
-| Caster angle | 0° (knuckle head tubes vertical) | No gravity self-centring |
-| Kingpin inclination | 0° | No gravity self-centring |
+| Caster angle | 0° (knuckle head tubes vertical) | No gravity self-centring, no wheel flop: the front neither rises nor falls as the wheels turn |
+| Kingpin inclination | 0° | As above |
 | Scrub radius | 0 mm (steering axis in the wheel's centre plane) | Little brake steer from an uneven drum |
-| Trail, straight fork (0 mm offset) | 0 mm | Neutral |
-| Trail, 30 mm offset fork fitted as sold (crown forward) | 30 mm negative; about 6.6 N·m per wheel pulling into the turn at 0.2 g, loaded | Steering would run into the turn |
-| Trail, 30 mm offset fork turned to trail | 30 mm; about 6.6 N·m per wheel centring at 0.2 g | Self-centring |
-| Trail, 45 mm offset fork, either way | 45 mm; about 9.9 N·m per wheel | As above, stronger |
+| Fork offset, fitted turned round | 35 mm in the model; 30 to 40 mm to buy | Sets the trail |
+| Mechanical trail | **35 mm** (30 to 40 mm with the fork range); checked to lie in 30 to 70 mm | Self-centring |
+| Aligning moment per wheel at 0.2 g, loaded | 7.9 N·m (6.7 to 9.0 N·m over the fork range) | Centres the steering |
+| Self-centring torque at the column, both wheels, 0.2 g | 15.7 N·m loaded (26 N at each grip on a 300 mm half-bar); 5.1 N·m rider only | Felt return to centre; light enough to hold |
+| Reference: the same fork fitted as sold | 35 mm negative | Pulls into the turn; not allowed (build plan safety stop S6) |
 
-With vertical head tubes, any fork offset ahead of the steering axis gives negative trail, so a fork fitted as sold would pull the steering into a turn. Turning each knuckle fork round so its offset trails, or a fork with no offset, is the first option to study; head tube caster would need the knuckle posts redrawn. This is a safety point before the first ride (build plan safety stop S6).
+**Why 30 to 70 mm, and why 35 mm.** Positive mechanical trail puts the tyre's side force behind the steering axis, so it turns the wheel back toward straight ahead. Bicycles use about 55 to 65 mm because the rider also steers by leaning; a tadpole cargo trike does not lean, so trail only has to centre the steering and keep it straight at speed. Below about 30 mm the centring torque at riding speeds is small compared with the friction in three headsets, a tie rod and a drag link, so the bar would not return. Above about 70 mm the heavily loaded front pair (2.25 kN loaded) makes the bar heavy at walking pace, kicks back over bumps and swings the tyres further across under the box at lock. A trail in the lower part of the range suits a front loader that is mostly ridden slowly and steered hard in tight streets. 35 mm comes from commonly sold 20 in forks with no part made specially, and it gives a measurable return to centre (15.7 N·m at 0.2 g, loaded) without a heavy bar.
+
+**What else changes.** The wheelbase shortens from 1.45 to 1.415 m because the axles now trail the kingpins. The turning circle falls to 5.52 m (R9) and the tipping thresholds rise slightly (R10). The axle beams, posts and steering linkage stay where they were, so the Ackermann arms, tie rod, drag link, 1:1 handlebar ratio and 40° lock are unchanged; toe at straight ahead is still set by the tie rod length (zero). The contact patches swing 22.5 mm across at full lock, which slightly increases the Ackermann scrub (0.20 m against 0.18 m). The clamp plates, steering arms and stop fins were redrawn to suit the leg's new position, the bed rails got a tyre notch, and the knuckle post plates' lower lip was trimmed for the crown (section 5).
+
+The FEA session still repeats this with the offset measured on the chosen fork before the first ride, as decided on 2026-10-02; any fork whose measured offset lies between 30 and 40 mm keeps the trail in range.
 
 ## 6. Structure (R2)
 
@@ -148,23 +159,24 @@ Bending stresses in the plates are low. Stability, torsion and joint behavior go
 | --- | --- | --- |
 | Spine torsion, 0.5 g roll (516 N·m) | 9.3 MPa in the closed 63 x 150 mm box (573 MPa if the covers were left out) | Met |
 | Cover tabs, shear flow 28 N/mm | 87 MPa bearing on 3 x 3 mm faces, 10 tabs per edge over the 280 mm closed box (the model's count) | Acceptable; confirm in FEA |
-| Upper stay strip, 2.59 kN compression per plate | Buckling safety factor 2.01 with a 100 mm strip braced at 300 mm (0.49 without the stay bridge) | Marginal; buckling governs the stays |
-| Bed-to-spine joint, fixed bed | 406 N shear and 150 N·m pitch moment (static, loaded) | Carried by the yokes' tabs and bolts |
-| Spine bending at the stay front node | 877 N·m, 17 MPa (joint moment and shear, dynamic, plus 0.5 g braking) | Met |
+| Upper stay strip, 2.41 kN compression per plate | Buckling safety factor 2.16 with a 100 mm strip braced at 300 mm (0.53 without the stay bridge) | Marginal; buckling governs the stays |
+| Bed-to-spine joint, fixed bed | 458 N shear and 97 N·m pitch moment (static, loaded) | Carried by the yokes' tabs and bolts |
+| Bed rail at the tyre notch (2026-10-03) | 59 N·m per rail, 39 MPa in the 55 mm of plate left | Met |
+| Spine bending at the stay front node | 788 N·m, 15.5 MPa (joint moment and shear, dynamic, plus 0.5 g braking) | Met |
 | Head tube joint under 0.5 g roll | Couple 2.58 kN with the 200 mm head tube (3.44 kN with 150 mm), from the cups into the yokes; 27 MPa bearing on one yoke's two tabs | Met on paper; the headset bearings do not carry it |
-| Front axle beam, 5.49 kN on a 566 mm span | 36 MPa (twin 3 x 120 mm plates with windows, shallower so the steering arms pass beneath); 19 MPa under the R2 proof load of 2.94 kN | Met |
-| Knuckle post arm, 2.74 kN per wheel | 16 MPa at its root (two plates, 120 mm deep) | Met |
+| Front axle beam, 5.61 kN on a 566 mm span | 37 MPa (twin 3 x 120 mm plates with windows, shallower so the steering arms pass beneath); 19 MPa under the R2 proof load of 2.90 kN | Met |
+| Knuckle post arm, 2.81 kN per wheel | 16 MPa at its root (two plates, 120 mm deep) | Met |
 | Knuckle collar plates | The cup flange bears on the lower collar plate within 2.5 mm of the post plates, so the plate is not bent | Met by layout |
-| Knuckle post column, 314 N·m | 40 MPa in the closed 45 x 50 mm box (155 MPa if the cheeks were left out) | At risk: highest stress in the frame; FEA needed |
-| Knuckle headsets | 2.74 kN axial per headset, dynamic | Within bicycle headset use; rating to confirm |
-| Stay-to-spine nodes, 2.59 kN per plate | Slip load 3.12 kN per bolt per face; bearing use 7 % if slipped | Met on paper if preload is kept |
-| Fatigue at M8 holes | 3.8 MPa per road cycle and 11.3 MPa per pothole, against a 66 MPa limit; about 3 million cycles in 5 years | Met on paper; fretting and slip not assessed |
+| Knuckle post column, 321 N·m | 41 MPa in the closed 45 x 50 mm box (159 MPa if the cheeks were left out) | At risk: highest stress in the frame; FEA needed |
+| Knuckle headsets | 2.81 kN axial per headset, dynamic | Within bicycle headset use; rating to confirm |
+| Stay-to-spine nodes, 2.41 kN per plate | Slip load 3.12 kN per bolt per face; bearing use 7 % if slipped | Met on paper if preload is kept |
+| Fatigue at M8 holes | 3.5 MPa per road cycle and 10.5 MPa per pothole, against a 66 MPa limit; about 3 million cycles in 5 years | Met on paper; fretting and slip not assessed |
 
 R2 is **at risk**: the nominal numbers pass, but the stay strips have only about twice their buckling load, the knuckle post columns depend on their cheek plates, and joint slip, fretting and the EN 17860 load cases are unassessed. A plate-and-joint FEA is the next step on paper.
 
 ## 7. Braking and parking (R11)
 
-Stopping from 15 km/h in 6 m needs 1.45 m/s² (2.22 m/s² if 0.5 s of reaction is counted inside the 6 m), from 2.6 kJ of kinetic energy. Shared equally, each drum must give about **37 N·m**, and the front pair alone needs a tyre grip coefficient of only 0.20. Parking on a 10 % grade needs 293 N, or **37 N·m** per front drum with the latch on the front pair. The drum torque rating of the chosen hubs has not been read.
+Stopping from 15 km/h in 6 m needs 1.45 m/s² (2.22 m/s² if 0.5 s of reaction is counted inside the 6 m), from 2.6 kJ of kinetic energy. Shared equally, each drum must give about **37 N·m**, and the front pair alone needs a tyre grip coefficient of only 0.19. Parking on a 10 % grade needs 292 N, or **37 N·m** per front drum with the latch on the front pair. The drum torque rating of the chosen hubs has not been read.
 
 Holding 10 km/h down a 5 % grade puts 274 W into the drums. With the assumed heat capacity (431 J/K each) and cooling (0.5 W/K), the steady rise would be 183 K, and the drums reach a 100 K rise after 11.4 min, or about **1.9 km** of continuous descent. R11 is **at risk**.
 
@@ -178,9 +190,9 @@ Unprotected 3 mm steel at the upper first-year corrosion rate of ISO 9223 catego
 
 ## 9. Cost (R15, R18)
 
-Value-engineering target: USD 800. Estimated cost of the constructable design: USD 728 (USD 72 under the target). That is the pedal-only prototype in `bom/bom.csv` (15 lines, every line priced; R15 within the target). The construction changes added $15: a seat tube and collars, a cut-down fork for the column, U-bolts and a tall quill stem, less 21 bolt sets; the two steering lock stops and their bolts added $4. The optional route C assist kit is $300 without the SwapCell pack, which is priced once in the SwapCell repo.
+Value-engineering target: USD 800. Estimated cost of the constructable design: USD 736 (USD 64 under the target). That is the pedal-only prototype in `bom/bom.csv` (15 lines, every line priced; R15 within the target). The construction changes added $15: a seat tube and collars, a cut-down fork for the column, U-bolts and a tall quill stem, less 21 bolt sets; the two steering lock stops and their bolts added $4; the straight-leg forks fitted turned to trail (2026-10-03) added $8. The optional route C assist kit is $300 without the SwapCell pack, which is priced once in the SwapCell repo.
 
-At 100 units the estimate is **$466** per trike: $74 of steel (one full sheet), $17 of cutting (about 58 m at $0.30/m), $324 of bought parts at 65 % of retail, the plywood box at 60 % and $15 of assembly labour. R18 ($300 at 100 units) is **over the value-engineering target by USD 166**. By Amish's decision the target stays until the first partner supplies wholesale prices for wheels, hubs and forks (FTK-DDR-002 item 18).
+At 100 units the estimate is **$471** per trike: $74 of steel (one full sheet), $17 of cutting (about 57 m at $0.30/m), $329 of bought parts at 65 % of retail, the plywood box at 60 % and $15 of assembly labour. R18 ($300 at 100 units) is **over the value-engineering target by USD 171**. By Amish's decision the target stays until the first partner supplies wholesale prices for wheels, hubs and forks (FTK-DDR-002 item 18).
 
 ## 10. Results against every requirement
 
@@ -189,22 +201,22 @@ At 100 units the estimate is **$466** per trike: $74 of steel (one full sheet), 
 | ID | Requirement (target) | Value | Status |
 | --- | --- | --- | --- |
 | R13 | 5 % grade at 4 km/h without dismounting | 239 W at the pedals needed unassisted; 6.0 km/h with route C assist | **Not met** unassisted |
-| R18 | Production cost $300 or less at 100 units | about $466 | **Over the value-engineering target by USD 166** |
-| R2 | Frame strength and fatigue | Stresses 40 MPa or less; stay buckling SF 2.01; knuckle post column 40 MPa | At risk |
+| R18 | Production cost $300 or less at 100 units | about $471 | **Over the value-engineering target by USD 171** |
+| R2 | Frame strength and fatigue | Stresses 41 MPa or less; stay buckling SF 2.16; knuckle post column 41 MPa | At risk |
 | R7 | Two people, 4 h or less, hand tools | about 4.07 h | At risk (about 4 minutes over; accepted 2026-10-02, timed at TRL 4) |
 | R11 | Stop from 15 km/h in 6 m; park on 10 % | 37 N·m per drum needed; fade after about 1.9 km of 5 % descent | At risk |
 | R16 | 5 years of commercial service | Up to 0.42 mm corrosion loss if unprotected | Not verifiable at TRL 3 |
-| R1 | Gross 300 kg or less: 148 kg cargo with an 80 kg rider, 138 kg with a 90 kg rider (restated 2026-10-02) | 299.7 kg in both cases | Met on paper (FTK-DDR-003, A1); final label from the weighed trike |
+| R1 | Gross 300 kg or less: 148 kg cargo with an 80 kg rider, 138 kg with a 90 kg rider (restated 2026-10-02) | 299.6 kg in both cases | Met on paper (FTK-DDR-003, A1); final label from the weighed trike |
 | R3 | Flat 3 mm plate only, bolted | 37 plates and 78 washers, all flat; bought tube sections cut to length | Met |
-| R4 | One 1,250 x 2,500 mm sheet | 1,940 mm used by the true-shape nest | Met (560 mm margin) |
-| R5 | Standard bicycle parts | 20 in ISO 406 wheels and forks, 1 1/8 in headsets, 68 mm BB, 27.2 mm post | Met by design; availability survey pending |
+| R4 | One 1,250 x 2,500 mm sheet | 1,985 mm used by the true-shape nest | Met (515 mm margin) |
+| R5 | Standard bicycle parts | 20 in ISO 406 wheels and forks (knuckle forks: straight-leg, 30 to 40 mm offset), 1 1/8 in headsets, 68 mm BB, 27.2 mm post | Met by design; availability survey pending |
 | R6 | 0.4 m³ or less; no piece over 1.0 m | 0.31 m³; longest piece 0.85 m | Met |
-| R8 | Empty mass 72 kg or less including the box (relaxed 2026-10-02) | 71.7 kg | Met on paper, 0.3 kg margin (FTK-DDR-003, A1) |
-| R9 | Width 1.0 m, length 2.2 m, turning circle 6 m or less | 0.984 m, 2.15 m, 5.64 m through the built linkage (5.95 m upper bound) | Met |
-| R10 | 0.30 g loaded; 0.22 g rider only with a label | 0.41 g loaded; 0.24 g rider only, at any lock; label 6 km/h at full lock | Met |
+| R8 | Empty mass 72 kg or less including the box (relaxed 2026-10-02) | 71.6 kg | Met on paper, 0.4 kg margin (FTK-DDR-003, A1) |
+| R9 | Width 1.0 m, length 2.2 m, turning circle 6 m or less | 0.986 m, 2.15 m, 5.52 m through the built linkage (5.86 m upper bound) | Met |
+| R10 | 0.30 g loaded; 0.22 g rider only with a label | 0.42 g loaded; 0.24 g rider only, at any lock; label 6 km/h at full lock | Met |
 | R12 | 7 km/h on the flat at 110 W | 7.6 km/h | Met |
 | R14 | 30 min per plate or part; 90 min for a spine side plate; 60 min for a knuckle post plate (2026-10-02) | 80 min spine side plate; 53 min knuckle post plate | Met on paper (FTK-DDR-003, A2) |
-| R15 | Pedal-only prototype $800 or less | $728 | Met |
+| R15 | Pedal-only prototype $800 or less | $736 | Met |
 | R17 | 150 L box; counter at 0.75 to 0.95 m | 151 L; 0.84 m | Met |
 
 Counts: 12 met, 1 not met, 1 over its value-engineering target (R18), 3 at risk, 1 not verifiable at TRL 3.
@@ -214,7 +226,7 @@ Counts: 12 met, 1 not met, 1 over its value-engineering target (R18), 3 at risk,
 - EN 17860 test loads and cycle counts were not read. A public summary confirms the series covers multi-track cargo cycles up to 300 kg and that commercial use doubles the pedaling-force test cycles ([ACT Lab](https://act-lab.com/cargo-bike-safety-en-17860/)); the numeric load cases need the standard itself.
 - Stress checks are hand calculations on simplified members. A plate-and-joint FEA of the spine box, stays, knuckle posts, yokes and bed, with the tab-and-slot joints modelled, is needed before any build decision.
 - The steering arms are held to the fork legs by U-bolt friction; the grip needed is not calculated here and is a check at TRL 4.
-- The steering geometry study (section 5a) is a first pass on the model as drawn; it is repeated with the measured rake of the chosen fork in the FEA session, before the first ride. Steering feel and brake steer are not quantified.
+- The steering geometry (section 5a) is measured on the model with a 35 mm fork offset; it is repeated with the measured offset of the chosen fork in the FEA session, before the first ride. Pneumatic trail, steering feel, shimmy and brake steer are not quantified.
 - The raster nest is a check that the plates fit, not a cutting layout.
 - Hub, fork and headset ratings, drum heat data and laser-cutting prices are assumptions until supplier data or quotes are obtained.
 

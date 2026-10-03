@@ -404,3 +404,51 @@ Renders on Amish's Mac from the exported scenes; then the FEA session (plate-and
 ## 2026-10-02: photoreal renders redone on the constructable design
 
 Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.
+
+## Session 2026-10-03: fork direction settled (forks turned to trail)
+
+On 2026-10-03 Amish wrote: "FlatTrike - i accept your design recommendation, proceed and execute the solution for fork direction or caster". The first-pass study (FTK-CAL-001 v0.6, section 5a) had named turning each knuckle fork round so its offset trails as the first option; this session carried it out. TRL stays at 3; TRL 4 remains on hold.
+
+### Solution and why
+
+- Each knuckle fork is a 20 in steel fork with a threaded 1 1/8 in steerer and straight BMX-type legs parallel to the steerer, 30 to 40 mm offset, fitted turned round so the axle trails the vertical knuckle head tube. Mechanical trail 35 mm in the model (30 to 40 mm over the fork range); caster 0°, kingpin inclination 0°, scrub 0 mm, all measured on the model by `model.py --check`.
+- Why this and not head tube caster: it needs no new or angled plates, keeps the knuckle posts, collar plates, headsets, ride height and linkage as they are, and gives no wheel flop. Caster would have meant redrawing the knuckle posts round a tilted head tube. Straight legs are needed because the steering arm clamps to the leg; a bent-leg fork turned round would put the clamp on the bend.
+- Why 35 mm: 30 to 70 mm is the target band (below about 30 mm the centring torque is small against the friction of three headsets and two rod-end links; above about 70 mm the 2.25 kN front load makes the bar heavy and kicks back). The lower part of the band suits a slow, tightly steered front loader, and 35 mm comes from stock forks. Centring torque at the column 15.7 N·m at 0.2 g loaded (26 N per grip).
+
+### Knock-on changes and effects
+
+- Wheelbase 1.45 to 1.415 m (kingpins unchanged at 1.45 m). Turning circle 5.64 to **5.52 m** (R9 met; 5.86 m upper bound). Tipping thresholds rise slightly (0.42 g loaded, 0.24 g rider only; R10 met). Lock 40°, Ackermann arms, tie rod, toe (zero) and 1:1 bar ratio unchanged; tyre scrub at full lock 0.20 m (was 0.18 m).
+- Bed rails: a tyre notch 55 mm up into the lower edge, 1,200 to 1,305 mm from the rear axle, because the trailing inner tyre swings 22.5 mm further across at full lock and otherwise struck the rail. 39 MPa in the 55 mm of plate left. Two rail windows shortened.
+- Knuckle post plates: lower lip 8 mm past the outer cheek (was 10 mm) for the fork crown's larger swing.
+- Steering arm clamp plates 67 x 40 mm (inboard end 104 mm from the kingpin, was 130 mm), steering arms shorter, lock stop fins 34 x 130 mm (were 77 x 130 mm). Stop force 0.82 kN at 109 mm.
+- Least running clearances over the sweep (new check, 5 mm minimum): inner tyre to the box side **7.7 mm** at full lock (about 33 mm before); fork crown to knuckle post plate 5.9 mm.
+- Mass 71.6 kg empty (0.4 kg under R8). Rear axle load falls (0.69 kN loaded); rear tyre grip needed on 5 % rises from 0.26 to 0.28.
+- Cost: BOM line 5 $92 to $100 (straight-leg forks about $4 more each). Base prototype **$736** (USD 64 under the $800 target); production about $471 (R18 USD 171 over).
+
+### Files changed
+
+- `cad/src/model.py` (FORK_OFFSET, axle_x(), TRAIL_RANGE, RAIL_NOTCH, POST_LIP, CLAMP_IN; new trail, scrub and running-clearance checks), `cad/step/*`, `cad/stl/*`. `python cad/src/model.py --check`: PASS (167 components, 0 overlaps, 0 floating, 0 joint, sweep, lock stop, clearance or geometry issues).
+- `docs/04-calcs/sizing.py`, `results.csv`, `01-sizing.md` (FTK-CAL-001 v0.7; section 5a rewritten)
+- `docs/03-requirements.md` (FTK-REQ-001 v0.9), `docs/02-concept.md` (FTK-PRC-001 v0.9), `docs/05-build-plan.md` (FTK-BLD-001 v0.5), `docs/06-design-decisions.md` (FTK-DEC-001 v0.5), `bom/bom.csv`, `bom/bom-notes.md`, `README.md`
+- Drawings: FTK-DWG-001 Rev P5; FTK-DWG-112 P2, 114 P3, 116 P2, 118 P2, 119 P3, 124 P2
+- Build plan pictures: `overview.png`, `joint-08.png`, `joint-09.png`, `joint-11.png`, `step-11.png` to `step-21.png`
+- Concept media (blueprint FTK-DWG-010 P4, hero, exploded, flow, model.glb)
+- `cad/src/product_model.py`: front wheels and mudguards at the trailing axle; forks come from the model (straight legs). Render scenes exported to `/home/claude/renders/flattrike` (hero, exploded, detail). Photoreal renders, `media/card.png` and `media/social-preview.png` not redone (Amish's Mac).
+
+### Proposed, awaiting Amish
+
+1. Front mudguards: with 7.7 mm from tyre to box side at full lock, a full-length front mudguard would rub the box. Options: (a) short front mudguards that stop above the axle at the rear; (b) reduce the inner lock to about 37° (turning circle about 5.8 m, R9 still met); (c) no front mudguards. Recommendation: (a).
+2. The 2026-10-02 appearance decision accepted "bent fork legs" as appearance only; the forks are now straight-leg by design and the appearance model already shows them straight. Recommendation: note that item as superseded.
+
+### Safety concerns
+
+- A fork fitted as sold (legs forward) gives 35 mm of negative trail and pulls the steering into turns. Step 16 now has a hold point and S6 requires both forks checked turned round before the first ride.
+- Pneumatic trail, shimmy and kickback with 35 mm trail are not quantified; the FEA session repeats the geometry with the chosen fork's measured offset.
+
+### Recommended next step
+
+Photoreal renders and cards on Amish's Mac from the exported scenes; then the FEA session (plate-and-joint FEA, lightening windows for the 0.4 kg R8 margin, steering geometry with the measured fork). **TRL 4 remains on hold by Amish's instruction.**
+
+## 2026-10-02: photoreal renders redone on the constructable design
+
+Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.

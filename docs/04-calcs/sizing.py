@@ -40,7 +40,8 @@ P = M.PARAMS
 RIDER, RIDER_MAX, CARGO, CARGO_MAX = 80.0, 90.0, 148.0, 138.0    # rating restated 2026-10-02 (FTK-DDR-003 A1)
 R8_KG = 72.0                   # R8 empty mass target, relaxed 2026-10-02
 R14_KN_MIN = 60.0              # R14 target for a knuckle post plate, 2026-10-02
-FORK_RAKES = (0.0, 30.0, 45.0)  # mm, fork offset of a bought 20 in fork (input to the steering geometry study)
+FORK_BUY = (30.0, 40.0)        # mm, fork offset range to buy; the fork is fitted turned round so the offset trails
+                               # (decided by Amish 2026-10-03); the model uses P["FORK_OFFSET"]
 RHO_STEEL, RHO_PLY = 7850.0, 700.0
 CRR, CDA, RHO_AIR, ETA = 0.015, 0.9, 1.2, 0.89
 P_RIDER, P_ASSIST = 110.0, 250.0
@@ -124,6 +125,18 @@ def true_shape_nest(plates, SW, SL, EDGE, cell=5.0):
     return float(used), placed
 
 
+def V_j_static(items, rider, mt, front):
+    """Vertical shear at the bed-to-spine joint, static, N (as section 5.3)."""
+    rear_lst = [i for i in items if not i[5]] + [rider]
+    return sum(i[1] for i in rear_lst) * G - (mt - front) * G
+
+
+def M_j_static(items, rider, mt, front, kp):
+    """Pitch moment at the bed-to-spine joint, static, N m (as section 5.3)."""
+    rear_lst = [i for i in items if not i[5]] + [rider]
+    return ((mt - front) * G * kp - sum(i[1] * G * (kp - i[2]) for i in rear_lst)) / 1000
+
+
 def main():
     parts = M.build_parts()
     sched = M.plate_schedule()
@@ -138,7 +151,8 @@ def main():
     rec("Overall length", bb.size.X / 1000, "m")
     rec("Overall width", bb.size.Y / 1000, "m")
     rec("Overall height (saddle top)", bb.size.Z / 1000, "m")
-    rec("Wheelbase", P["WB"] / 1000, "m"); rec("Front track", P["TRACK"] / 1000, "m")
+    rec("Wheelbase", M.axle_x() / 1000, "m", "front axles trail the knuckle steering axes (1.45 m) by the fork offset")
+    rec("Front track", P["TRACK"] / 1000, "m")
     n_plates = sum(v["qty"] for v in sched.values())
     area = sum(v["qty"] * v["area_m2"] for v in sched.values())
     rec("Cut plates (count)", n_plates)
@@ -248,11 +262,11 @@ def main():
 
     # axle loads, loaded
     mt, xt, _, zt = com(items + [rider, cargo])
-    front = mt * xt / P["WB"]
+    front = mt * xt / M.axle_x()
     rec("Front axle load, loaded (static)", front * G / 1000, "kN")
     rec("Rear axle load, loaded (static)", (mt - front) * G / 1000, "kN")
     mr, xr, _, _ = com(items + [rider])
-    rec("Rear axle load, rider only (static)", (mr - mr * xr / P["WB"]) * G / 1000, "kN")
+    rec("Rear axle load, rider only (static)", (mr - mr * xr / M.axle_x()) * G / 1000, "kN")
 
     # ------------------------------------------------------------ 3 riding power
     head("3. Riding power, gearing and assist (R12, R13)")
@@ -310,24 +324,41 @@ def main():
 
     # ------------------------------------------------------------ 4 steering and stability
     head("4. Steering, turning circle and stability (R9, R10)")
-    kp, wb, tr = P["KP_X"], P["WB"], P["TRACK"] / 2
+    kp, wk, tr = P["KP_X"], P["WB"], P["TRACK"] / 2
+    e = P["FORK_OFFSET"]                      # trail: each contact patch is e behind its kingpin axis
+    wb = M.axle_x()                           # wheelbase, straight ahead
     lock = math.radians(P["STEER_LOCK"])
 
-    def threshold(lst):
-        """Lateral acceleration (g) at tip-up in a left turn. Ackermann steering with the kingpins through the
-        wheel centres: the contact triangle and every mass stay where they are at any lock."""
+    def contact(side_y, d):
+        """Contact patch of the front wheel whose kingpin is at (wk, side_y), steered d (rad, + anticlockwise)."""
+        return wk - e * math.cos(d), side_y - e * math.sin(d)
+
+    def axle_line_y(side_y, d):
+        """Where the wheel's axle line (through its contact patch) meets the rear axle line (x = 0)."""
+        cx, cy = contact(side_y, d)
+        return cy + cx / math.tan(d)
+
+    def threshold(lst, d_out=0.0):
+        """Lateral acceleration (g) at tip-up in a left turn, outer (right) wheel steered d_out. With trail the
+        outer contact patch moves out and forward as the wheels turn, so straight ahead is the lowest case."""
         m = sum(i[1] for i in lst)
         cx = sum(i[1] * i[2] for i in lst) / m; cy = sum(i[1] * i[3] for i in lst) / m
         cz = sum(i[1] * i[4] for i in lst) / m
-        ox, oy = wb, -tr                        # outer (right) front contact
+        ox, oy = contact(-tr, d_out)            # outer (right) front contact
         L = math.hypot(ox, oy)
         dist = (cx * (-oy) + cy * ox) / L       # distance of CoM from the rear-to-outer-front axis
         return dist / cz, cx, cz
 
-    # Ackermann: turn centre on the rear axle line; inner wheel at full lock
-    y_ic = tr + wb / math.tan(lock)
-    d_outer = math.degrees(math.atan(wb / (y_ic + tr)))
-    r_outer = math.hypot(wb, y_ic + tr) + P["TYRE_W"] / 2
+    # inner wheel at full lock: its axle line through its trailing contact patch sets the turn centre
+    y_ic = axle_line_y(tr, lock)
+    lo_, hi_ = math.radians(1), lock          # ideal Ackermann outer angle: outer axle line through the same centre
+    for _ in range(60):
+        mid = (lo_ + hi_) / 2
+        if axle_line_y(-tr, mid) > y_ic:
+            lo_ = mid
+        else:
+            hi_ = mid
+    d_outer = math.degrees((lo_ + hi_) / 2)
     r_box = math.hypot(x0 + P["BOX_L"], y_ic + P["BOX_W"] / 2)
     rec("Inner wheel lock (box clearance limit)", P["STEER_LOCK"], "deg")
     rec("Outer wheel lock (ideal Ackermann, for comparison)", d_outer, "deg")
@@ -337,16 +368,19 @@ def main():
     rec("Column (handlebar) turn at full inner lock, left wheel through the drag link", math.degrees(M._column_angle(lock)), "deg",
         "drop arm parallel to the left steering arm (FTK-DDR-003); was about 1.7 times the wheel angle")
     # built linkage: the outer wheel's axle line meets the rear axle line closer in than the inner wheel's; the tyres
-    # scrub between the two. The outer wheel's own centre sets the outer tyre's path (the smaller, built figure);
-    # the inner wheel's centre gives the larger figure, which is the ideal Ackermann value.
-    y_ic_out = -tr + wb / math.tan(math.radians(d_built))
+    # scrub between the two. The outer wheel's own line sets the outer tyre's path (the smaller, built figure);
+    # the inner wheel's line gives the larger figure (upper bound).
+    db = math.radians(d_built)
+    y_ic_out = axle_line_y(-tr, db)
+    ocx, ocy = contact(-tr, db)
     rec("Turn centre from the centre line, outer wheel's axle line (built linkage)", y_ic_out / 1000, "m")
     rec("Turn centre from the centre line, inner wheel's axle line", y_ic / 1000, "m")
     rec("Turn centre mismatch between the front wheels (tyre scrub at full lock)", y_ic - y_ic_out, "mm")
-    r_out_b = math.hypot(wb, y_ic_out + tr) + P["TYRE_W"] / 2
+    r_out_b = math.hypot(ocx, y_ic_out - ocy) + P["TYRE_W"] / 2
+    r_outer = math.hypot(ocx, y_ic - ocy) + P["TYRE_W"] / 2
     rec("Turning circle, outer tyre, built linkage", 2 * r_out_b / 1000, "m", "R9 target 6 m")
     rec("Turning circle, outer tyre, if the turn centre stayed on the inner wheel's axle line (upper bound)",
-        2 * r_outer / 1000, "m", "equals the ideal Ackermann figure")
+        2 * r_outer / 1000, "m", "the inner wheel's turn centre")
     rec("Swept circle, box front corner (inner wheel's turn centre, upper bound)", 2 * r_box / 1000, "m")
     # steering lock stops (2026-10-02): the clamp plate's front inboard corner meets a stop fin at the inner lock
     xc_s, yc_s = M.stop_corner(1)
@@ -366,22 +400,39 @@ def main():
         0.2 * f_stop * (z1s - z_c) / (P["STOP_LEG"] * P["T"] ** 2 / 6), "MPa")
     t_bolt = f_stop * (z2s - z_c) / (z2s - (P["AB_Z0"] + 14))
     rec("Stop fin T-slot bolt tension (fin pivots on its top corner)", t_bolt, "N", "M8 8.8 preload 15.6 kN")
-    # steering geometry study (decided 2026-10-02; repeated with the measured fork in the FEA session)
-    head("4a. Steering geometry study, first pass (decision 7)")
-    rec("Caster angle (knuckle head tubes vertical in the model)", 0.0, "deg")
-    rec("Kingpin inclination (head tubes vertical)", 0.0, "deg")
-    rec("Scrub radius (steering axis in the wheel's centre plane)", 0.0, "mm")
+    # steering geometry (study decided 2026-10-02; fork direction decided by Amish 2026-10-03: forks turned to trail)
+    head("4a. Steering geometry: forks turned to trail (decided 2026-10-03)")
+    geo = M.steering_geometry(M.C)["left"]
+    rec("Caster angle, measured on the model (knuckle head tubes vertical)", round(geo["caster"], 2) + 0.0, "deg")
+    rec("Kingpin inclination, measured on the model", round(geo["kpi"], 2) + 0.0, "deg")
+    rec("Scrub radius, measured on the model", round(geo["scrub"], 2) + 0.0, "mm", "steering axis in the wheel's centre plane")
+    rec("Fork offset, fitted turned round (model)", e, "mm", f"buy {FORK_BUY[0]:.0f} to {FORK_BUY[1]:.0f} mm, legs parallel to the steerer")
+    rec("Mechanical trail, measured on the model", geo["trail"], "mm",
+        f"target {P['TRAIL_RANGE'][0]:.0f} to {P['TRAIL_RANGE'][1]:.0f} mm; checked by model.py --check")
     front_w = front * G / 2
-    for rake in FORK_RAKES:
-        for orient, sgn in (("crown forward (as sold)", -1), ("fork turned to trail", 1)):
-            if rake == 0 and sgn > 0:
-                continue
-            trail = sgn * rake
-            rec(f"Trail, {rake:.0f} mm fork offset, {orient if rake else 'straight fork'}", trail, "mm",
-                "negative = contact patch ahead of the steering axis")
-            rec(f"  aligning moment per wheel at 0.2 g, loaded", front_w * 0.2 * trail / 1000, "N m",
-                "positive centres the steering; negative pulls it into the turn")
+    for lab, tr_ in (("model", geo["trail"]), (f"{FORK_BUY[0]:.0f} mm fork", FORK_BUY[0]), (f"{FORK_BUY[1]:.0f} mm fork", FORK_BUY[1])):
+        rec(f"Aligning moment per wheel at 0.2 g, loaded, {lab}", front_w * 0.2 * tr_ / 1000, "N m", "centres the steering")
+    t_col = 2 * front_w * 0.2 * geo["trail"] / 1000
+    rec("Self-centring torque at the column, both wheels, 0.2 g, loaded", t_col, "N m", "1:1 linkage")
+    rec("  as a force at each grip (300 mm half-bar, two hands)", t_col / (2 * 0.30), "N")
+    front_r = (mr * xr / M.axle_x()) * G / 2
+    rec("Self-centring torque at the column, rider only, 0.2 g", 2 * front_r * 0.2 * geo["trail"] / 1000, "N m")
+    rec("Reference: same fork fitted as sold (crown forward), trail", -e, "mm", "pulls into the turn; not allowed")
+    rec("Front wheel drop (flop) when steered, vertical axis", 0.0, "mm", "no lift or fall of the front with steering")
     rec("Gravity self-centring (needs caster or kingpin inclination)", 0.0, "N m")
+    rec("Contact patch swing across at full lock (inner wheel)", e * math.sin(lock), "mm", "the rear of the inner tyre swings in")
+    # tyre notch in the bed rails (2026-10-03): the rail's least section at the notch, between the bulkhead and beams
+    nx0, nx1, nz = P["RAIL_NOTCH"]
+    x_n = (nx0 + nx1) / 2
+    h_n = P["BOX_Z0"] - nz
+    bed_behind = [i for i in items if i[5] and kp < i[2] < x_n]
+    m_static = abs(M_j_static(items, rider, mt, front, kp) - V_j_static(items, rider, mt, front) * (x_n - kp) / 1000
+                   - sum(i[1] * G * (x_n - i[2]) for i in bed_behind) / 1000)
+    box_part = (x_n - P["BOX_X0"]) / P["BOX_L"] * (CARGO + 0.0) * G       # cargo standing on the box floor behind the notch
+    m_n = (m_static + box_part * (x_n - P["BOX_X0"]) / 2 / 1000) * DYN / 2  # per rail, dynamic, cargo added unfavourably
+    rec("Bed rail at the tyre notch: depth of plate left", h_n, "mm", f"notch {nx0:.0f} to {nx1:.0f} mm from the rear axle")
+    rec("Bed rail at the tyre notch: bending moment per rail, dynamic", m_n, "N m")
+    rec("Bed rail at the tyre notch: bending stress", m_n * 1e3 / (P["T"] * h_n ** 2 / 6), "MPa", "yield 235 MPa")
 
     cases = {}
     for label, lst in (("loaded", items + [rider, cargo]), ("rider only", items + [rider]),
